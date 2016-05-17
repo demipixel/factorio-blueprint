@@ -1,0 +1,16 @@
+{
+  "name": "factorio-blueprint",
+  "version": "1.0.0",
+  "description": "Factorio Blueprints API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DemiPixel <luke5227@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "atob": "^2.0.3",
+    "gzip-js": "^0.3.2",
+    "victor": "^1.1.0"
+  }
+}
