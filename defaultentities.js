@@ -62,7 +62,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
-  basic_splitter: { // how do we deal with rotatable items?
+  basic_splitter: { // Default position is facing north, 2 wide and 1 high for all splitters.
     type: item,
     width: 2,
     height: 1
@@ -172,7 +172,12 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width:2,
     height:2
   },
-  // how do I handle curved rails?`
+  curved_rail: {
+    type:item,
+    width:1,
+    height:1
+  },
+  // Lets figure out curved rails later.
   land_mine: {
     type:item,
     width:1,
