@@ -5,6 +5,10 @@ Import and Export blueprint strings automagically with this handy dandy blueprin
 
 `npm install --save factorio-blueprint`
 
+And don't forget to install the blue print mod!
+
+https://forums.factorio.com/viewtopic.php?t=13651
+
 ## Blueprint
 
 ### Properties
