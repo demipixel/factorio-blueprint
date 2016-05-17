@@ -46,6 +46,154 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 2
   },
+  
+  basic_underground_belt: {
+    type: item,
+    width: 1,
+    height: 1
+  },
+  fast_underground_belt: {
+    type: item,
+    width: 1,
+    height: 1
+  },
+  express_underground_belt: {
+    type: item,
+    width: 1,
+    height: 1
+  },
+  basic_splitter: { // how do we deal with rotatable items?
+    type: item,
+    width: 2,
+    height: 1
+  },
+  fast_splitter: {
+    type: item,
+    width: 2,
+    height: 1
+  },
+  express_splitter: {
+    type: item,
+    width: 2,
+    height: 1
+  },
+  basic_transport_belt: {
+    type: item,
+    width: 1,
+    height: 1
+  },
+  fast_transport_belt: {
+    type:item,
+    width:1,
+    height:1
+  },
+  express_transport_belt: {
+    type:item,
+    width:1,
+    height:1
+  },
+  assembling_machine_1: {
+    type:item,
+    width:3,
+    height:3
+  },
+  assembling_machine_2: {
+    type:item,
+    width:3,
+    height:3
+  },
+  assembling_machine_3: {
+    type:item,
+    width:3,
+    height:3
+  },
+  iron_chest: {
+    type:item,
+    width:1,
+    height:1
+  },
+  steel_chest: {
+    type:item,
+    width:1,
+    height:1
+  },
+  smart_chest: {
+    type:item,
+    width:1,
+    height:1
+  },
+  logistic_chest_passive_provider: {
+    type:item,
+    width:1,
+    height:1
+  },
+  logistic_chest_active_provider: {
+    type:item,
+    width:1,
+    height:1
+  },
+  logistic_chest_storage: {
+    type:item,
+    width:1,
+    height:1
+  },
+  logistic_chest_requester: {
+    type:item,
+    width:1,
+    height:1
+  },
+  long_handed_inserter: {
+    type:item,
+    width:1,
+    height:1
+  },
+  fast_inserter: {
+    type:item,
+    width:1,
+    height:1
+  },
+  smart_inserter: {
+    type:item,
+    width:1,
+    height:1
+  },
+  gate: {
+    type:item,
+    width:1,
+    height:1
+  },
+  wall: {
+    type:item,
+    width:1,
+    height:1
+  },
+  straight_rail: {
+    type:item,
+    width:2,
+    height:2
+  },
+  // how do I handle curved rails?`
+  land_mine: {
+    type:item,
+    width:1,
+    height:1
+  },
+  train_station: { // pretty sure this is a 1.2x1.2 centered in a 2x2 square.
+    type:item,
+    width:2,
+    height:2
+  },
+  lab: {
+    type:item,
+    width:3,
+    height:3
+  },
+  rocket_silo: {
+    type:item,
+    width:10,
+    height:10 //unsure about these values, got them from code only (never counted it in game, but 10 sounds right.)
+  }
+  
 
   water: {
     type: fluid
