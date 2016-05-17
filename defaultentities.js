@@ -192,7 +192,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type:item,
     width:10,
     height:10 //unsure about these values, got them from code only (never counted it in game, but 10 sounds right.)
-  }
+  },
   
 
   water: {
