@@ -148,8 +148,10 @@ class Entity {
     this.connections = [];
     this.condition = this.parseCondition(data.conditions);
     this.filters = {};
+    this.requestFilters = {};
 
     this.parseFilters(data.filters);
+    this.parseRequestFilters(data.request_filters);
 
 
     let myData = entityData[this.name];
@@ -216,6 +218,14 @@ class Entity {
     for (let i = 0; i < filters.length; i++) {
       filters[i].signal.name = checkName(filters[i].signal.name);
       this.setFilter(filters[i].index, filters[i].signal.name, filters[i].count);
+    }
+  }
+
+  parseRequestFilters(request_filters) { // Parse request_filters from lua (for constructor)
+    if (!request_filters) return [];
+    for (let i = 0; i < request_filters.length; i++) {
+      request_filters[i].name = checkName(request_filters[i].name);
+      this.setRequestFilter(request_filters[i].index, request_filters[i].name, request_filters[i].count);
     }
   }
 
@@ -363,8 +373,23 @@ class Entity {
     return this;
   }
 
+  setRequestFilter(pos, item, amt) {
+    item = checkName(item);
+    if (item == null) delete this.requestFilters[pos];
+    this.requestFilters[pos] = {
+      name: item,
+      count: amt
+    };
+    return this;
+  }
+
   removeAllFilters() {
     this.filters = {};
+    return this;
+  }
+
+  removeAllRequestFilters() {
+    this.requestFilters = {};
     return this;
   }
 
@@ -429,6 +454,16 @@ class Entity {
     })));
   }
 
+  luaRequestFilter() {
+    return toLuaFixer(JSON.stringify(Object.keys(this.requestFilters).map(key => {
+      return {
+        name: this.requestFilters[key].name.replace(/_/g, '-'),
+        count: this.requestFilters[key].count,
+        index: parseInt(key)
+      };
+    })));
+  }
+
   luaCondition() {
     let key = this.name == 'arithmetic_combinator' ? 'arithmetic' : 'decider';
     let out = {};
@@ -462,9 +497,10 @@ class Entity {
     const direction = this.direction ? ',direction='+this.direction : '';
     const connections = this.connections.length ? ',connections='+this.luaConnections() : '';
     const filters = Object.keys(this.filters).length ? ',filters='+this.luaFilter() : '';
+    const request_filters = Object.keys(this.requestFilters).length ? ',request_filters='+this.luaRequestFilter() : '';
     const condition = this.name == 'decider_combinator' || this.name == 'arithmetic_combinator' ? ',conditions='+this.luaCondition() : '';
     const centerPos = this.center();
-    return '{name="'+this.name.replace(/_/g, '-')+'",position={x='+centerPos.x+',y='+centerPos.y+'}'+direction+connections+filters+condition+'}';
+    return '{name="'+this.name.replace(/_/g, '-')+'",position={x='+centerPos.x+',y='+centerPos.y+'}'+direction+connections+filters+request_filters+condition+'}';
   }
 }
 
