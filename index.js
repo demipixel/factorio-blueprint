@@ -446,7 +446,7 @@ class Entity {
       return {
         signal: {
           type: entityData[this.filters[key].name].type,
-          name: this.filters[key].name
+          name: this.filters[key].name.replace(/_/g, '-')
         },
         count: this.filters[key].count,
         index: parseInt(key)

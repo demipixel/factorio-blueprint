@@ -145,7 +145,7 @@ Removes all wire connections with `toEntity`. `color` is optional.
 
 Remove all wires connections.
 
-#### entity.setFilter(position, item, amount)
+#### entity.setFilter(position, item, [amount])
 
 Sets filter at `position` with `amount` of `item` (an entity name)
 
