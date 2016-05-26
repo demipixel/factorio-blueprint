@@ -76,7 +76,7 @@ Get the encoded blue print string
 
 #### static entityData(data)
 
-Pass it extra items in the `data` object if you need custom entities (such as from mods or entities that aren't included). 
+Pass it extra items in the `data` object if you need custom entities (such as from mods or entities that aren't included).
 Use the same format as defaultentities.js
 
 ## Entity
@@ -145,11 +145,17 @@ Removes all wire connections with `toEntity`. `color` is optional.
 
 Remove all wires connections.
 
-#### entity.setFilter(position, item, amount)
+#### entity.setFilter(position, item, [amount])
 
 Sets filter at `position` with `amount` of `item` (an entity name)
 
 #### entity.removeAllFilters()
+
+#### entity.setRequestFilter(position, item, amount)
+
+Sets logistics request filter at `position` with `amount` of `item` (an entity name)
+
+#### entity.removeAllRequestFilters()
 
 #### entity.setCondition(opt)
 
