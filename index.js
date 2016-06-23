@@ -47,7 +47,8 @@ class Blueprint {
   }
 
   createEntity(name, position, allowOverlap, noPlace, center) {
-    return this.createEntityWithData({ name: name, position: position }, allowOverlap, noPlace, center);
+    return this.createEntityWithData({ name: name, position: position, direction: 0 }, allowOverlap, noPlace, center);
+    // Need to add to defaultentities.js whether something is rotatable. If not, set direction to null.
   }
 
   createEntityWithData(data, allowOverlap, noPlace, center) {
@@ -63,7 +64,7 @@ class Blueprint {
   }
 
   findEntity(pos) {
-    return this.tileArray[pos.x+','+pos.y] || null;
+    return this.tileArray[Math.floor(pos.x)+','+(pos.y)] || null;
   }
 
   removeEntity(ent) {
@@ -189,8 +190,8 @@ class Entity {
     if (this.condition) {
       str += '  condition:\n';
       str += '    expr: '+this.condition.left+' '+this.condition.operator+' '+this.condition.right+'\n';
-      str += '    countFromInput: '+(this.condition.countFromInput || false)+'\n';
-      str += '    out: '+this.condition.out+'\n';
+      str += this.condition.countFromInput != undefined ? '    countFromInput: '+(this.condition.countFromInput || false)+'\n' : '';
+      str += this.condition.out != undefined ? '    out: '+this.condition.out+'\n' : '';
     }
     return str;
   }
@@ -238,13 +239,17 @@ class Entity {
     if (obj.output_signal) obj.output_signal.name = checkName(obj.output_signal.name);
     const out = {
       left: obj.first_signal ? obj.first_signal.name : undefined,
-      right: obj.second_signal ? obj.second_signal.name : parseInt(obj.constant) || undefined,
+      right: obj.second_signal ? obj.second_signal.name : parseInt(obj.constant),
       out: obj.output_signal ? obj.output_signal.name : undefined
     };
     if (key == 'decider') {
-      out.operator = obj.comparator;
       out.countFromInput = obj.copy_count_from_input == 'true';
-    } else out.operator = obj.operation;
+    }
+
+    if (obj.comparator) // Set operator
+      out.operator = obj.comparator == ':' ? '=' : obj.comparator;
+    else
+      out.operator = obj.operation;
 
     return out;
   }
@@ -425,6 +430,7 @@ class Entity {
   }
 
   setDirection(dir) {
+    // if (this.direction == null) return this; // Prevent rotation when we know what things can rotate in defaultentities.js
     this.direction = dir;
     return this;
   }
@@ -486,7 +492,7 @@ class Entity {
     };
     if (key == 'decider') {
       out[key].comparator = this.condition.operator;
-      out[key].copy_count_from_input = (!!this.condition.countFromInput).toString();
+      out[key].copy_count_from_input = this.condition.countFromInput != undefined ? (!!this.condition.countFromInput).toString() : undefined;
     } else {
       out[key].operation = this.condition.operator;
     }
@@ -498,7 +504,7 @@ class Entity {
     const connections = this.connections.length ? ',connections='+this.luaConnections() : '';
     const filters = Object.keys(this.filters).length ? ',filters='+this.luaFilter() : '';
     const request_filters = Object.keys(this.requestFilters).length ? ',request_filters='+this.luaRequestFilter() : '';
-    const condition = this.name == 'decider_combinator' || this.name == 'arithmetic_combinator' ? ',conditions='+this.luaCondition() : '';
+    const condition = this.condition ? ',conditions='+this.luaCondition() : '';
     const centerPos = this.center();
     return '{name="'+this.name.replace(/_/g, '-')+'",position={x='+centerPos.x+',y='+centerPos.y+'}'+direction+connections+filters+request_filters+condition+'}';
   }
