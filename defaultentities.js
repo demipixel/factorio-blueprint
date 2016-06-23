@@ -27,6 +27,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   heavy_armor: {
     type: item
   },
+  basic_modular_armor: {
+    type: item
+  },
   basic_grenade: {
     type: item
   },
@@ -73,6 +76,22 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
   explosive_cannon_shell: {
+    type: item
+  },
+
+  power_armor: {
+    type: item
+  },
+  energy_shield_equipment: {
+    type: item
+  },
+  energy_shield_mk2_equipment: {
+    type: item
+  },
+  solar_panel_equipment: {
+    type: item
+  },
+  fusion_reactor_equipment: {
     type: item
   },
 
@@ -328,7 +347,8 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   smart_inserter: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    filterAmount: false
   },
   gate: {
     type: item,
@@ -430,6 +450,13 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item,
     width: 1,
     height: 1
+  },
+
+  electronic_circuit: {
+    type: item
+  },
+  advanced_circuit: {
+    type: item
   },
 
 
@@ -543,6 +570,24 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: virtual
   },
   signal_9: {
+    type: virtual
+  },
+  signal_A: {
+    type: virtual
+  },
+  signal_B: {
+    type: virtual
+  },
+  signal_C: {
+    type: virtual
+  },
+  signal_D: {
+    type: virtual
+  },
+  signal_E: {
+    type: virtual
+  },
+  signal_F: {
     type: virtual
   },
   signal_blue: {

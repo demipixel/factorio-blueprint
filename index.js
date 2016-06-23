@@ -151,13 +151,13 @@ class Entity {
     this.filters = {};
     this.requestFilters = {};
 
-    this.parseFilters(data.filters);
-    this.parseRequestFilters(data.request_filters);
-
-
     let myData = entityData[this.name];
     this.size = myData ? new Victor(myData.width, myData.height) :
                         (entityData[this.name] ? new Victor(entityData[this.name].width, entityData[this.name].height) : new Victor(1, 1));
+    this.filterAmount = myData.filterAmount !== false;
+
+    this.parseFilters(data.filters);
+    this.parseRequestFilters(data.request_filters);
 
     if (center) {
       this.position.subtract(this.size.clone().divide(new Victor(2, 2)));
@@ -217,8 +217,12 @@ class Entity {
   parseFilters(filters) { // Parse filters from lua (for constructor)
     if (!filters) return [];
     for (let i = 0; i < filters.length; i++) {
-      filters[i].signal.name = checkName(filters[i].signal.name);
-      this.setFilter(filters[i].index, filters[i].signal.name, filters[i].count);
+      const name = checkName(this.filterAmount ? filters[i].signal.name : filters[i].name);
+
+      if (this.filterAmount) filters[i].signal.name = name;
+      else filters[i].name = name;
+
+      this.setFilter(filters[i].index, this.filterAmount ? filters[i].signal.name : filters[i].name, this.filterAmount ? filters[i].count : undefined);
     }
   }
 
@@ -373,7 +377,7 @@ class Entity {
     if (item == null) delete this.filters[pos];
     this.filters[pos] = {
       name: item,
-      count: amt
+      count: amt || 0
     };
     return this;
   }
@@ -449,14 +453,21 @@ class Entity {
 
   luaFilter() {
     return toLuaFixer(JSON.stringify(Object.keys(this.filters).map(key => {
-      return {
-        signal: {
-          type: entityData[this.filters[key].name].type,
-          name: this.filters[key].name.replace(/_/g, '-')
-        },
-        count: this.filters[key].count,
+      const obj = {
         index: parseInt(key)
       };
+      const name = this.filters[key].name.replace(/_/g, '-');
+      if (this.filterAmount) {
+        const type = entityData[this.filters[key].name].type;
+        obj.signal = {
+          type: type,
+          name: name,
+        };
+        obj.count = this.filters[key].count;
+      } else {
+        obj.name = name;
+      }
+      return obj;
     })));
   }
 
