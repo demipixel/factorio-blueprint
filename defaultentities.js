@@ -440,7 +440,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   },
   steam_engine: {
     type: item,
-    width: 5
+    width: 5,
     height: 3
   },
   basic_accumulator: {
