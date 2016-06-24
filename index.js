@@ -47,7 +47,7 @@ class Blueprint {
   }
 
   createEntity(name, position, allowOverlap, noPlace, center) {
-    return this.createEntityWithData({ name: name, position: position, direction: 0 }, allowOverlap, noPlace, center);
+    return this.createEntityWithData({ name: name, position: position, direction: position.direction || 0 }, allowOverlap, noPlace, center);
     // Need to add to defaultentities.js whether something is rotatable. If not, set direction to null.
   }
 
@@ -59,7 +59,7 @@ class Blueprint {
       return ent;
     } else {
       const otherEnt = ent.getOverlap(this.tileArray);
-      throw new Error('Entity '+data.name+' overlaps '+otherEnt.name+' entity ('+data.position+')');
+      throw new Error('Entity '+data.name+' overlaps '+otherEnt.name+' entity ('+data.position.x+', '+data.position.y+')');
     }
   }
 
@@ -135,6 +135,9 @@ class Blueprint {
     }
   }
 
+  static getEntityData() {
+    return entityData;
+  }
 }
 
 class Entity {
@@ -144,7 +147,7 @@ class Entity {
     this.bp = bp;
     this.name = checkName(data.name);
     this.position = Victor.fromObject(data.position);
-    this.direction = data.direction == undefined ? null : data.direction;
+    this.direction = 0;
     this.rawConnections = data.connections;
     this.connections = [];
     this.condition = this.parseCondition(data.conditions);
@@ -155,6 +158,8 @@ class Entity {
     this.size = myData ? new Victor(myData.width, myData.height) :
                         (entityData[this.name] ? new Victor(entityData[this.name].width, entityData[this.name].height) : new Victor(1, 1));
     this.filterAmount = myData.filterAmount !== false;
+
+    this.setDirection(data.direction || 0);
 
     this.parseFilters(data.filters);
     this.parseRequestFilters(data.request_filters);
@@ -403,14 +408,8 @@ class Entity {
   }
 
   setCondition(opt) {
-    const combinators = {
-      'decider_combinator': '<>=',
-      'arithmetic_combinator': '+-*/'
-    };
-    if (!combinators[this.name]) throw new Error('Can\'t set condition for '+this.name);
-    else if (opt.operator && combinators[this.name].indexOf(opt.operator) == -1) throw new Error('Invalid symbol '+opt.operator+
-                                                                                              ' for '+this.name);
-    else if (opt.countFromInput != undefined && this.name != 'decider_combinator') throw new Error('Cannot set countFromInput for '+this.name);
+    if (opt.countFromInput != undefined && this.name != 'decider_combinator') throw new Error('Cannot set countFromInput for '+this.name);
+
     if (opt.left) opt.left = checkName(opt.left);
     if (typeof opt.right == 'string') opt.right = checkName(opt.right);
     if (opt.out) opt.out = checkName(opt.out);
@@ -423,6 +422,7 @@ class Entity {
         return undefined;
       }
     }
+    if (!this.condition) this.condition = {};
     this.condition = {
       left: checkAllow('left'),
       right: checkAllow('right'),
@@ -435,6 +435,8 @@ class Entity {
 
   setDirection(dir) {
     // if (this.direction == null) return this; // Prevent rotation when we know what things can rotate in defaultentities.js
+    this.size = new Victor((dir % 4 == this.direction % 4 ? this.size.x : this.size.y),
+                           (dir % 4 == this.direction % 4 ? this.size.y : this.size.x));
     this.direction = dir;
     return this;
   }
@@ -482,7 +484,7 @@ class Entity {
   }
 
   luaCondition() {
-    let key = this.name == 'arithmetic_combinator' ? 'arithmetic' : 'decider';
+    let key = this.name == 'arithmetic_combinator' ? 'arithmetic' : (this.name == 'decider_combinator' ? 'decider' : 'circuit');
     let out = {};
     out[key] = {
       first_signal: (this.condition.left ? {
@@ -501,7 +503,7 @@ class Entity {
         name: this.condition.out.replace(/_/g, '-')
       } : undefined)
     };
-    if (key == 'decider') {
+    if (key != 'arithmetic') {
       out[key].comparator = this.condition.operator;
       out[key].copy_count_from_input = this.condition.countFromInput != undefined ? (!!this.condition.countFromInput).toString() : undefined;
     } else {

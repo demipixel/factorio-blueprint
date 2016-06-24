@@ -79,6 +79,10 @@ Get the encoded blue print string
 Pass it extra items in the `data` object if you need custom entities (such as from mods or entities that aren't included).
 Use the same format as defaultentities.js
 
+#### static Blueprint.getEntityData()
+
+Get a list of all entities added to be supported by factorio-blueprint.
+
 ## Entity
 
 ### Properties

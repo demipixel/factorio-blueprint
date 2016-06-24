@@ -21,9 +21,6 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   basic_armor: {
     type: item
   },
-  basic_bullet_magazine: {
-    type: item
-  },
   heavy_armor: {
     type: item
   },
@@ -66,7 +63,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   pistol: {
     type: item
   },
-  bullet_magazine: {
+  basic_bullet_magazine: {
     type: item
   },
   piercing_bullet_magazine: {
@@ -204,21 +201,6 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     height: 1
   },
   
-  basic_underground_belt: {
-    type: item,
-    width: 1,
-    height: 1
-  },
-  fast_underground_belt: {
-    type: item,
-    width: 1,
-    height: 1
-  },
-  express_underground_belt: {
-    type: item,
-    width: 1,
-    height: 1
-  },
   basic_splitter: { // Default position is facing north, 2 wide and 1 high for all splitters.
     type: item,
     width: 2,
@@ -355,7 +337,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
-  wall: {
+  stone_wall: {
     type: item,
     width: 1,
     height: 1
@@ -526,6 +508,12 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   petroleum_gas: {
     type: fluid
   },
+  heavy_oil: {
+    type: fluid
+  },
+  light_oil: {
+    type: fluid
+  },
   sulfuric_acid: {
     type: fluid
   },
@@ -533,14 +521,33 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: fluid
   },
 
+  iron_ore: {
+    type: item
+  },
+  iron_plate: {
+    type: item
+  },
+  copper_ore: {
+    type: item
+  },
+  copper_plate: {
+    type: item
+  },
+  steel: {
+    type: item
+  },
+
   signal_anything: {
-    type: virtual
+    type: virtual,
+    combinator: true
   },
   signal_each: {
-    type: virtual
+    type: virtual,
+    combinator: true
   },
   signal_everything: {
-    type: virtual
+    type: virtual,
+    combinator: true
   },
   signal_0: {
     type: virtual,
