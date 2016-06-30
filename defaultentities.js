@@ -18,16 +18,16 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
 
-  basic_armor: {
+  light_armor: {
     type: item
   },
   heavy_armor: {
     type: item
   },
-  basic_modular_armor: {
+  modular_armor: {
     type: item
   },
-  basic_grenade: {
+  grenade: {
     type: item
   },
   flame_thrower: {
@@ -63,10 +63,10 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   pistol: {
     type: item
   },
-  basic_bullet_magazine: {
+  firearm_magazine: {
     type: item
   },
-  piercing_bullet_magazine: {
+  piercing_rounds_magazine: {
     type: item
   },
   cannon_shell: {
@@ -145,7 +145,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
 
-  basic_beacon: {
+  beacon: {
     type: item,
     width: 3,
     height: 3
@@ -201,7 +201,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     height: 1
   },
   
-  basic_splitter: { // Default position is facing north, 2 wide and 1 high for all splitters.
+  splitter: { // Default position is facing north, 2 wide and 1 high for all splitters.
     type: item,
     width: 2,
     height: 1
@@ -216,7 +216,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 2,
     height: 1
   },
-  basic_transport_belt: {
+  transport_belt: {
     type: item,
     width: 1,
     height: 1
@@ -231,17 +231,17 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
-  basic_transport_belt_to_ground: {
+  underground_belt: {
     type: item,
     width: 1,
     height: 1
   },
-  fast_transport_belt_to_ground: {
+  fast_underground_belt: {
     type: item,
     width: 1,
     height: 1
   },
-  express_transport_belt_to_ground: {
+  express_underground_belt: {
     type: item,
     width: 1,
     height: 1
@@ -276,11 +276,6 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
-  smart_chest: {
-    type: item,
-    width: 1,
-    height: 1
-  },
   logistic_chest_passive_provider: {
     type: item,
     width: 1,
@@ -311,7 +306,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
-  basic_inserter: {
+  inserter: {
     type: item,
     width: 1,
     height: 1
@@ -326,7 +321,18 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
-  smart_inserter: {
+  filter_inserter: {
+    type: item,
+    width: 1,
+    height: 1,
+    filterAmount: false
+  },
+  stack_inserter: {
+    type: item,
+    width: 1,
+    height: 1,
+  },
+  stack_filter_inserter: {
     type: item,
     width: 1,
     height: 1,
@@ -413,7 +419,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 2,
     height: 2
   },
-  basic_mining_drill: {
+  mining_drill: {
     type: item,
     width: 3,
     height: 3
@@ -452,7 +458,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 5,
     height: 3
   },
-  basic_accumulator: {
+  accumulator: {
     type: item,
     width: 2,
     height: 2
@@ -468,6 +474,11 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   },
   logistic_robot: {
     type: item
+  },
+  power_switch: {
+    type: item,
+    width: 3,
+    height: 3,
   },
 
   productivity_module: {
@@ -597,6 +608,67 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   signal_F: {
     type: virtual
   },
+  signal_G: {
+    type: virtual
+  },
+  signal_H: {
+    type: virtual
+  },
+  signal_I: {
+    type: virtual
+  },
+  signal_J: {
+    type: virtual
+  },
+  signal_K: {
+    type: virtual
+  },
+  signal_L: {
+    type: virtual
+  },
+  signal_M: {
+    type: virtual
+  },
+  signal_N: {
+    type: virtual
+  },
+  signal_O: {
+    type: virtual
+  },
+  signal_P: {
+    type: virtual
+  },
+  signal_Q: {
+    type: virtual
+  },
+  signal_R: {
+    type: virtual
+  },
+  signal_S: {
+    type: virtual
+  },
+  signal_T: {
+    type: virtual
+  },
+  signal_U: {
+    type: virtual
+  },
+  signal_V: {
+    type: virtual
+  },
+  signal_W: {
+    type: virtual
+  },
+  signal_X: {
+    type: virtual
+  },
+  signal_Y: {
+    type: virtual
+  },
+  signal_Z: {
+    type: virtual
+  },
+
   signal_blue: {
     type: virtual
   },
@@ -608,5 +680,20 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   },
   signal_yellow: {
     type: virtual
-  }
+  },
+  signal_cyan: {
+    type: virtual
+  },
+  signal_pink: {
+    type: virtual
+  },
+  signal_white: {
+    type: virtual
+  },
+  signal_grey: {
+    type: virtual
+  },
+  signal_black: {
+    type: virtual
+  },
 };

@@ -87,20 +87,21 @@ class Blueprint {
     }
   }
 
-  center() {
+  getPosition(f, xcomp, ycomp) {
+    if (!this.entities.length) return new Victor(0, 0);
+    return new Victor(this.entities.reduce((best, ent) => xcomp(best, ent[f]().x), this.entities[0][f]().x), this.entities.reduce((best, ent) => ycomp(best, ent[f]().y), this.entities[0][f]().y));
+  }
+  center() { return new Victor((this.topLeft().x + this.topRight().x) / 2, (this.topLeft().y + this.bottomLeft().y) / 2) }
+  topLeft() { return this.getPosition('topLeft', Math.min, Math.min); }
+  topRight() { return this.getPosition('topRight', Math.max, Math.min); }
+  bottomLeft() { return this.getPosition('bottomLeft', Math.min, Math.max); }
+  bottomRight() { return this.getPosition('bottomRight', Math.max, Math.max); }
+
+  fixCenter() {
     if (!this.entities.length) return;
-    let minX = this.entities[0].center().x;
-    let maxX = this.entities[0].center().x;
-    let minY = this.entities[0].center().y;
-    let maxY = this.entities[0].center().y;
-    for (let i = 0; i < this.entities.length; i++) {
-      minX = Math.min(minX, this.entities[i].center().x);
-      maxX = Math.max(maxX, this.entities[i].center().x);
-      minY = Math.min(minY, this.entities[i].center().y);
-      maxY = Math.max(maxY, this.entities[i].center().y);
-    }
-    let offsetX = -Math.floor(maxX + minX) / 2;
-    let offsetY = -Math.floor(maxY + minY) / 2;
+    
+    let offsetX = -this.center().x;
+    let offsetY = -this.center().y;
     const offset = new Victor(offsetX, offsetY);
     this.entities.forEach(entity => {
       entity.position.add(offset);
@@ -280,7 +281,7 @@ class Entity {
 
   // Quick corner positions
   topLeft() { return this.position.clone(); }
-  topRight() { return this.position.clone().subtract(this.size.clone().multiply(new Victor(1, 0))); }
+  topRight() { return this.position.clone().add(this.size.clone().multiply(new Victor(1, 0))); }
   bottomRight() { return this.position.clone().add(this.size); }
   bottomLeft() { return this.position.clone().add(this.size.clone().multiply(new Victor(0, 1))); }
   center() { return this.position.clone().add(this.size.clone().divide(new Victor(2, 2))); }

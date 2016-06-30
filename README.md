@@ -58,9 +58,29 @@ Removes an entity given the `position`, returns the entity (or false if it was n
 
 Initialize the IDs on each item. They default to -1, but this is called automatically for things like .toString() and .encode()
 
-#### bp.center()
+#### bp.fixCenter()
 
 Centers all entities on the blueprint. I recommend calling this before .encode()
+
+#### bp.center()
+
+Get position that is the center of all entities
+
+#### bp.topLeft()
+
+Get top-left-most entity's corner position
+
+#### bp.topRight()
+
+Get top-right-most entity's corner position
+
+#### bp.bottomLeft()
+
+Get bottom-left-most entity's corner position
+
+#### bp.bottomRight()
+
+Get bottom-right-most entity's corner position
 
 #### bp.generateIcon(num)
 
