@@ -35,9 +35,9 @@ Loads encoded blueprint string `str`
 
 Outputs fancy format with all the entities.
 
-#### bp.createEntity(name, position, allowOverlap=false, noPlace=false, center=false)
+#### bp.createEntity(name, position, direction=0, allowOverlap=false, noPlace=false, center=false)
 
-Created an entity of type `name` at `position` (top-left corner).
+Created an entity of type `name` at `position` (top-left corner) facing `direction`.
 - Use `allowOverlap` to ignore two entities overlapping (which Factorio does not like...)
 - Use `noPlace` if you want the entity to be created but not placed (mainly used in .load())
 - Use `center` if you want `position` to refer to the center of the entity (again, mainly used by .load())

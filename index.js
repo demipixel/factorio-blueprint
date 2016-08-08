@@ -46,8 +46,8 @@ class Blueprint {
     }
   }
 
-  createEntity(name, position, allowOverlap, noPlace, center) {
-    return this.createEntityWithData({ name: name, position: position, direction: position.direction || 0 }, allowOverlap, noPlace, center);
+  createEntity(name, position, direction, allowOverlap, noPlace, center) {
+    return this.createEntityWithData({ name: name, position: position, direction: direction || 0 }, allowOverlap, noPlace, center);
     // Need to add to defaultentities.js whether something is rotatable. If not, set direction to null.
   }
 
