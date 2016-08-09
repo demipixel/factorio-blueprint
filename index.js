@@ -10,17 +10,19 @@ var entityData = require('./defaultentities');
 class Blueprint {
 
   constructor(str) {
-    this.icons = [];
-    this.entities = [];
-    this.tileArray = {};
+    this.icons = []; // Icons for Blueprint (up to 4)
+    this.entities = []; // List of all entities in Blueprint
+    this.tileGrid = {}; // Object with tile keys in format "x,y" => entity
     if (str) this.load(str);
   }
 
+  // All entities in beautiful string format
   toString() {
     this.setIds();
     return this.entities.map(ent => ent.toString()).join('\n');
   }
 
+  // Load blueprint from an existing one
   load(str) {
     const converted = RawFlate.inflate(atob(str).slice(10, -8));
     const match = converted.match(/do local _={entities={(.+)},icons={(.+)}};return _;end/);
@@ -37,56 +39,65 @@ class Blueprint {
       this.createEntityWithData(entity, false, true, true); // no overlap, place altogether later, positions are their center
     });
     this.entities.forEach(entity => {
-      entity.place(this.tileArray, this.entities);
+      entity.place(this.tileGrid, this.entities);
     })
 
     this.icons = [];
     for (let i = 0; i < icons.length; i++) {
       this.icons[icons[i].index-1] = icons[i].name;
     }
+    return this;
   }
 
+  // Create an entity!
   createEntity(name, position, direction, allowOverlap, noPlace, center) {
     return this.createEntityWithData({ name: name, position: position, direction: direction || 0 }, allowOverlap, noPlace, center);
     // Need to add to defaultentities.js whether something is rotatable. If not, set direction to null.
   }
 
+  // Creates an entity with a data object instead of paramaters
   createEntityWithData(data, allowOverlap, noPlace, center) {
-    const ent = new Entity(data, this.tileArray, this, center);
-    if (allowOverlap || ent.checkNoOverlap(this.tileArray)) {
-      if (!noPlace) ent.place(this.tileArray, this.entities);
+    const ent = new Entity(data, this.tileGrid, this, center);
+    if (allowOverlap || ent.checkNoOverlap(this.tileGrid)) {
+      if (!noPlace) ent.place(this.tileGrid, this.entities);
       this.entities.push(ent);
       return ent;
     } else {
-      const otherEnt = ent.getOverlap(this.tileArray);
+      const otherEnt = ent.getOverlap(this.tileGrid);
       throw new Error('Entity '+data.name+' overlaps '+otherEnt.name+' entity ('+data.position.x+', '+data.position.y+')');
     }
   }
 
+  // Returns entity at a position (or null)
   findEntity(pos) {
-    return this.tileArray[Math.floor(pos.x)+','+(pos.y)] || null;
+    return this.tileGrid[Math.floor(pos.x)+','+(pos.y)] || null;
   }
 
+  // Removes a specific entity
   removeEntity(ent) {
     if (!ent) return false;
     else {
-      ent.removeCleanup(this.tileArray);
+      ent.removeCleanup(this.tileGrid);
       this.entities.splice(this.entities.indexOf(ent), 1);
       return ent;
     }
   }
 
+  // Removes an entity at a position (returns false if no entity is there)
   removeEntityPosition(position) {
-    if (!this.tileArray) return false;
-    return this.removeEntity(this.tileArray[position.x+','+position.y]);
+    if (!this.tileGrid[position.x+','+position.y]) return false;
+    return this.removeEntity(this.tileGrid[position.x+','+position.y]);
   }
 
+  // Set ids for entities, called in luaString()
   setIds() {
     for (let i = 0; i < this.entities.length; i++) {
       this.entities[i].id = i+1;
     }
+    return this;
   }
 
+  // Get corner/center positions
   getPosition(f, xcomp, ycomp) {
     if (!this.entities.length) return new Victor(0, 0);
     return new Victor(this.entities.reduce((best, ent) => xcomp(best, ent[f]().x), this.entities[0][f]().x), this.entities.reduce((best, ent) => ycomp(best, ent[f]().y), this.entities[0][f]().y));
@@ -97,8 +108,9 @@ class Blueprint {
   bottomLeft() { return this.getPosition('bottomLeft', Math.min, Math.max); }
   bottomRight() { return this.getPosition('bottomRight', Math.max, Math.max); }
 
+  // Center all entities
   fixCenter() {
-    if (!this.entities.length) return;
+    if (!this.entities.length) return this;
     
     let offsetX = -this.center().x;
     let offsetY = -this.center().y;
@@ -106,16 +118,20 @@ class Blueprint {
     this.entities.forEach(entity => {
       entity.position.add(offset);
     });
+    return this;
   }
 
+  // Quickly generate 2 (or num) icons
   generateIcons(num) {
     if (!num) num = 2;
     num = Math.min(this.entities.length, Math.min(Math.max(num, 1), 4));
     for (let i = 0; i < num; i++) {
       this.icons[i] = this.entities[i].name;
     }
+    return this;
   }
 
+  // Give luaString that gets converted by encode()
   luaString() {
     this.setIds();
     if (!this.icons.length) this.generateIcons();
@@ -125,17 +141,20 @@ class Blueprint {
     return 'do local _={entities={'+entString+'},icons={'+iconString+'}};return _;end';
   }
 
+  // Blueprint string! Yay!
   encode() {
     return (new Buffer(gzip.zip(this.luaString()))).toString('base64');
   }
 
-  static entityData(obj) {
+  // Set entityData
+  static setEntityData(obj) {
     let keys = Object.keys(obj);
     for (let i = 0; i < keys.length; i++) {
       entityData[keys[i]] = obj[keys[i]];
     }
   }
 
+  // Get entityData
   static getEntityData() {
     return entityData;
   }
@@ -143,22 +162,22 @@ class Blueprint {
 
 class Entity {
 
-  constructor(data, tileArray, bp, center) {
-    this.id = -1;
-    this.bp = bp;
-    this.name = checkName(data.name);
-    this.position = Victor.fromObject(data.position);
-    this.direction = 0;
-    this.rawConnections = data.connections;
-    this.connections = [];
-    this.condition = this.parseCondition(data.conditions);
-    this.filters = {};
-    this.requestFilters = {};
+  constructor(data, tileGrid, bp, center) {
+    this.id = -1; // Id used when generating blueprint
+    this.bp = bp; // Blueprint
+    this.name = checkName(data.name); // Name or "type"
+    this.position = Victor.fromObject(data.position); // Position of top left corner
+    this.direction = 0; // Direction (usually 0, 2, 4, or 6)
+    this.rawConnections = data.connections; // Used in parsing connections from existing entity
+    this.connections = []; // Wire connections
+    this.condition = this.parseCondition(data.conditions); // Condition in combinator
+    this.filters = {}; // Filters for container or signals in constant combinator
+    this.requestFilters = {}; // Request filters for requester chest
 
-    let myData = entityData[this.name];
-    this.size = myData ? new Victor(myData.width, myData.height) :
+    let myData = entityData[this.name]; // entityData contains info like width, height, filterAmount, etc
+    this.size = myData ? new Victor(myData.width, myData.height) : // Size in Victor form
                         (entityData[this.name] ? new Victor(entityData[this.name].width, entityData[this.name].height) : new Victor(1, 1));
-    this.filterAmount = myData.filterAmount !== false;
+    this.filterAmount = myData.filterAmount !== false; // Should filters have an amount (e.g. constant combinators have an amount, cargo wagon filter would not)
 
     this.setDirection(data.direction || 0);
 
@@ -171,6 +190,7 @@ class Entity {
     this.position = new Victor(Math.round(this.position.x*100)/100, Math.round(this.position.y*100)/100);
   }
 
+  // Beautiful string format
   toString() {
     let str = this.id+') '+this.name + ' =>\n';
     str += '  position: '+this.position+'\n';
@@ -202,6 +222,11 @@ class Entity {
     return str;
   }
 
+  /////////////////////////////////////
+  ///// Parsing from existing blueprint
+  /////////////////////////////////////
+
+  // Parse connections into standard Entity format
   parseConnections(entityList) {
     const conns = this.rawConnections;
     if (!conns) return [];
@@ -220,6 +245,7 @@ class Entity {
     }
   }
 
+  // Parse filters into standard Entity format
   parseFilters(filters) { // Parse filters from lua (for constructor)
     if (!filters) return [];
     for (let i = 0; i < filters.length; i++) {
@@ -232,6 +258,7 @@ class Entity {
     }
   }
 
+  // Parse request filters into standard Entity format
   parseRequestFilters(request_filters) { // Parse request_filters from lua (for constructor)
     if (!request_filters) return [];
     for (let i = 0; i < request_filters.length; i++) {
@@ -240,6 +267,7 @@ class Entity {
     }
   }
 
+  // Parse condition into standard Entity format
   parseCondition(condition) {
     if (!condition) return (this.name == 'decider_combinator' || this.name == 'arithmetic_combinator' ? {} : null);
     const key = Object.keys(condition)[0];
@@ -264,52 +292,66 @@ class Entity {
     return out;
   }
 
-  place(tileArray, entityList) { // Setup for placing
-    this.setTileData(tileArray);
+  ////////////////
+  ////////////////
+  ////////////////
+
+  // Sets values in BP (tile data, parses connections).
+  // Typically, when loading from an existing blueprint, all entities are creating at the same time,
+  // and then all are placed at the same time (so each entity can parse the connections of the others)
+  place(tileGrid, entityList) {
+    this.setTileData(tileGrid);
     this.parseConnections(entityList);
     return this;
   }
 
+  // Remove entity from blueprint
   remove(bp) {
     return (bp || this.bp).removeEntity(this);
   }
 
-  removeCleanup(tileArray) { // Cleanup for removal
-    this.removeTileData(tileArray);
+  // Cleans up tile data after removing
+  removeCleanup(tileGrid) {
+    this.removeTileData(tileGrid);
     return this;
   }
 
-  // Quick corner positions
+  // Quick corner/center positions
   topLeft() { return this.position.clone(); }
   topRight() { return this.position.clone().add(this.size.clone().multiply(new Victor(1, 0))); }
   bottomRight() { return this.position.clone().add(this.size); }
   bottomLeft() { return this.position.clone().add(this.size.clone().multiply(new Victor(0, 1))); }
   center() { return this.position.clone().add(this.size.clone().divide(new Victor(2, 2))); }
 
-  setTileData(tileArray) { // Add self to grid array
-    this.tileDataAction(tileArray, (x, y) => tileArray[x+','+y] = this);
+  // Adds self to grid array
+  setTileData(tileGrid) {
+    this.tileDataAction(tileGrid, (x, y) => tileGrid[x+','+y] = this);
     return this;
   }
 
-  removeTileData(tileArray) { // Remove self from grid array
-    this.tileDataAction(tileArray, (x, y) => delete tileArray[x+','+y]);
+  // Removes self from grid array
+  removeTileData(tileGrid) {
+    this.tileDataAction(tileGrid, (x, y) => delete tileGrid[x+','+y]);
     return this;
   }
 
-  checkNoOverlap(tileArray) { // Check overlap with other tiles based off size
-    return !this.getOverlap(tileArray);
+  // Return true if this entity overlaps with no other
+  checkNoOverlap(tileGrid) {
+    return !this.getOverlap(tileGrid);
   }
 
-  getOverlap(tileArray) {
+  // Returns an item this entity overlaps with (or null)
+  getOverlap(tileGrid) {
     let item = null;
-    this.tileDataAction(tileArray, (x, y) => {
-      item = tileArray[x+','+y] || item;
+    this.tileDataAction(tileGrid, (x, y) => {
+      item = tileGrid[x+','+y] || item;
     });
     return item;
   }
 
-  tileDataAction(tileArray, fn) { // Do something with all tiles entity overlaps
-    if (!tileArray) return;
+  // Do an action on every tile that this entity overlaps in a given tileGrid
+  tileDataAction(tileGrid, fn) {
+    if (!tileGrid) return;
     const topLeft = this.topLeft();
     const bottomRight = this.bottomRight().subtract(new Victor(0.9, 0.9));
     for (let x = Math.floor(topLeft.x); x < bottomRight.x; x++) {
@@ -319,6 +361,7 @@ class Entity {
     }
   }
 
+  // Connect current entity to another entity via wire
   connect(ent, mySide, theirSide, color) {
     mySide = convertSide(mySide, this);
     theirSide = convertSide(theirSide, ent);
@@ -334,6 +377,7 @@ class Entity {
     return this;
   }
 
+  // Remove a specific wire connection given all details
   removeConnection(ent, mySide, theirSide, color) {
     mySide = convertSide(mySide, this);
     theirSide = convertSide(theirSide, ent);
@@ -354,6 +398,7 @@ class Entity {
     return this;
   }
 
+  // Remove all wire connections with entity (optionally of a specific color)
   removeConnectionsWithEntity(ent, color) {
     for (let i = this.connections.length-1; i >= 0; i--) {
       if (this.connections[i].entity == ent && (!color || this.connections[i].color == color)) this.connections.splice(i, 1);
@@ -362,8 +407,10 @@ class Entity {
     for (let i = ent.connections.length-1; i >= 0; i--) {
       if (ent.connections[i].entity == this && (!color || ent.connections[i].color == color)) ent.connections.splice(i, 1);
     }
+    return this;
   }
 
+  // Remove all wire connections
   removeAllConnections() {
     for (let i = 0; i < this.connections.length; i++) {
       let ent = this.connections[i].entity;
@@ -378,24 +425,19 @@ class Entity {
     return this;
   }
 
-  setFilter(pos, item, amt) {
+  setFilter(pos, item, amt, request) {
+    const filter = request ? 'requestFilters' : 'filters';
     item = checkName(item);
-    if (item == null) delete this.filters[pos];
-    this.filters[pos] = {
-      name: item,
-      count: amt || 0
-    };
+    if (item == null) delete this[filter][pos];
+    else this[filter][pos] = {
+          name: item,
+          count: amt || 0
+        };
     return this;
   }
 
   setRequestFilter(pos, item, amt) {
-    item = checkName(item);
-    if (item == null) delete this.requestFilters[pos];
-    this.requestFilters[pos] = {
-      name: item,
-      count: amt
-    };
-    return this;
+    return this.setFilter(pos, item, amt, true);
   }
 
   removeAllFilters() {
@@ -408,6 +450,7 @@ class Entity {
     return this;
   }
 
+  // Sets condition of entity (for combinators)
   setCondition(opt) {
     if (opt.countFromInput != undefined && this.name != 'decider_combinator') throw new Error('Cannot set countFromInput for '+this.name);
 
@@ -434,6 +477,7 @@ class Entity {
     return this;
   }
 
+  // Sets direction of entity
   setDirection(dir) {
     // if (this.direction == null) return this; // Prevent rotation when we know what things can rotate in defaultentities.js
     this.size = new Victor((dir % 4 == this.direction % 4 ? this.size.x : this.size.y),
@@ -442,6 +486,7 @@ class Entity {
     return this;
   }
 
+  // Convert condition to lua format
   luaConnections() {
     const out = {};
     for (let i = 0; i < this.connections.length; i++) {
@@ -454,6 +499,7 @@ class Entity {
     return toLuaFixer(JSON.stringify(out)).replace(/([12])=/g, '["\$1"]=');
   }
 
+  // Convert filter to lua format
   luaFilter() {
     return toLuaFixer(JSON.stringify(Object.keys(this.filters).map(key => {
       const obj = {
@@ -474,6 +520,7 @@ class Entity {
     })));
   }
 
+  // Convert request filter to lua format
   luaRequestFilter() {
     return toLuaFixer(JSON.stringify(Object.keys(this.requestFilters).map(key => {
       return {
@@ -484,6 +531,7 @@ class Entity {
     })));
   }
 
+  // Convert condition to Lua format
   luaCondition() {
     let key = this.name == 'arithmetic_combinator' ? 'arithmetic' : (this.name == 'decider_combinator' ? 'decider' : 'circuit');
     let out = {};
@@ -513,6 +561,7 @@ class Entity {
     return toLuaFixer(JSON.stringify(out));
   }
 
+  // Entity luaString that gets merged in Blueprint.luaString()
   luaString() {
     const direction = this.direction ? ',direction='+this.direction : '';
     const connections = this.connections.length ? ',connections='+this.luaConnections() : '';
@@ -524,10 +573,14 @@ class Entity {
   }
 }
 
+// Lib Functions
+
+// Convert to lua
 function toLuaFixer(str) {
   return str.replace(/\[/g, '{').replace(/\]/g, '}').replace(/"([a-z0-9_]+)":/g, '\$1=')
 }
 
+// Convert from lua to JSON
 function fromLuaBracket(str) {
   let out = '';
   const brackets = [];
@@ -549,6 +602,7 @@ function fromLuaBracket(str) {
   return out;
 }
 
+// Convert 'in' or 'out' of wires (only combinators have both of these) to a 1 or 2.
 function convertSide(side, ent) {
   if (!side) return 1;
   if (side == 1 || side == 2) return side;
@@ -558,6 +612,7 @@ function convertSide(side, ent) {
   } else throw new Error('Invalid side');
 }
 
+// Check that name of entity is valid
 function checkName(name) {
   name = name.replace(/-/g, '_');
   if (!entityData[name]) throw new Error(name+' does not exist! You can add it by putting it into entityData.');

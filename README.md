@@ -29,7 +29,7 @@ Create an empty blueprint. Accepts an optional encoded blueprint string `str` to
 
 #### bp.load(str)
 
-Loads encoded blueprint string `str`
+Loads encoded blueprint string `str`. Returns self.
 
 #### bp.toString()
 
@@ -41,6 +41,8 @@ Created an entity of type `name` at `position` (top-left corner) facing `directi
 - Use `allowOverlap` to ignore two entities overlapping (which Factorio does not like...)
 - Use `noPlace` if you want the entity to be created but not placed (mainly used in .load())
 - Use `center` if you want `position` to refer to the center of the entity (again, mainly used by .load())
+
+Returns the new entity
 
 #### bp.findEntity(position)
 
@@ -56,11 +58,11 @@ Removes an entity given the `position`, returns the entity (or false if it was n
 
 #### bp.setIds()
 
-Initialize the IDs on each item. They default to -1, but this is called automatically for things like .toString() and .encode()
+Initialize the IDs on each item. They default to -1, but this is called automatically for things like .toString() and .encode(). Returns self.
 
 #### bp.fixCenter()
 
-Centers all entities on the blueprint. I recommend calling this before .encode()
+Centers all entities on the blueprint. I recommend calling this before `Blueprint.encode()`. Returns self.
 
 #### bp.center()
 
@@ -84,7 +86,7 @@ Get bottom-right-most entity's corner position
 
 #### bp.generateIcon(num)
 
-Generate icons based off the entities, `num` is the number of icons from 1 to 4.
+Generate icons based off the entities, `num` is the number of icons from 1 to 4. Returns self.
 
 #### bp.luaString()
 
@@ -121,7 +123,7 @@ Get the entity's blueprint parent
 
 #### entity.direction
 
-Number from 1 to 8. For most things it's 2, 4, 6, and 8
+Number from 1 to 8. For most things it's 0, 2, 4, or 6
 
 #### entity.connections
 
@@ -155,31 +157,35 @@ Gets position of respective relative location. `entity.topLeft()` simply returns
 
 #### entity.connect(toEntity, fromSide, toSide, color)
 
-Connect with wire `entity`'s `fromSide` to `toEntity`'s `toSide` with wire `color` (red or green)
+Connect with wire `entity`'s `fromSide` to `toEntity`'s `toSide` with wire `color` (red or green). Returns self.
 
 #### entity.removeConnection(toEntity, fromSide, toSide, color)
 
-Remove wire connection (if it exists).
+Remove wire connection (if it exists). Returns self.
 
 #### entity.removeConnectionsWithEntity(toEntity, color)
 
-Removes all wire connections with `toEntity`. `color` is optional.
+Removes all wire connections with `toEntity`. `color` is optional. Returns self.
 
 #### entity.removeAllConnections()
 
-Remove all wires connections.
+Remove all wires connections. Returns self.
 
 #### entity.setFilter(position, item, [amount])
 
-Sets filter at `position` with `amount` of `item` (an entity name)
+Sets filter at `position` with `amount` of `item` (an entity name). Returns self.
 
 #### entity.removeAllFilters()
 
+Returns self.
+
 #### entity.setRequestFilter(position, item, amount)
 
-Sets logistics request filter at `position` with `amount` of `item` (an entity name)
+Sets logistics request filter at `position` with `amount` of `item` (an entity name). Returns self.
 
 #### entity.removeAllRequestFilters()
+
+Returns self.
 
 #### entity.setCondition(opt)
 
