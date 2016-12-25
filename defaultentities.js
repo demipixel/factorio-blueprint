@@ -374,6 +374,11 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
+  rail_chain_signal: {
+    type: item,
+    width: 1,
+    height: 1
+  },
   lab: {
     type: item,
     width: 3,
@@ -545,6 +550,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
   steel: {
+    type: item
+  },
+  coal: {
     type: item
   },
 
