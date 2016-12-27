@@ -96,7 +96,7 @@ The lua string that is encoded
 
 Get the encoded blue print string
 
-#### static entityData(data)
+#### static setEntityData(data)
 
 Pass it extra items in the `data` object if you need custom entities (such as from mods or entities that aren't included).
 Use the same format as defaultentities.js
