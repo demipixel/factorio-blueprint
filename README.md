@@ -21,6 +21,10 @@ Array of names of entities. No more than four icons are allowed. If this array i
 
 List of all entities
 
+#### bp.name
+
+Name of the blueprint, can be set. Be wary of setting this to anything other than letters or numbers.
+
 ### Methods
 
 #### Blueprint([str])
