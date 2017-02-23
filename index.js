@@ -6,7 +6,7 @@ const Victor = require('victor');
 const gzip = require('gzip-js');
 
 const entityData = require('./defaultentities');
-const Entity = require('./entity');
+const Entity = require('./entity')(entityData);
 
 class Blueprint {
 
