@@ -421,28 +421,6 @@ module.exports = function(entityData) {
     return str.replace(/\[/g, '{').replace(/\]/g, '}').replace(/"([a-z0-9_]+)":/g, '\$1=')
   }
 
-  // Convert from lua to JSON
-  function fromLuaBracket(str) {
-    let out = '';
-    const brackets = [];
-    for (var i = 0; i < str.length; i++) {
-      if (str[i] == '{') {
-        if (str[i+1] == '{') {
-          out += '[';
-          brackets.push(true);
-        } else {
-          out += '{';
-          brackets.push(false);
-        }
-      } else if (str[i] == '}') {
-        let isArray = brackets.splice(-1)[0];
-        if (isArray) out += ']';
-        else out += '}';
-      } else out += str[i];
-    }
-    return out;
-  }
-
   // Convert 'in' or 'out' of wires (only combinators have both of these) to a 1 or 2.
   function convertSide(side, ent) {
     if (!side) return 1;

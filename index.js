@@ -164,3 +164,26 @@ class Blueprint {
 }
 
 module.exports = Blueprint;
+
+
+// Convert from lua to JSON
+function fromLuaBracket(str) {
+  let out = '';
+  const brackets = [];
+  for (var i = 0; i < str.length; i++) {
+    if (str[i] == '{') {
+      if (str[i+1] == '{') {
+        out += '[';
+        brackets.push(true);
+      } else {
+        out += '{';
+        brackets.push(false);
+      }
+    } else if (str[i] == '}') {
+      let isArray = brackets.splice(-1)[0];
+      if (isArray) out += ']';
+      else out += '}';
+    } else out += str[i];
+  }
+  return out;
+}
