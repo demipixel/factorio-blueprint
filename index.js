@@ -25,7 +25,7 @@ class Blueprint {
   }
 
   // Load blueprint from an existing one
-  load(str) {
+  load(str, opt={}) {
     const converted = RawFlate.inflate(atob(str).slice(10, -8));
     const match = converted.match(/do local _={entities={(.+)},icons={(.+)}(,name="(.+)")?};return _;end/);
     if (!match) throw new Error('Invalid blueprint string');
@@ -39,7 +39,12 @@ class Blueprint {
     this.name = match[4] || '';
 
     entities.forEach(entity => {
-      this.createEntityWithData(entity, false, true, true); // no overlap, place altogether later, positions are their center
+      if (opt.fixEntityData) {
+        const data = {};
+        data[entity] = { type: item };
+        Blueprint.setEntityData(data);
+      }
+      this.createEntityWithData(entity, opt.allowOverlap, true, true); // no overlap, place altogether later, positions are their center
     });
     this.entities.forEach(entity => {
       entity.place(this.tileGrid, this.entities);

@@ -31,9 +31,12 @@ Name of the blueprint, can be set. Be wary of setting this to anything other tha
 
 Create an empty blueprint. Accepts an optional encoded blueprint string `str` to be loaded in.
 
-#### bp.load(str)
+#### bp.load(str, opt)
 
-Loads encoded blueprint string `str`. Returns self.
+Loads encoded blueprint string `str`. Returns self. Options are (all default false):
+
+- allowOverlap: Throws an error if two entities are colliding
+- fixEntityData: Automatically adds unknown entities to entityData
 
 #### bp.toString()
 
