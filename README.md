@@ -44,24 +44,48 @@ Outputs fancy format with all the entities.
 
 #### bp.createEntity(name, position, direction=0, allowOverlap=false, noPlace=false, center=false)
 
-Created an entity of type `name` at `position` (top-left corner) facing `direction`.
+Creates an entity of type `name` at `position` (top-left corner) facing `direction`.
 - Use `allowOverlap` to ignore two entities overlapping (which Factorio does not like...)
 - Use `noPlace` if you want the entity to be created but not placed (mainly used in .load())
 - Use `center` if you want `position` to refer to the center of the entity (again, mainly used by .load())
 
 Returns the new entity
 
+#### bp.createEntityWithData(data, allowOverlap=false, noPlace=false, center=false)
+
+Creates an entity with loaded data (containing keys such as name, position, direction, recipe, filters, and other options).
+
+Typically used when generating entities from a blueprint string. Can be used to clone an entity using the data of `entityToClone.getData()`
+
+#### bp.createTile(name, position)
+
+Creates a tile of type `name` at `position`.
+
+Returns the new tile
+
 #### bp.findEntity(position)
 
 Return entity that overlaps `position` or null.
+
+#### bp.findTile(position)
+
+Return tile at `position` or null.
 
 #### bp.removeEntity(entity)
 
 Removes `entity`, returns it (or false if it was not removed)
 
-#### bp.removeEntityPosition(position)
+#### bp.removeTile(tile)
 
-Removes an entity given the `position`, returns the entity (or false if it was not removed)
+Removes `tile`, returns it (or false if it was not removed)
+
+#### bp.removeEntityAtPosition(position)
+
+Removes an entity that overlaps `position`, returns the entity (or false if it was not removed)
+
+#### bp.removeTileAtPosition(position)
+
+Removes a tile at `position`, returns the entity (or false if it was not removed)
 
 #### bp.setIds()
 
@@ -95,13 +119,17 @@ Get bottom-right-most entity's corner position
 
 Generate icons based off the entities, `num` is the number of icons from 1 to 4. Returns self.
 
-#### bp.luaString()
+#### bp.toObject()
 
-The lua string that is encoded
+Object containing all the data (just before being converted to JSON)
+
+#### bp.toJSON()
+
+Get the JSON data of the blueprint before it's encoded
 
 #### bp.encode()
 
-Get the encoded blue print string
+Get the encoded blueprint string
 
 #### static setEntityData(data)
 
@@ -118,7 +146,7 @@ Get a list of all entities added to be supported by factorio-blueprint.
 
 #### entity.id
 
-Position in `bp.entities` when `bp.setIds()` is called.
+1-based index of entity in  `bp.entities` when `bp.setIds()` is called.
 
 #### entity.bp
 
@@ -128,9 +156,13 @@ Get the entity's blueprint parent
 
 #### entity.position
 
+#### entity.size
+
+x/y contain the width/height
+
 #### entity.direction
 
-Number from 1 to 8. For most things it's 0, 2, 4, or 6
+Number from 0 to 7. For most things it's 0, 2, 4, or 6
 
 #### entity.connections
 
@@ -144,9 +176,21 @@ Condition if the entity is a combinator
 
 Object of filters. Keys are the positions (1 to X). Used for constant combinators and storage containers.
 
-#### entity.size
+#### entity.recipe
 
-x/y contain the width/height
+Entity name of the recipe
+
+#### entity.directionType
+
+"input" or "output" to distinguish between ins and outs of underground belts
+
+#### entity.bar
+
+How many slots have not been blocked off (0 for all slots blocked off, 1 for all but one, -1 for none). Can be up to entity.INVENTORY_SIZE
+
+#### entity.INVENTORY_SIZE
+
+Number of slots this entity has
 
 ### Methods
 
@@ -204,3 +248,73 @@ Returns self.
 - out: String (item/entity name)
 
 #### entity.setDirection(dir)
+
+See entity.direction, returns self
+
+#### entity.setDirectionType(type)
+
+See entity.directionType, returns self.
+
+#### entity.setRecipe(recipe)
+
+See entity.recipe, returns self.
+
+#### entity.setBar(count)
+
+See entity.bar, returns self.
+
+#### entity.setConstant(position, name, count)
+
+Set a constant combinator's value (count) for a signal (name) at position (0-indexed). Returns self
+
+#### entity.setParameters(opt)
+
+opt is an object with the following possible key/values. Returns self
+
+- volume: 0.0 to 1.0 volume of a programmble speaker
+- playGlobally: Whether a programmable speaker should play globally
+- allowPolyphony: Whether a programmable speaker should be able to play multiple overlapping sounds
+
+#### entity.setCircuityParameters(opt)
+
+opt is an object with the following possible key/values. Returns self
+
+- signalIsPitch: Whether a signal should be used as the pitch in a programmable speaker
+- instrument: The ID of the instrument (0-indexed)
+- note: The ID of the note to be played (0-indexed), different for different instruments
+
+#### entity.setAlertParameters(opt)
+
+opt is an object with the following possible key/values. Returns self
+
+- showAlert: Whether or not to show an alert in the GUI when a sound is played
+- showOnMap: Whether or not the location should appear on the map
+- message: String containing the alert message
+
+#### entity.getData()
+
+Return object with factorio-style data about entity. Entity names will contain dashes, not underscores
+
+## Tile
+
+### Properties
+
+#### tile.id
+
+1-based index of tile in  `bp.tiles` when `bp.setIds()` is called.
+
+#### tile.bp
+
+Get the tile's blueprint parent
+
+#### tile.name
+
+#### tile.position
+
+#### tile.remove()
+
+Removes self from blueprint
+
+#### tile.getData()
+
+Return object with factorio-style data about entity. Entity names will contain dashes, not underscores

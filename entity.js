@@ -3,22 +3,37 @@ const Victor = require('victor');
 module.exports = function(entityData) {
   class Entity {
 
-    constructor(data, tileGrid, bp, center) {
+    constructor(data, positionGrid, bp, center) {
+      let myData = entityData[bp.checkName(data.name)]; // entityData contains info like width, height, filterAmount, etc
+
       this.id = -1; // Id used when generating blueprint
       this.bp = bp; // Blueprint
-      this.name = checkName(data.name); // Name or "type"
+      this.name = this.bp.checkName(data.name); // Name or "type"
       this.position = Victor.fromObject(data.position); // Position of top left corner
       this.direction = 0; // Direction (usually 0, 2, 4, or 6)
+
       this.rawConnections = data.connections; // Used in parsing connections from existing entity
       this.connections = []; // Wire connections
-      this.condition = this.parseCondition(data.conditions); // Condition in combinator
+      this.circuitParameters = data.circuit_parameters || null;
+      this.controlBehavior = data.control_behavior || null;
+      this.condition = this.parseCondition(data); // Condition in combinator
+
+      this.parameters = data.paramaters || (myData.parameters ? {} : null);
+      this.alertParameters = data.alert_parameters || (myData.alertParameters ? {} : null);
+
       this.filters = {}; // Filters for container or signals in constant combinator
       this.requestFilters = {}; // Request filters for requester chest
+      this.directionType = data.type || 'input'; // Underground belts input/output
+      this.recipe = data.recipe || null;
+      this.bar = data.bar || -1;
 
-      let myData = entityData[this.name]; // entityData contains info like width, height, filterAmount, etc
+
       this.size = myData ? new Victor(myData.width, myData.height) : // Size in Victor form
                           (entityData[this.name] ? new Victor(entityData[this.name].width, entityData[this.name].height) : new Victor(1, 1));
-      this.filterAmount = myData.filterAmount !== false; // Should filters have an amount (e.g. constant combinators have an amount, cargo wagon filter would not)
+      this.FILTER_AMOUNT = myData.filterAmount !== false; // Should filters have an amount (e.g. constant combinators have an amount, cargo wagon filter would not)
+      this.HAS_DIRECTION_TYPE = myData.directionType;
+      this.CAN_HAVE_RECIPE = myData.recipe;
+      this.INVENTORY_SIZE = myData.inventorySize || null;
 
       this.setDirection(data.direction || 0);
 
@@ -26,13 +41,13 @@ module.exports = function(entityData) {
       this.parseRequestFilters(data.request_filters);
 
       if (center) {
-        this.position.subtract(this.size.clone().divide(new Victor(2, 2)));
+        this.position.add(new Victor(0.5, 0.5)).subtract(this.size.clone().divide(new Victor(2, 2)));
       }
       this.position = new Victor(Math.round(this.position.x*100)/100, Math.round(this.position.y*100)/100);
     }
 
     // Beautiful string format
-    toString() {
+    /*toString() {
       let str = this.id+') '+this.name + ' =>\n';
       str += '  position: '+this.position+'\n';
       str += '  direction: '+this.direction+'\n';
@@ -61,7 +76,7 @@ module.exports = function(entityData) {
         str += this.condition.out != undefined ? '    out: '+this.condition.out+'\n' : '';
       }
       return str;
-    }
+    }*/
 
     /////////////////////////////////////
     ///// Parsing from existing blueprint
@@ -72,6 +87,7 @@ module.exports = function(entityData) {
       const conns = this.rawConnections;
       if (!conns) return [];
       for (let side in conns) {
+        if (parseInt(side) != side) return; // Not a number!
         for (let color in conns[side]) {
           for (let i = 0; i < conns[side][color].length; i++ ) {
             const id = conns[side][color][i]['entity_id'];
@@ -87,48 +103,52 @@ module.exports = function(entityData) {
     }
 
     // Parse filters into standard Entity format
-    parseFilters(filters) { // Parse filters from lua (for constructor)
+    parseFilters(filters) { // Parse filters from json (for constructor)
       if (!filters) return [];
       for (let i = 0; i < filters.length; i++) {
-        const name = checkName(this.filterAmount ? filters[i].signal.name : filters[i].name);
+        const name = this.bp.checkName(this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name);
 
-        if (this.filterAmount) filters[i].signal.name = name;
+        if (this.FILTER_AMOUNT) filters[i].signal.name = name;
         else filters[i].name = name;
 
-        this.setFilter(filters[i].index, this.filterAmount ? filters[i].signal.name : filters[i].name, this.filterAmount ? filters[i].count : undefined);
+        this.setFilter(filters[i].index, this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name, this.FILTER_AMOUNT ? filters[i].count : undefined);
       }
     }
 
     // Parse request filters into standard Entity format
-    parseRequestFilters(request_filters) { // Parse request_filters from lua (for constructor)
+    parseRequestFilters(request_filters) { // Parse request_filters from json (for constructor)
       if (!request_filters) return [];
       for (let i = 0; i < request_filters.length; i++) {
-        request_filters[i].name = checkName(request_filters[i].name);
+        request_filters[i].name = this.bp.checkName(request_filters[i].name);
         this.setRequestFilter(request_filters[i].index, request_filters[i].name, request_filters[i].count);
       }
     }
 
     // Parse condition into standard Entity format
-    parseCondition(condition) {
-      if (!condition) return (this.name == 'decider_combinator' || this.name == 'arithmetic_combinator' ? {} : null);
-      const key = Object.keys(condition)[0];
-      const obj = condition[key];
-      if (obj.first_signal) obj.first_signal.name = checkName(obj.first_signal.name);
-      if (obj.second_signal) obj.second_signal.name = checkName(obj.second_signal.name);
-      if (obj.output_signal) obj.output_signal.name = checkName(obj.output_signal.name);
+    parseCondition(data) {
+      const condition = (data.controlBehavior && (data.controlBehavior.decider_conditions || data.controlBehavior.arithmetic_conditions)) ||
+                       (data.connections && data.connections.circuit_condition);
+      if (!condition) return {};
+      if (condition.first_signal) condition.first_signal.name = this.bp.checkName(condition.first_signal.name);
+      if (condition.second_signal) condition.second_signal.name = this.bp.checkName(condition.second_signal.name);
+      if (condition.output_signal) condition.output_signal.name = this.bp.checkName(condition.output_signal.name);
       const out = {
-        left: obj.first_signal ? obj.first_signal.name : undefined,
-        right: obj.second_signal ? obj.second_signal.name : parseInt(obj.constant),
-        out: obj.output_signal ? obj.output_signal.name : undefined
+        left: condition.first_signal ? condition.first_signal.name : undefined,
+        right: condition.second_signal ? condition.second_signal.name : parseInt(condition.constant),
+        out: condition.output_signal ? condition.output_signal.name : undefined,
+
+        controlEnable: condition.circuit_enable_disable, // circuit_enable_disable, true/false
+        readContents: condition.circuit_read_hand_contents, // circuit_read_hand_contents, true/false
+        readMode: condition.circuit_contents_read_mode != undefined ? (condition.circuit_contents_read_mode == 0 ? 'pulse' : 'hold') : undefined
       };
-      if (key == 'decider') {
-        out.countFromInput = obj.copy_count_from_input == 'true';
+      if (this.name == 'decider_combinator') {
+        out.countFromInput = condition.copy_count_from_input == 'true';
       }
 
-      if (obj.comparator) // Set operator
-        out.operator = obj.comparator == ':' ? '=' : obj.comparator;
+      if (condition.comparator) // Set operator
+        out.operator = condition.comparator == ':' ? '=' : condition.comparator;
       else
-        out.operator = obj.operation;
+        out.operator = condition.operation;
 
       return out;
     }
@@ -140,20 +160,20 @@ module.exports = function(entityData) {
     // Sets values in BP (tile data, parses connections).
     // Typically, when loading from an existing blueprint, all entities are creating at the same time,
     // and then all are placed at the same time (so each entity can parse the connections of the others)
-    place(tileGrid, entityList) {
-      this.setTileData(tileGrid);
+    place(positionGrid, entityList) {
+      this.setTileData(positionGrid);
       this.parseConnections(entityList);
       return this;
     }
 
     // Remove entity from blueprint
-    remove(bp) {
-      return (bp || this.bp).removeEntity(this);
+    remove() {
+      return this.bp.removeEntity(this);
     }
 
     // Cleans up tile data after removing
-    removeCleanup(tileGrid) {
-      this.removeTileData(tileGrid);
+    removeCleanup(positionGrid) {
+      this.removeTileData(positionGrid);
       return this;
     }
 
@@ -165,34 +185,34 @@ module.exports = function(entityData) {
     center() { return this.position.clone().add(this.size.clone().divide(new Victor(2, 2))); }
 
     // Adds self to grid array
-    setTileData(tileGrid) {
-      this.tileDataAction(tileGrid, (x, y) => tileGrid[x+','+y] = this);
+    setTileData(positionGrid) {
+      this.tileDataAction(positionGrid, (x, y) => positionGrid[x+','+y] = this);
       return this;
     }
 
     // Removes self from grid array
-    removeTileData(tileGrid) {
-      this.tileDataAction(tileGrid, (x, y) => delete tileGrid[x+','+y]);
+    removeTileData(positionGrid) {
+      this.tileDataAction(positionGrid, (x, y) => delete positionGrid[x+','+y]);
       return this;
     }
 
     // Return true if this entity overlaps with no other
-    checkNoOverlap(tileGrid) {
-      return !this.getOverlap(tileGrid);
+    checkNoOverlap(positionGrid) {
+      return !this.getOverlap(positionGrid);
     }
 
     // Returns an item this entity overlaps with (or null)
-    getOverlap(tileGrid) {
+    getOverlap(positionGrid) {
       let item = null;
-      this.tileDataAction(tileGrid, (x, y) => {
-        item = tileGrid[x+','+y] || item;
+      this.tileDataAction(positionGrid, (x, y) => {
+        item = positionGrid[x+','+y] || item;
       });
       return item;
     }
 
-    // Do an action on every tile that this entity overlaps in a given tileGrid
-    tileDataAction(tileGrid, fn) {
-      if (!tileGrid) return;
+    // Do an action on every tile that this entity overlaps in a given positionGrid
+    tileDataAction(positionGrid, fn) {
+      if (!positionGrid) return;
       const topLeft = this.topLeft();
       const bottomRight = this.bottomRight().subtract(new Victor(0.9, 0.9));
       for (let x = Math.floor(topLeft.x); x < bottomRight.x; x++) {
@@ -266,19 +286,19 @@ module.exports = function(entityData) {
       return this;
     }
 
-    setFilter(pos, item, amt, request) {
+    setFilter(pos, name, amt, request) {
       const filter = request ? 'requestFilters' : 'filters';
-      item = checkName(item);
-      if (item == null) delete this[filter][pos];
+      name = this.bp.checkName(name);
+      if (name == null) delete this[filter][pos];
       else this[filter][pos] = {
-            name: item,
+            name: name,
             count: amt || 0
           };
       return this;
     }
 
-    setRequestFilter(pos, item, amt) {
-      return this.setFilter(pos, item, amt, true);
+    setRequestFilter(pos, name, amt) {
+      return this.setFilter(pos, name, amt, true);
     }
 
     removeAllFilters() {
@@ -294,10 +314,11 @@ module.exports = function(entityData) {
     // Sets condition of entity (for combinators)
     setCondition(opt) {
       if (opt.countFromInput != undefined && this.name != 'decider_combinator') throw new Error('Cannot set countFromInput for '+this.name);
+      else if (opt.readMode && (opt.readMode != 'pulse' && opt.readMode != 'hold')) throw new Error('readMode in a condition must be "pulse" or "hold"!');
 
-      if (opt.left) opt.left = checkName(opt.left);
-      if (typeof opt.right == 'string') opt.right = checkName(opt.right);
-      if (opt.out) opt.out = checkName(opt.out);
+      if (opt.left) opt.left = this.bp.checkName(opt.left);
+      if (typeof opt.right == 'string') opt.right = this.bp.checkName(opt.right);
+      if (opt.out) opt.out = this.bp.checkName(opt.out);
       const checkAllow = name => {
         if (opt[name] != undefined) {
           return opt[name];
@@ -313,7 +334,11 @@ module.exports = function(entityData) {
         right: checkAllow('right'),
         operator: checkAllow('operator'),
         countFromInput: checkAllow('countFromInput'),
-        out: checkAllow('out')
+        out: checkAllow('out'),
+
+        controlEnable: checkAllow('controlEnable'), // circuit_enable_disable, true/false
+        readContents: checkAllow('readContents'), // circuit_read_hand_contents, true/false
+        readMode: checkAllow('readMode') // circuit_contents_read_mode, 0 or 1
       };
       return this;
     }
@@ -327,8 +352,66 @@ module.exports = function(entityData) {
       return this;
     }
 
+    setDirectionType(type) {
+      if (!this.HAS_DIRECTION_TYPE) throw new Error('This type of item does not have a directionType! Usually only underground belts have these.');
+      else if (type != 'input' && type != 'output') throw new Error('setDirectionType() accepts the string "input" and "output" only');
+      this.directionType = type;
+
+      return this;
+    }
+
+    setRecipe(recipe) {
+      if (!this.CAN_HAVE_RECIPE) throw new Error('This entity cannot have a recipe.');
+      this.recipe = checkName(recipe);
+
+      return this;
+    }
+
+    setBar(num) {
+      if (!this.INVENTORY_SIZE) throw new Error('Only entities with inventories can have bars!');
+      else if (typeof num == 'number' && num < 0) throw new Error('You must provide a positive value to setBar()');
+      this.bar = typeof num != 'number' || num >= this.INVENTORY_SIZE ? -1 : num;
+
+      return this;
+    }
+
+    setCircuitParameters(obj) {
+      if (!this.circuitParameters) this.circuitParameters = {};
+      Object.keys(obj).forEach(key => this.circuitParameters[key] = obj[key]);
+
+      return this;
+    }
+
+    setParameters(obj) {
+      if (!this.parameters) this.parameters = {};
+      Object.keys(obj).forEach(key => this.parameters[key] = obj[key]);
+
+      return this;
+    }
+
+    setAlertParameters(obj) {
+      if (!this.alertParameters) this.alertParameters = {};
+      Object.keys(obj).forEach(key => this.alertParameters[key] = obj[key]);
+
+      return this;
+    }
+
+    setConstant(pos, name, count) {
+      if (this.name != 'constant_combinator') throw new Error('Can only set constants for constant combinators!');
+      if (!this.controlBehavior) this.controlBehavior = {};
+      if (!this.controlBehavior.filters) this.controlBehavior.filters = {};
+
+      if (!name) delete this.controlBehavior.filters[pos];
+      else this.controlBehavior.filters[pos] = {
+        name: this.bp.checkName(name),
+        count: count == undefined ? 0 : count
+      };
+
+      return this;
+    }
+
     // Convert condition to lua format
-    luaConnections() {
+    /*luaConnections() {
       const out = {};
       for (let i = 0; i < this.connections.length; i++) {
         let side = this.connections[i].side;
@@ -347,7 +430,7 @@ module.exports = function(entityData) {
           index: parseInt(key)
         };
         const name = this.filters[key].name.replace(/_/g, '-');
-        if (this.filterAmount) {
+        if (this.FILTER_AMOUNT) {
           const type = entityData[this.filters[key].name].type;
           obj.signal = {
             type: type,
@@ -411,15 +494,134 @@ module.exports = function(entityData) {
       const condition = this.condition ? ',conditions='+this.luaCondition() : '';
       const centerPos = this.center();
       return '{name="'+this.name.replace(/_/g, '-')+'",position={x='+centerPos.x+',y='+centerPos.y+'}'+direction+connections+filters+request_filters+condition+'}';
+    }*/
+
+    getData() {
+      const useValueOrDefault = (val, def) => val != undefined ? val : def;
+
+      const getCondition = () => {
+        // let key = this.name == 'arithmetic_combinator' ? 'arithmetic' : (this.name == 'decider_combinator' ? 'decider' : 'circuit');
+        const out = {
+          first_signal: (this.condition.left ? {
+            type: entityData[this.condition.left].type,
+            name: this.condition.left.replace(/_/g, '-')
+          } : undefined),
+          second_signal: (typeof this.condition.right == 'string' ? {
+            type: entityData[this.condition.right].type,
+            name: this.condition.right.replace(/_/g, '-')
+          } : undefined),
+          constant: typeof this.condition.right == 'number' ? this.condition.right : undefined,
+          operation: undefined,
+          comparator: undefined,
+          output_signal: (this.condition.out ? {
+            type: entityData[this.condition.out].type,
+            name: this.condition.out.replace(/_/g, '-')
+          } : undefined),
+
+          circuit_enable_disable: this.condition.controlEnable,
+          circuit_read_hand_contents: this.condition.readContents,
+          circuit_contents_read_mode: this.condition.readMode != undefined ? (this.condition.readMode == 'pulse' ? 0 : 1) : undefined
+        };
+        if (this.name != 'arithmetic_combinator') {
+          out.comparator = this.condition.operator;
+          out.copy_count_from_input = this.condition.countFromInput != undefined ? (!!this.condition.countFromInput).toString() : undefined;
+        } else {
+          out.operation = this.condition.operator;
+        }
+        return out;
+      }
+
+      return {
+        name: this.bp.fixName(this.name),
+        position: this.center().subtract(new Victor(0.5, 0.5)),
+        direction: this.direction || undefined,
+
+        type: this.HAS_DIRECTION_TYPE ? this.directionType : undefined,
+        recipe: this.CAN_HAVE_RECIPE && this.recipe ? this.recipe : undefined,
+        bar: this.INVENTORY_SIZE && (this.bar != -1) ? this.bar : undefined,
+
+        filters: makeEmptyArrayUndefined(Object.keys(this.filters).map(index => {
+          const filter = this.filters[index];
+          const type = entityData[filter.name].type;
+
+          const obj = { index: parseInt(index) };
+          if (this.FILTER_AMOUNT) {
+            obj.signal = {
+              name: this.bp.fixName(filter.name),
+              type: type
+            };
+            obj.count = filter.count;
+          } else {
+            obj.name = filter.name;
+          }
+          return obj;
+        })),
+
+        request_filters: makeEmptyArrayUndefined(Object.keys(this.requestFilters).map(index => {
+          const rFilter = this.requestFilters[index];
+          return {
+            name: this.bp.fixName(rFilter.name),
+            count: rFilter.count,
+            index: parseInt(index)
+          }
+        })),
+
+        connections: this.connections.length || this.condition || Object.keys(this.condition).length || Object.keys(this.circuitParameters).length ? this.connections.reduce((obj, connection) => {
+          let side = connection.side;
+          let color = connection.color;
+          if (!obj[side]) obj[side] = {};
+          if (!obj[side][color]) obj[side][color] = [];
+          obj[side][color].push({ entity_id: connection.entity.id, circuit_id: connection.id });
+          return obj;
+        }, {
+          circuit_condition: !this.name.includes('combinator') && Object.keys(this.condition).length ? getCondition() : undefined,
+
+          circuit_parameters: this.circuitParameters ? {
+            signal_value_is_pitch: useValueOrDefault(this.circuitParameters.signalIsPitch, false),
+            instrument_id: useValueOrDefault(this.circuitParameters.instrument, 0),
+            note_id: useValueOrDefault(this.circuitParameters.note, 0)
+          } : undefined,
+
+        }) : undefined,
+
+        parameters: this.parameters ? {
+          playback_volume: useValueOrDefault(this.parameters.volume, 1.0),
+          playback_globally: useValueOrDefault(this.parameters.playGlobally, false),
+          allow_polyphony: useValueOrDefault(this.parameters.allowPolyphony, true)
+        } : undefined,
+
+        alert_parameters: this.alertParameters ? {
+          show_alert: useValueOrDefault(this.alertParameters.showAlert, false),
+          show_on_map: useValueOrDefault(this.alertParameters.showOnMap, true),
+          alert_message: useValueOrDefault(this.alertParameters.message, '')
+        } : undefined,
+
+        control_behavior: this.controlBehavior || (this.condition && (this.name == 'decider_combinator' || this.name == 'arithmetic_combinator')) ? {
+          filters: this.controlBehavior && this.controlBehavior.filters && Object.keys(this.controlBehavior.filters).length ? Object.keys(this.controlBehavior.filters).map((key, i) => {
+            const data = this.controlBehavior.filters[key];
+            return {
+              signal: {
+                name: this.bp.fixName(data.name),
+                type: entityData[data.name].type
+              },
+              count: data.count != undefined ? data.count : 0,
+              index: parseInt(key) + 1
+            };
+          }) : undefined,
+
+          decider_conditions: this.name == 'decider_combinator' ? getCondition() : undefined,
+          arithmetic_conditions: this.name == 'arithmetic_combinator' ? getCondition() : undefined
+        } : undefined,
+      };
     }
   }
 
   // Lib Functions
 
   // Convert to lua
-  function toLuaFixer(str) {
+  /*function toLuaFixer(str) {
     return str.replace(/\[/g, '{').replace(/\]/g, '}').replace(/"([a-z0-9_]+)":/g, '\$1=')
-  }
+  }*/
 
   // Convert 'in' or 'out' of wires (only combinators have both of these) to a 1 or 2.
   function convertSide(side, ent) {
@@ -431,11 +633,8 @@ module.exports = function(entityData) {
     } else throw new Error('Invalid side');
   }
 
-  // Check that name of entity is valid
-  function checkName(name) {
-    name = name.replace(/-/g, '_');
-    if (!entityData[name]) throw new Error(name+' does not exist! You can add it by putting it into entityData.');
-    return name;
+  function makeEmptyArrayUndefined(arr) {
+    return arr.length ? arr : undefined;
   }
 
 

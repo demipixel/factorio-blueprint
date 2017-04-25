@@ -1,59 +1,73 @@
 'use strict';
 
-const RawFlate = require('./rawflate');
-const atob = require('atob');
+const prettyJSON = require('prettyjson');
 const Victor = require('victor');
-const gzip = require('gzip-js');
+const zlib = require('zlib');
+const Buffer = require('buffer').Buffer;
 
 const entityData = require('./defaultentities');
 const Entity = require('./entity')(entityData);
+const Tile = require('./tile')(entityData);
 
 class Blueprint {
 
   constructor(str) {
     this.icons = []; // Icons for Blueprint (up to 4)
     this.entities = []; // List of all entities in Blueprint
-    this.tileGrid = {}; // Object with tile keys in format "x,y" => entity
-    this.name = ''; // Name if it exists
+    this.tiles = []; // List of all tiles in Blueprint (such as stone path or concrete)
+    this.entityPositionGrid = {}; // Object with tile keys in format "x,y" => entity
+    this.tilePositionGrid = {};
+    this.version = null;
     if (str) this.load(str);
   }
 
   // All entities in beautiful string format
   toString() {
     this.setIds();
-    return this.entities.map(ent => ent.toString()).join('\n');
+    return prettyJSON.render(this.toObject().blueprint, {
+      noAlign: true,
+      numberColor: 'magenta'
+    });
   }
 
   // Load blueprint from an existing one
   load(str, opt={}) {
-    const converted = RawFlate.inflate(atob(str).slice(10, -8));
-    const match = converted.match(/do local _={entities={(.+)},icons={(.+)}(,name="(.+)")?};return _;end/);
-    if (!match) throw new Error('Invalid blueprint string');
-
-    const correctFormat = str => {
-      return fromLuaBracket(str.replace(/\["([0-9]+)"\]/g, '\$1').replace(/=/g, ':').replace(/([a-z0-9_]+):/g, '"\$1":'));
+    let data = null;
+    try {
+      data = JSON.parse(zlib.inflateSync(Buffer.from(str.slice(1), 'base64')).toString('utf8'));
+    } catch (e) {
+      throw e;
     }
 
-    const entities = JSON.parse('['+correctFormat(match[1])+']');
-    const icons = JSON.parse('['+correctFormat(match[2])+']');
-    this.name = match[4] || '';
+    console.log(JSON.stringify(data));
 
-    entities.forEach(entity => {
+    data = data.blueprint;
+
+    if (!data.tiles) data.tiles = [];
+    if (!data.entities) data.entities = [];
+
+    this.version = data.version;
+
+    data.entities.forEach(entity => {
       if (opt.fixEntityData) {
         const data = {};
         data[entity] = { type: item };
         Blueprint.setEntityData(data);
       }
-      this.createEntityWithData(entity, opt.allowOverlap, true, true); // no overlap, place altogether later, positions are their center
+      this.createEntityWithData(entity, opt.allowOverlap, true, true); // no overlap (unless option allows it), place altogether later, positions are their center
     });
     this.entities.forEach(entity => {
-      entity.place(this.tileGrid, this.entities);
-    })
+      entity.place(this.entityPositionGrid, this.entities);
+    });
+
+    data.tiles.forEach(tile => {
+      this.createTile(tile.name, tile.position);
+    });
 
     this.icons = [];
-    for (let i = 0; i < icons.length; i++) {
-      this.icons[icons[i].index-1] = icons[i].name;
-    }
+    data.icons.forEach(icon => {
+      this.icons[icon.index-1] = this.checkName(icon.signal.name);
+    });
     return this;
   }
 
@@ -65,43 +79,80 @@ class Blueprint {
 
   // Creates an entity with a data object instead of paramaters
   createEntityWithData(data, allowOverlap, noPlace, center) {
-    const ent = new Entity(data, this.tileGrid, this, center);
-    if (allowOverlap || ent.checkNoOverlap(this.tileGrid)) {
-      if (!noPlace) ent.place(this.tileGrid, this.entities);
+    const ent = new Entity(data, this.entityPositionGrid, this, center);
+    if (allowOverlap || ent.checkNoOverlap(this.entityPositionGrid)) {
+      if (!noPlace) ent.place(this.entityPositionGrid, this.entities);
       this.entities.push(ent);
       return ent;
     } else {
-      const otherEnt = ent.getOverlap(this.tileGrid);
+      const otherEnt = ent.getOverlap(this.entityPositionGrid);
       throw new Error('Entity '+data.name+' overlaps '+otherEnt.name+' entity ('+data.position.x+', '+data.position.y+')');
     }
   }
 
+  createTile(name, position) {
+    return createTileWithData({ name: name, position: position });
+  }
+
+  createTileWithData(data) {
+    const tile = new Tile(data, this);
+    if (this.tilePositionGrid[position.x+','+position.y]) this.removeTile(this.tilePositionGrid[position.x+','+position.y]);
+
+    this.tilePositionGrid[position.x+','+position.y] = tile;
+    this.tiles.push(tile);
+    return tile;
+  }
+
   // Returns entity at a position (or null)
   findEntity(pos) {
-    return this.tileGrid[Math.floor(pos.x)+','+(pos.y)] || null;
+    return this.entityPositionGrid[Math.floor(pos.x)+','+(pos.y)] || null;
+  }
+
+  findTile(pos) {
+    return this.tilePositionGrid[Math.floor(pos.x)+','+(pos.y)] || null;
   }
 
   // Removes a specific entity
   removeEntity(ent) {
     if (!ent) return false;
     else {
-      ent.removeCleanup(this.tileGrid);
-      this.entities.splice(this.entities.indexOf(ent), 1);
+      ent.removeCleanup(this.entityPositionGrid);
+      const index = this.entities.indexOf(ent)
+      if (index == -1) return ent;
+      this.entities.splice(index, 1);
       return ent;
     }
   }
 
-  // Removes an entity at a position (returns false if no entity is there)
-  removeEntityPosition(position) {
-    if (!this.tileGrid[position.x+','+position.y]) return false;
-    return this.removeEntity(this.tileGrid[position.x+','+position.y]);
+  removeTile(tile) {
+    if (!tile) return false;
+    else {
+      const index = this.tiles.indexOf(tile)
+      if (index == -1) return tile;
+      this.tiles.splice(index, 1);
+      return tile;
+    }
   }
 
-  // Set ids for entities, called in luaString()
+  // Removes an entity at a position (returns false if no entity is there)
+  removeEntityAtPosition(position) {
+    if (!this.entityPositionGrid[position.x+','+position.y]) return false;
+    return this.removeEntity(this.entityPositionGrid[position.x+','+position.y]);
+  }
+
+  removeTileAtPosition(position) {
+    if (!this.tilePositionGrid[position.x+','+position.y]) return false;
+    return this.removeTile(this.tilePositionGrid[position.x+','+position.y]);
+  }
+
+  // Set ids for entities, called in toJSON()
   setIds() {
-    for (let i = 0; i < this.entities.length; i++) {
-      this.entities[i].id = i+1;
-    }
+    this.entities.forEach((entity, i) => {
+      entity.id = i+1;
+    })
+    this.tiles.forEach((tile, i) => {
+      tile.id = i+1;
+    });
     return this;
   }
 
@@ -120,8 +171,8 @@ class Blueprint {
   fixCenter() {
     if (!this.entities.length) return this;
     
-    let offsetX = -this.center().x;
-    let offsetY = -this.center().y;
+    let offsetX = -Math.floor(this.center().x);
+    let offsetY = -Math.floor(this.center().y);
     const offset = new Victor(offsetX, offsetY);
     this.entities.forEach(entity => {
       entity.position.add(offset);
@@ -140,18 +191,39 @@ class Blueprint {
   }
 
   // Give luaString that gets converted by encode()
-  luaString() {
+  toObject() {
     this.setIds();
     if (!this.icons.length) this.generateIcons();
-    const entString = this.entities.map(ent => ent.luaString()).join(',');
-    const iconString = this.icons.map((icon, i) => '{index='+(i+1)+',name="'+icon.replace(/_/g, '-')+'"}');
+    const entityInfo = this.entities.map((ent, i) => {
+      const entData = ent.getData();
 
-    return 'do local _={entities={'+entString+'},icons={'+iconString+'}'+(this.name.length != 0 ? ',name="'+this.name+'"' : '')+'};return _;end';
+      entData.entity_number = i+1;
+
+      return entData;
+    });
+    const tileInfo = this.tiles.map((tile, i) => tile.getData());
+    const iconData = this.icons.map((icon, i) => {
+      return { signal: { type: entityData[icon].type, name: this.fixName(icon) }, index: i+1 };
+    });
+
+    return {
+      blueprint: {
+        icons: iconData,
+        entities: this.entities.length ? entityInfo : undefined,
+        tiles: this.tiles.length ? tileInfo : undefined,
+        item: 'blueprint',
+        version: this.version || 0
+      }
+    };
+  }
+
+  toJSON() {
+    return JSON.stringify(this.toObject());
   }
 
   // Blueprint string! Yay!
   encode() {
-    return (new Buffer(gzip.zip(this.luaString()))).toString('base64');
+    return '0' + zlib.deflateSync(this.toJSON()).toString('base64');
   }
 
   // Set entityData
@@ -166,29 +238,17 @@ class Blueprint {
   static getEntityData() {
     return entityData;
   }
+
+  checkName(name) {
+    if (typeof name != 'string') throw new Error('Expected name of entity or tile, instead got '+name);
+    name = name.replace(/-/g, '_');
+    if (!entityData[name]) throw new Error(name+' does not exist! You can add it by putting it into entityData.');
+    return name;
+  }
+
+  fixName(name) {
+    return name.replace(/_/g, '-');
+  }
 }
 
 module.exports = Blueprint;
-
-
-// Convert from lua to JSON
-function fromLuaBracket(str) {
-  let out = '';
-  const brackets = [];
-  for (var i = 0; i < str.length; i++) {
-    if (str[i] == '{') {
-      if (str[i+1] == '{') {
-        out += '[';
-        brackets.push(true);
-      } else {
-        out += '{';
-        brackets.push(false);
-      }
-    } else if (str[i] == '}') {
-      let isArray = brackets.splice(-1)[0];
-      if (isArray) out += ']';
-      else out += '}';
-    } else out += str[i];
-  }
-  return out;
-}

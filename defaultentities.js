@@ -1,9 +1,24 @@
-var fluid = 'fluid';
-var item = 'item';
-var virtual = 'virtual';
+const fluid = 'fluid';
+const item = 'item';
+const virtual = 'virtual';
+const tile = 'tile'
+
 
 module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)! 
                    // Somebody will probably automate the gathering of this data soon...
+
+  stone_path: {
+    type: tile
+  },
+
+  programmable_speaker: {
+    type: item,
+    width: 1,
+    height: 1,
+
+    parameters: true,
+    alertParameters: true,
+  },
 
   tank: {
     type: item
@@ -12,7 +27,8 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
   cargo_wagon: {
-    type: item
+    type: item,
+    inventorySize: 40
   },
   diesel_locomotive: {
     type: item
@@ -234,67 +250,80 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   underground_belt: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    directionType: true
   },
   fast_underground_belt: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    directionType: true
   },
   express_underground_belt: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    directionType: true
   },
   assembling_machine_1: {
     type: item,
     width: 3,
-    height: 3
+    height: 3,
+    recipe: true
   },
   assembling_machine_2: {
     type: item,
     width: 3,
-    height: 3
+    height: 3,
+    recipe: true
   },
   assembling_machine_3: {
     type: item,
     width: 3,
-    height: 3
+    height: 3,
+    recipe: true
   },
   wooden_chest: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    inventorySize: 16
   },
   iron_chest: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    inventorySize: 32
   },
   steel_chest: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    inventorySize: 48
   },
   logistic_chest_passive_provider: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    inventorySize: 48
   },
   logistic_chest_active_provider: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    inventorySize: 48
   },
   logistic_chest_storage: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    inventorySize: 48
   },
   logistic_chest_requester: {
     type: item,
     width: 1,
-    height: 1
+    height: 1,
+    inventorySize: 48
   },
   storage_tank: {
     type: item,
@@ -424,7 +453,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 2,
     height: 2
   },
-  mining_drill: {
+  electric_mining_drill: {
     type: item,
     width: 3,
     height: 3
@@ -484,6 +513,12 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item,
     width: 3,
     height: 3,
+  },
+
+  gun_turret: {
+    type: item,
+    width: 2,
+    height: 2
   },
 
   productivity_module: {
