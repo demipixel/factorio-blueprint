@@ -20,6 +20,30 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     alertParameters: true,
   },
 
+  heat_exchanger: {
+    type: item,
+    width: 3,
+    height: 2
+  },
+
+  heat_pipe: {
+    type: item,
+    width: 1,
+    height: 1
+  },
+
+  nuclear_reactor: {
+    type: item,
+    width: 5,
+    height: 5
+  },
+
+  steam_turbine: {
+    type: item,
+    width: 3,
+    height: 5
+  },
+
   tank: {
     type: item
   },

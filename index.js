@@ -11,14 +11,14 @@ const Tile = require('./tile')(entityData);
 
 class Blueprint {
 
-  constructor(str) {
+  constructor(str, opt) {
     this.icons = []; // Icons for Blueprint (up to 4)
     this.entities = []; // List of all entities in Blueprint
     this.tiles = []; // List of all tiles in Blueprint (such as stone path or concrete)
     this.entityPositionGrid = {}; // Object with tile keys in format "x,y" => entity
     this.tilePositionGrid = {};
     this.version = null;
-    if (str) this.load(str);
+    if (str) this.load(str, opt);
   }
 
   // All entities in beautiful string format
@@ -49,7 +49,7 @@ class Blueprint {
     data.entities.forEach(entity => {
       if (opt.fixEntityData) {
         const data = {};
-        data[entity] = { type: item };
+        data[this.jsName(entity.name)] = { type: 'item', width: 1, height: 1 };
         Blueprint.setEntityData(data);
       }
       this.createEntityWithData(entity, opt.allowOverlap, true, true); // no overlap (unless option allows it), place altogether later, positions are their center
@@ -239,9 +239,13 @@ class Blueprint {
 
   checkName(name) {
     if (typeof name != 'string') throw new Error('Expected name of entity or tile, instead got '+name);
-    name = name.replace(/-/g, '_');
+    name = this.jsName(name);
     if (!entityData[name]) throw new Error(name+' does not exist! You can add it by putting it into entityData.');
     return name;
+  }
+
+  jsName(name) {
+    return typeof name == 'string' ? name.replace(/-/g, '_') : name;
   }
 
   fixName(name) {
