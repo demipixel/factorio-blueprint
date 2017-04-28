@@ -39,8 +39,6 @@ class Blueprint {
       throw e;
     }
 
-    console.log(JSON.stringify(data));
-
     data = data.blueprint;
 
     if (!data.tiles) data.tiles = [];
