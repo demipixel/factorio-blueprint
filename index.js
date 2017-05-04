@@ -69,6 +69,40 @@ class Blueprint {
     return this;
   }
 
+  placeBlueprint(bp, position, direction, allowOverlap) { // direction is 0, 1, 2, or 3
+    bp.entities.forEach(ent => {
+      const data = ent.getData();
+
+      data.direction += (direction || 0)*2;
+      // data.direction += 8;
+      data.direction %= 8;
+
+      if (direction == 3) data.position = { x: data.position.y, y: -data.position.x };
+      else if (direction == 2) data.position = { x: -data.position.x, y: -data.position.y };
+      else if (direction == 1) data.position = { x: -data.position.y, y: data.position.x };
+
+      data.position.x += position.x;
+      data.position.y += position.y;
+
+      this.createEntityWithData(data, allowOverlap, false, true);
+    });
+
+    bp.tiles.forEach(tile => {
+      const data = ent.getData();
+
+      if (direction == 1) data.position = { x: data.position.y, y: -data.position.x };
+      else if (direction == 2) data.position = { x: data.position.y, y: -data.position.x };
+      else if (direction == 3) data.position = { x: data.position.y, y: -data.position.x };
+
+      data.position.x += position.x;
+      data.position.y += position.y;
+
+      this.createTileWithData(data);
+    });
+
+    return this;
+  }
+
   // Create an entity!
   createEntity(name, position, direction, allowOverlap, noPlace, center) {
     return this.createEntityWithData({ name: name, position: position, direction: direction || 0 }, allowOverlap, noPlace, center);
@@ -89,14 +123,14 @@ class Blueprint {
   }
 
   createTile(name, position) {
-    return createTileWithData({ name: name, position: position });
+    return this.createTileWithData({ name: name, position: position });
   }
 
   createTileWithData(data) {
     const tile = new Tile(data, this);
-    if (this.tilePositionGrid[position.x+','+position.y]) this.removeTile(this.tilePositionGrid[position.x+','+position.y]);
+    if (this.tilePositionGrid[data.position.x+','+data.position.y]) this.removeTile(this.tilePositionGrid[data.position.x+','+data.position.y]);
 
-    this.tilePositionGrid[position.x+','+position.y] = tile;
+    this.tilePositionGrid[data.position.x+','+data.position.y] = tile;
     this.tiles.push(tile);
     return tile;
   }
@@ -166,11 +200,11 @@ class Blueprint {
   bottomRight() { return this.getPosition('bottomRight', Math.max, Math.max); }
 
   // Center all entities
-  fixCenter() {
+  fixCenter(aroundPoint) {
     if (!this.entities.length) return this;
     
-    let offsetX = -Math.floor(this.center().x);
-    let offsetY = -Math.floor(this.center().y);
+    let offsetX = aroundPoint ? -aroundPoint.x : -Math.floor(this.center().x/2)*2;
+    let offsetY = aroundPoint ? -aroundPoint.y : -Math.floor(this.center().y/2)*2;
     const offset = new Victor(offsetX, offsetY);
     this.entities.forEach(entity => {
       entity.position.add(offset);

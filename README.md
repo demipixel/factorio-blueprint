@@ -63,6 +63,12 @@ Creates a tile of type `name` at `position`.
 
 Returns the new tile
 
+#### bp.placeBlueprint(otherBlueprint, position, direction=0, allowOverlap=false)
+
+Places `otherBlueprint` at `position` (being the center of `otherBlueprint`) with rotations direction (0, 1, 2, or 3 rotating clockwise each time). `allowOverlap` works the same as in createEntity(). Clones both entities and tiles.
+
+Returns self.
+
 #### bp.findEntity(position)
 
 Return entity that overlaps `position` or null.
@@ -91,9 +97,11 @@ Removes a tile at `position`, returns the entity (or false if it was not removed
 
 Initialize the IDs on each item. They default to -1, but this is called automatically for things like .toString() and .encode(). Returns self.
 
-#### bp.fixCenter()
+#### bp.fixCenter([point])
 
-Centers all entities on the blueprint. I recommend calling this before `Blueprint.encode()`. Returns self.
+Centers all entities on the blueprint. I recommend calling this before `Blueprint.encode()`. An optional `point` may be provided to center about.
+
+Returns self.
 
 #### bp.center()
 

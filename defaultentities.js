@@ -54,7 +54,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item,
     inventorySize: 40
   },
-  diesel_locomotive: {
+  locomotive: {
     type: item
   },
 
@@ -70,10 +70,10 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   grenade: {
     type: item
   },
-  flame_thrower: {
+  flamethrower: {
     type: item
   },
-  flame_thrower_ammo: {
+  flamethrower_ammo: {
     type: item
   },
   rocket_launcher: {
@@ -401,6 +401,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
+  rail: {
+    type: item
+  },
   straight_rail: {
     type: item,
     width: 2,
@@ -543,6 +546,11 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item,
     width: 2,
     height: 2
+  },
+  laser_turret: {
+    type: item,
+    width: 2,
+    width: 2
   },
 
   productivity_module: {

@@ -15,8 +15,8 @@ module.exports = function(entityData) {
       this.rawConnections = data.connections; // Used in parsing connections from existing entity
       this.connections = []; // Wire connections
       this.circuitParameters = data.circuit_parameters || null;
-      this.controlBehavior = data.control_behavior || null;
       this.condition = this.parseCondition(data); // Condition in combinator
+      this.constants = {};
 
       this.parameters = data.paramaters || (myData.parameters ? {} : null);
       this.alertParameters = data.alert_parameters || (myData.alertParameters ? {} : null);
@@ -126,8 +126,7 @@ module.exports = function(entityData) {
 
     // Parse condition into standard Entity format
     parseCondition(data) {
-      const condition = (data.controlBehavior && (data.controlBehavior.decider_conditions || data.controlBehavior.arithmetic_conditions)) ||
-                       (data.connections && data.connections.circuit_condition);
+      const condition = data.controlBehavior && (data.controlBehavior.decider_conditions || data.controlBehavior.arithmetic_conditions || data.controlBehavior.circuit_condition);
       if (!condition) return {};
       if (condition.first_signal) condition.first_signal.name = this.bp.checkName(condition.first_signal.name);
       if (condition.second_signal) condition.second_signal.name = this.bp.checkName(condition.second_signal.name);
@@ -315,6 +314,10 @@ module.exports = function(entityData) {
     setCondition(opt) {
       if (opt.countFromInput != undefined && this.name != 'decider_combinator') throw new Error('Cannot set countFromInput for '+this.name);
       else if (opt.readMode && (opt.readMode != 'pulse' && opt.readMode != 'hold')) throw new Error('readMode in a condition must be "pulse" or "hold"!');
+      else if (this.name == 'arithmetic_combinator' && (opt.left == 'signal_everything' || opt.out == 'signal_everything' || opt.left == 'signal_anything' || opt.out == 'signal_anything'))
+        throw new Error('Only comparitive conditions can contain signal_everything or signal_anything. Instead use signal_each');
+      else if (opt.out == 'signal_each' && opt.left != 'signal_each')
+        throw new Error('Left condition must be signal_each for output to be signal_each.'+(this.name != 'arithmetic_combinator' ? ' Use signal_everything for the output instead' : ''));
 
       if (opt.left) opt.left = this.bp.checkName(opt.left);
       if (typeof opt.right == 'string') opt.right = this.bp.checkName(opt.right);
@@ -398,11 +401,10 @@ module.exports = function(entityData) {
 
     setConstant(pos, name, count) {
       if (this.name != 'constant_combinator') throw new Error('Can only set constants for constant combinators!');
-      if (!this.controlBehavior) this.controlBehavior = {};
-      if (!this.controlBehavior.filters) this.controlBehavior.filters = {};
+      else if (pos < 0 || pos >= 18) throw new Error(pos+' is an invalid position (must be between 0 and 17 inclusive)');
 
-      if (!name) delete this.controlBehavior.filters[pos];
-      else this.controlBehavior.filters[pos] = {
+      if (!name) delete this.constants[pos];
+      else this.constants[pos] = {
         name: this.bp.checkName(name),
         count: count == undefined ? 0 : count
       };
@@ -534,7 +536,7 @@ module.exports = function(entityData) {
       return {
         name: this.bp.fixName(this.name),
         position: this.center().subtract(new Victor(0.5, 0.5)),
-        direction: this.direction || undefined,
+        direction: this.direction || 0,
 
         type: this.HAS_DIRECTION_TYPE ? this.directionType : undefined,
         recipe: this.CAN_HAVE_RECIPE && this.recipe ? this.recipe : undefined,
@@ -573,16 +575,7 @@ module.exports = function(entityData) {
           if (!obj[side][color]) obj[side][color] = [];
           obj[side][color].push({ entity_id: connection.entity.id, circuit_id: connection.id });
           return obj;
-        }, {
-          circuit_condition: !this.name.includes('combinator') && Object.keys(this.condition).length ? getCondition() : undefined,
-
-          circuit_parameters: this.circuitParameters ? {
-            signal_value_is_pitch: useValueOrDefault(this.circuitParameters.signalIsPitch, false),
-            instrument_id: useValueOrDefault(this.circuitParameters.instrument, 0),
-            note_id: useValueOrDefault(this.circuitParameters.note, 0)
-          } : undefined,
-
-        }) : undefined,
+        }, {}) : undefined,
 
         parameters: this.parameters ? {
           playback_volume: useValueOrDefault(this.parameters.volume, 1.0),
@@ -596,9 +589,9 @@ module.exports = function(entityData) {
           alert_message: useValueOrDefault(this.alertParameters.message, '')
         } : undefined,
 
-        control_behavior: this.controlBehavior || (this.condition && (this.name == 'decider_combinator' || this.name == 'arithmetic_combinator')) ? {
-          filters: this.controlBehavior && this.controlBehavior.filters && Object.keys(this.controlBehavior.filters).length ? Object.keys(this.controlBehavior.filters).map((key, i) => {
-            const data = this.controlBehavior.filters[key];
+        control_behavior: this.constants || this.condition || this.name == 'decider_combinator' || this.name == 'arithmetic_combinator' ? {
+          filters: this.constants && Object.keys(this.constants).length ? Object.keys(this.constants).map((key, i) => {
+            const data = this.constants[key];
             return {
               signal: {
                 name: this.bp.fixName(data.name),
@@ -610,7 +603,14 @@ module.exports = function(entityData) {
           }) : undefined,
 
           decider_conditions: this.name == 'decider_combinator' ? getCondition() : undefined,
-          arithmetic_conditions: this.name == 'arithmetic_combinator' ? getCondition() : undefined
+          arithmetic_conditions: this.name == 'arithmetic_combinator' ? getCondition() : undefined,
+          circuit_condition: !this.name.includes('combinator') && Object.keys(this.condition).length ? getCondition() : undefined,
+
+          circuit_parameters: this.circuitParameters ? {
+            signal_value_is_pitch: useValueOrDefault(this.circuitParameters.signalIsPitch, false),
+            instrument_id: useValueOrDefault(this.circuitParameters.instrument, 0),
+            note_id: useValueOrDefault(this.circuitParameters.note, 0)
+          } : undefined
         } : undefined,
       };
     }
