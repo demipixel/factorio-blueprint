@@ -70,6 +70,7 @@ class Blueprint {
   }
 
   placeBlueprint(bp, position, direction, allowOverlap) { // direction is 0, 1, 2, or 3
+    const entitiesCreated = []
     bp.entities.forEach(ent => {
       const data = ent.getData();
 
@@ -84,7 +85,11 @@ class Blueprint {
       data.position.x += position.x;
       data.position.y += position.y;
 
-      this.createEntityWithData(data, allowOverlap, false, true);
+      entitiesCreated.push(this.createEntityWithData(data, allowOverlap, true, true));
+    });
+
+    entitiesCreated.forEach(e => {
+      e.place(this.entityPositionGrid, this.entitiesCreated);
     });
 
     bp.tiles.forEach(tile => {
@@ -271,6 +276,22 @@ class Blueprint {
     return entityData;
   }
 
+  static get UP() {
+    return 0
+  }
+
+  static get RIGHT() {
+    return 2;
+  }
+
+  static get DOWN() {
+    return 4;
+  }
+
+  static get LEFT() {
+    return 6;
+  }
+ 
   checkName(name) {
     if (typeof name != 'string') throw new Error('Expected name of entity or tile, instead got '+name);
     name = this.jsName(name);
