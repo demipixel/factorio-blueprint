@@ -616,10 +616,17 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   copper_plate: {
     type: item
   },
-  steel: {
+  steel_plate: {
     type: item
   },
   coal: {
+    type: item
+  },
+  uranium_ore: {
+    type: item
+  },
+
+  iron_stick: {
     type: item
   },
 
