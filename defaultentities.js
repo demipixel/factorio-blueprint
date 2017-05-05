@@ -7,10 +7,6 @@ const tile = 'tile'
 module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)! 
                    // Somebody will probably automate the gathering of this data soon...
 
-  stone_path: {
-    type: tile
-  },
-
   programmable_speaker: {
     type: item,
     width: 1,
@@ -149,14 +145,17 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   },
 
   stone_brick: {
-    type: item,
-    width: 1,
-    height: 1
+    type: item
+  },
+
+  stone_path: {
+    type: tile
   },
   concrete: {
-    type: item,
-    width: 1,
-    height: 1
+    type: tile
+  },
+  hazard_concrete: {
+    type: tile
   },
 
   iron_axe: {
