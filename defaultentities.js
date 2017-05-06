@@ -154,7 +154,10 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   concrete: {
     type: tile
   },
-  hazard_concrete: {
+  hazard_concrete_left: {
+    type: tile
+  },
+  hazard_concrete_right: {
     type: tile
   },
 

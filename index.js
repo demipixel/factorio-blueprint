@@ -93,7 +93,7 @@ class Blueprint {
     });
 
     bp.tiles.forEach(tile => {
-      const data = ent.getData();
+      const data = tile.getData();
 
       if (direction == 1) data.position = { x: data.position.y, y: -data.position.x };
       else if (direction == 2) data.position = { x: data.position.y, y: -data.position.x };
@@ -211,8 +211,15 @@ class Blueprint {
     let offsetX = aroundPoint ? -aroundPoint.x : -Math.floor(this.center().x/2)*2;
     let offsetY = aroundPoint ? -aroundPoint.y : -Math.floor(this.center().y/2)*2;
     const offset = new Victor(offsetX, offsetY);
+    this.entities.forEach(entity => entity.removeTileData(this.entityPositionGrid));
     this.entities.forEach(entity => {
       entity.position.add(offset);
+      entity.setTileData(this.entityPositionGrid);
+    });
+    this.tiles.forEach(tile => delete this.tilePositionGrid[tile.position.x+','+tile.position.y]);
+    this.tiles.forEach(tile => {
+      tile.position.add(offset);
+      this.tilePositionGrid[tile.position.x+','+tile.position.y] = tile;
     });
     return this;
   }
