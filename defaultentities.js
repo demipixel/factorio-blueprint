@@ -403,6 +403,11 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
+  radar: {
+    type: item,
+    width: 3,
+    height: 3
+  },
   rail: {
     type: item
   },
@@ -552,7 +557,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   laser_turret: {
     type: item,
     width: 2,
-    width: 2
+    height: 2
   },
 
   productivity_module: {
