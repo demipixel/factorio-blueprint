@@ -24,7 +24,7 @@ module.exports = function(entityData) {
       this.filters = {}; // Filters for container or signals in constant combinator
       this.requestFilters = {}; // Request filters for requester chest
       this.directionType = data.type || 'input'; // Underground belts input/output
-      this.recipe = data.recipe || null;
+      this.recipe = this.bp.checkName(data.recipe) || null;
       this.bar = data.bar || -1;
 
       this.modules = data.items || null;
@@ -547,7 +547,7 @@ module.exports = function(entityData) {
         direction: this.direction || 0,
 
         type: this.HAS_DIRECTION_TYPE ? this.directionType : undefined,
-        recipe: this.CAN_HAVE_RECIPE && this.recipe ? this.recipe : undefined,
+        recipe: this.CAN_HAVE_RECIPE && this.recipe ? this.bp.fixName(this.recipe) : undefined,
         bar: this.INVENTORY_SIZE && (this.bar != -1) ? this.bar : undefined,
 
         items: this.modules || undefined,
