@@ -1,6 +1,6 @@
 {
   "name": "factorio-blueprint",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "Factorio Blueprints API",
   "main": "index.js",
   "scripts": {
