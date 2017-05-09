@@ -24,10 +24,12 @@ module.exports = function(entityData) {
       this.filters = {}; // Filters for container or signals in constant combinator
       this.requestFilters = {}; // Request filters for requester chest
       this.directionType = data.type || 'input'; // Underground belts input/output
-      this.recipe = this.bp.checkName(data.recipe) || null;
+      this.recipe = data.recipe ? this.bp.checkName(data.recipe) : null;
       this.bar = data.bar || -1;
 
-      this.modules = data.items || null;
+      this.modules = data.items ? data.items.map(module => {
+        return { item: this.bp.checkName(module.item), count: module.count }
+      }) : null;
 
 
       this.size = myData ? new Victor(myData.width, myData.height) : // Size in Victor form
@@ -35,6 +37,7 @@ module.exports = function(entityData) {
       this.FILTER_AMOUNT = myData.filterAmount !== false; // Should filters have an amount (e.g. constant combinators have an amount, cargo wagon filter would not)
       this.HAS_DIRECTION_TYPE = myData.directionType;
       this.CAN_HAVE_RECIPE = myData.recipe;
+      this.CAN_HAVE_MODULES = myData.modules;
       this.INVENTORY_SIZE = myData.inventorySize || null;
 
       this.setDirection(data.direction || 0);
@@ -550,7 +553,9 @@ module.exports = function(entityData) {
         recipe: this.CAN_HAVE_RECIPE && this.recipe ? this.bp.fixName(this.recipe) : undefined,
         bar: this.INVENTORY_SIZE && (this.bar != -1) ? this.bar : undefined,
 
-        items: this.modules || undefined,
+        items: this.CAN_HAVE_MODULES && this.modules ? this.modules.map(module => {
+          return { item: this.bp.fixName(module.item), count: module.count }
+        }) : undefined,
 
         filters: makeEmptyArrayUndefined(Object.keys(this.filters).map(index => {
           const filter = this.filters[index];
