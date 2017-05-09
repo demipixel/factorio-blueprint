@@ -549,11 +549,11 @@ module.exports = function(entityData) {
         position: this.center().subtract(new Victor(0.5, 0.5)),
         direction: this.direction || 0,
 
-        type: this.HAS_DIRECTION_TYPE ? this.directionType : undefined,
-        recipe: this.CAN_HAVE_RECIPE && this.recipe ? this.bp.fixName(this.recipe) : undefined,
-        bar: this.INVENTORY_SIZE && (this.bar != -1) ? this.bar : undefined,
+        type: /*this.HAS_DIRECTION_TYPE*/ this.directionType ? this.directionType : undefined,
+        recipe: /*this.CAN_HAVE_RECIPE &&*/ this.recipe ? this.bp.fixName(this.recipe) : undefined,
+        bar: /*this.INVENTORY_SIZE &&*/ (this.bar != -1) ? this.bar : undefined,
 
-        items: this.CAN_HAVE_MODULES && this.modules ? this.modules.map(module => {
+        items: /*this.CAN_HAVE_MODULES &&*/ this.modules ? this.modules.map(module => {
           return { item: this.bp.fixName(module.item), count: module.count }
         }) : undefined,
 
