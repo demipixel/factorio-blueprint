@@ -27,6 +27,8 @@ module.exports = function(entityData) {
       this.recipe = data.recipe || null;
       this.bar = data.bar || -1;
 
+      this.modules = data.items || null;
+
 
       this.size = myData ? new Victor(myData.width, myData.height) : // Size in Victor form
                           (entityData[this.name] ? new Victor(entityData[this.name].width, entityData[this.name].height) : new Victor(1, 1));
@@ -197,7 +199,13 @@ module.exports = function(entityData) {
 
     // Return true if this entity overlaps with no other
     checkNoOverlap(positionGrid) {
-      return !this.getOverlap(positionGrid);
+      const ent = this.getOverlap(positionGrid);
+
+      if (!ent) return true;
+
+      if ((this.name == 'gate' && ent.name == 'straight_rail') || (ent.name == 'gate' && this.name == 'straight_rail')) return true;
+
+      return false;
     }
 
     // Returns an item this entity overlaps with (or null)
@@ -541,6 +549,8 @@ module.exports = function(entityData) {
         type: this.HAS_DIRECTION_TYPE ? this.directionType : undefined,
         recipe: this.CAN_HAVE_RECIPE && this.recipe ? this.recipe : undefined,
         bar: this.INVENTORY_SIZE && (this.bar != -1) ? this.bar : undefined,
+
+        items: this.modules || undefined,
 
         filters: makeEmptyArrayUndefined(Object.keys(this.filters).map(index => {
           const filter = this.filters[index];

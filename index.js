@@ -66,6 +66,9 @@ class Blueprint {
     data.icons.forEach(icon => {
       this.icons[icon.index-1] = this.checkName(icon.signal.name);
     });
+
+    this.setIds();
+
     return this;
   }
 

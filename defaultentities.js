@@ -190,7 +190,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   beacon: {
     type: item,
     width: 3,
-    height: 3
+    height: 3,
+
+    modules: 2
   },
   small_electric_pole: {
     type: item,
@@ -301,24 +303,30 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item,
     width: 3,
     height: 3,
-    recipe: true
+
+    recipe: true,
+    modules: 2
   },
   assembling_machine_3: {
     type: item,
     width: 3,
     height: 3,
-    recipe: true
+
+    recipe: true,
+    modules: 4
   },
   wooden_chest: {
     type: item,
     width: 1,
     height: 1,
+
     inventorySize: 16
   },
   iron_chest: {
     type: item,
     width: 1,
     height: 1,
+
     inventorySize: 32
   },
   steel_chest: {
@@ -445,22 +453,30 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   lab: {
     type: item,
     width: 3,
-    height: 3
+    height: 3,
+
+    modules: 2
   },
   rocket_silo: {
     type: item,
     width: 10,
-    height: 10 //unsure about these values, got them from code only (never counted it in game, but 10 sounds right.)
+    height: 10, //unsure about these values, got them from code only (never counted it in game, but 10 sounds right.)
+
+    modules: 4
   },
   chemical_plant: {
     type: item,
     width: 3,
-    height: 3
+    height: 3,
+
+    modules: 3
   },
   oil_refinery: {
     type: item,
     width: 5,
-    height: 5
+    height: 5,
+
+    modules: 3
   },
   stone_furnace: {
     type: item,
@@ -475,7 +491,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   electric_furnace: {
     type: item,
     width: 3,
-    height: 3
+    height: 3,
+
+    modules: 2
   },
   pumpjack: {
     type: item,
@@ -490,7 +508,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   electric_mining_drill: {
     type: item,
     width: 3,
-    height: 3
+    height: 3,
+
+    modules: 3
   },
   small_pump: {
     type: item,
