@@ -4,7 +4,7 @@ module.exports = function(entityData) {
   class Entity {
 
     constructor(data, positionGrid, bp, center) {
-      let myData = entityData[bp.checkName(data.name)]; // entityData contains info like width, height, filterAmount, etc
+      let myData = entityData[bp.checkName(data.name)] || {}; // entityData contains info like width, height, filterAmount, etc
 
       this.id = -1; // Id used when generating blueprint
       this.bp = bp; // Blueprint
