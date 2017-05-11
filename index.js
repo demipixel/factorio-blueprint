@@ -12,6 +12,7 @@ const Tile = require('./tile')(entityData);
 class Blueprint {
 
   constructor(str, opt) {
+    if (!opt) opt = {};
     this.icons = []; // Icons for Blueprint (up to 4)
     this.entities = []; // List of all entities in Blueprint
     this.tiles = []; // List of all tiles in Blueprint (such as stone path or concrete)
