@@ -18,6 +18,7 @@ class Blueprint {
     this.entityPositionGrid = {}; // Object with tile keys in format "x,y" => entity
     this.tilePositionGrid = {};
     this.version = null;
+    this.checkWithEntityData = opt.checkWithEntityData != undefined ? opt.checkWithEntityData : true; // make sure checkName() validates with entityData
     if (str) this.load(str, opt);
   }
 
@@ -305,7 +306,7 @@ class Blueprint {
   checkName(name) {
     if (typeof name != 'string') throw new Error('Expected name of entity or tile, instead got '+name);
     name = this.jsName(name);
-    if (!entityData[name]) throw new Error(name+' does not exist! You can add it by putting it into entityData.');
+    if (!entityData[name] && this.checkWithEntityData) throw new Error(name+' does not exist! You can add it by putting it into entityData.');
     return name;
   }
 
