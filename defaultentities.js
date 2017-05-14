@@ -2,6 +2,7 @@ const fluid = 'fluid';
 const item = 'item';
 const virtual = 'virtual';
 const tile = 'tile'
+const recipe = 'recipe';
 
 
 module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)! 
@@ -629,6 +630,10 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   },
   lubricant: {
     type: fluid
+  },
+
+  advanced_oil_processing: {
+    type: recipe
   },
 
   iron_ore: {

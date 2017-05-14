@@ -116,6 +116,8 @@ module.exports = function(entityData) {
         if (this.FILTER_AMOUNT) filters[i].signal.name = name;
         else filters[i].name = name;
 
+        if (filters[i].signal && !entityData[filters[i].signal.name]) entityData[filters[i].signal.name] = { type: filters[i].signal.type };
+
         this.setFilter(filters[i].index, this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name, this.FILTER_AMOUNT ? filters[i].count : undefined);
       }
     }
@@ -145,6 +147,9 @@ module.exports = function(entityData) {
         readContents: condition.circuit_read_hand_contents, // circuit_read_hand_contents, true/false
         readMode: condition.circuit_contents_read_mode != undefined ? (condition.circuit_contents_read_mode == 0 ? 'pulse' : 'hold') : undefined
       };
+      [condition.first_signal, condition.second_signal, condition.output_signal].forEach(signal => {
+        if (signal && !entityData[signal.name]) entityData[signal.name] = { type: signal.type };
+      });
       if (this.name == 'decider_combinator') {
         out.countFromInput = condition.copy_count_from_input == 'true';
       }
