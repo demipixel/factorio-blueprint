@@ -4,7 +4,8 @@ module.exports = function(entityData) {
   class Entity {
 
     constructor(data, positionGrid, bp, center) {
-      let myData = entityData[bp.checkName(data.name)] || {}; // entityData contains info like width, height, filterAmount, etc
+      if (!entityData[bp.checkName(data.name)]) entityData[bp.checkName(data.name)] = {};
+      let myData = entityData[bp.checkName(data.name)]; // entityData contains info like width, height, filterAmount, etc
 
       this.id = -1; // Id used when generating blueprint
       this.bp = bp; // Blueprint
@@ -117,6 +118,7 @@ module.exports = function(entityData) {
         else filters[i].name = name;
 
         if (filters[i].signal && !entityData[filters[i].signal.name]) entityData[filters[i].signal.name] = { type: filters[i].signal.type };
+        if (filters[i].signal && !myData.filterAmount) myData.filterAmount = true;
 
         this.setFilter(filters[i].index, this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name, this.FILTER_AMOUNT ? filters[i].count : undefined);
       }
@@ -564,10 +566,10 @@ module.exports = function(entityData) {
 
         filters: makeEmptyArrayUndefined(Object.keys(this.filters).map(index => {
           const filter = this.filters[index];
-          const type = entityData[filter.name].type;
 
           const obj = { index: parseInt(index) };
           if (this.FILTER_AMOUNT) {
+            const type = entityData[filter.name].type;
             obj.signal = {
               name: this.bp.fixName(filter.name),
               type: type
