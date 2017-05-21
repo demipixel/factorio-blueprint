@@ -141,20 +141,20 @@ class Blueprint {
 
   createTileWithData(data) {
     const tile = new Tile(data, this);
-    if (this.tilePositionGrid[data.position.x + ',' + data.position.y]) this.removeTile(this.tilePositionGrid[data.position.x + ',' + data.position.y]);
+    if (this.tilePositionGrid[data.position.x+','+data.position.y]) this.removeTile(this.tilePositionGrid[data.position.x+','+data.position.y]);
 
-    this.tilePositionGrid[data.position.x + ',' + data.position.y] = tile;
+    this.tilePositionGrid[data.position.x+','+data.position.y] = tile;
     this.tiles.push(tile);
     return tile;
   }
 
   // Returns entity at a position (or null)
   findEntity(pos) {
-    return this.entityPositionGrid[Math.floor(pos.x) + ',' + (pos.y)] || null;
+    return this.entityPositionGrid[Math.floor(pos.x)+','+(pos.y)] || null;
   }
 
   findTile(pos) {
-    return this.tilePositionGrid[Math.floor(pos.x) + ',' + (pos.y)] || null;
+    return this.tilePositionGrid[Math.floor(pos.x)+','+(pos.y)] || null;
   }
 
   // Removes a specific entity
@@ -181,13 +181,13 @@ class Blueprint {
 
   // Removes an entity at a position (returns false if no entity is there)
   removeEntityAtPosition(position) {
-    if (!this.entityPositionGrid[position.x + ',' + position.y]) return false;
-    return this.removeEntity(this.entityPositionGrid[position.x + ',' + position.y]);
+    if (!this.entityPositionGrid[position.x+','+position.y]) return false;
+    return this.removeEntity(this.entityPositionGrid[position.x+','+position.y]);
   }
 
   removeTileAtPosition(position) {
-    if (!this.tilePositionGrid[position.x + ',' + position.y]) return false;
-    return this.removeTile(this.tilePositionGrid[position.x + ',' + position.y]);
+    if (!this.tilePositionGrid[position.x+','+position.y]) return false;
+    return this.removeTile(this.tilePositionGrid[position.x+','+position.y]);
   }
 
   // Set ids for entities, called in toJSON()
@@ -207,25 +207,11 @@ class Blueprint {
     return new Victor(this.entities.reduce((best, ent) => xcomp(best, ent[f]().x), this.entities[0][f]().x), this.entities.reduce((best, ent) => ycomp(best, ent[f]().y), this.entities[0][f]().y));
   }
 
-  center() {
-    return new Victor((this.topLeft().x + this.topRight().x) / 2, (this.topLeft().y + this.bottomLeft().y) / 2)
-  }
-
-  topLeft() {
-    return this.getPosition('topLeft', Math.min, Math.min);
-  }
-
-  topRight() {
-    return this.getPosition('topRight', Math.max, Math.min);
-  }
-
-  bottomLeft() {
-    return this.getPosition('bottomLeft', Math.min, Math.max);
-  }
-
-  bottomRight() {
-    return this.getPosition('bottomRight', Math.max, Math.max);
-  }
+  center() { return new Victor((this.topLeft().x + this.topRight().x) / 2, (this.topLeft().y + this.bottomLeft().y) / 2) }
+  topLeft() { return this.getPosition('topLeft', Math.min, Math.min); }
+  topRight() { return this.getPosition('topRight', Math.max, Math.min); }
+  bottomLeft() { return this.getPosition('bottomLeft', Math.min, Math.max); }
+  bottomRight() { return this.getPosition('bottomRight', Math.max, Math.max); }
 
   // Center all entities
   fixCenter(aroundPoint) {
@@ -239,10 +225,10 @@ class Blueprint {
       entity.position.add(offset);
       entity.setTileData(this.entityPositionGrid);
     });
-    this.tiles.forEach(tile => delete this.tilePositionGrid[tile.position.x + ',' + tile.position.y]);
+    this.tiles.forEach(tile => delete this.tilePositionGrid[tile.position.x+','+tile.position.y]);
     this.tiles.forEach(tile => {
       tile.position.add(offset);
-      this.tilePositionGrid[tile.position.x + ',' + tile.position.y] = tile;
+      this.tilePositionGrid[tile.position.x+','+tile.position.y] = tile;
     });
     return this;
   }
