@@ -7,7 +7,6 @@ const entityData = require('./defaultentities');
 const Entity = require('./entity')(entityData);
 const Tile = require('./tile')(entityData);
 const util = require('./util');
-const book = require('./book');
 
 class Blueprint {
 
@@ -337,10 +336,11 @@ class Blueprint {
     fixName(name) {
         return name.replace(/_/g, '-');
     }
-
-    static getBook(str) {
-        return book(str);
-    }
 }
 
 module.exports = Blueprint;
+
+const book = require('./book');
+Blueprint.getBook = function (str) {
+    return book(str);
+};

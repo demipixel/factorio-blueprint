@@ -13,8 +13,9 @@ exports = module.exports = (str) => {
     const dict = {};
 
     blueprints.forEach((blueprint) => {
+        blueprint = blueprint.blueprint;
         const name = blueprint.label;
-        dict[name] = Blueprint(blueprint);
+        dict[name] = new Blueprint(blueprint);
     });
 
     return dict;
