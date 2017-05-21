@@ -23,13 +23,17 @@ Name of the blueprint, can be set. Be wary of setting this to anything other tha
 
 ### Methods
 
-#### Blueprint([str])
+#### Blueprint.getBook(str)
 
-Create an empty blueprint. Accepts an optional encoded blueprint string `str` to be loaded in.
+Returns blueprint book (i.e. map (blueprint name) -> (Blueprint object)) for a given blueprint string
 
-#### bp.load(str, opt)
+#### Blueprint([data])
 
-Loads encoded blueprint string `str`. Returns self. Options are (all default false):
+Create an empty blueprint. Optional `data` can be a blueprint string or a Factorio blueprint object
+
+#### bp.load(data, opt)
+
+Loads blueprint from a blueprint string or a Factorio blueprint object `data`. Returns self. Options are (all default false):
 
 - allowOverlap: Throws an error if two entities are colliding
 - fixEntityData: Automatically adds unknown entities to entityData
