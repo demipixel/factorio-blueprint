@@ -135,19 +135,20 @@ module.exports = function(entityData) {
 
     // Parse condition into standard Entity format
     parseCondition(data) {
-      const condition = data.controlBehavior && (data.controlBehavior.decider_conditions || data.controlBehavior.arithmetic_conditions || data.controlBehavior.circuit_condition);
-      if (!condition) return {};
+      const controlBehavior = data.control_behavior;
+      const condition = (controlBehavior && (controlBehavior.decider_conditions || controlBehavior.arithmetic_conditions || controlBehavior.circuit_condition)) || {};
+      if (!controlBehavior) return {};
       if (condition.first_signal) condition.first_signal.name = this.bp.checkName(condition.first_signal.name);
       if (condition.second_signal) condition.second_signal.name = this.bp.checkName(condition.second_signal.name);
       if (condition.output_signal) condition.output_signal.name = this.bp.checkName(condition.output_signal.name);
       const out = {
         left: condition.first_signal ? condition.first_signal.name : undefined,
-        right: condition.second_signal ? condition.second_signal.name : parseInt(condition.constant),
+        right: condition.second_signal ? condition.second_signal.name : (condition.constant ? parseInt(condition.constant) : undefined),
         out: condition.output_signal ? condition.output_signal.name : undefined,
 
-        controlEnable: condition.circuit_enable_disable, // circuit_enable_disable, true/false
-        readContents: condition.circuit_read_hand_contents, // circuit_read_hand_contents, true/false
-        readMode: condition.circuit_contents_read_mode != undefined ? (condition.circuit_contents_read_mode == 0 ? 'pulse' : 'hold') : undefined
+        controlEnable: controlBehavior.circuit_enable_disable, // circuit_enable_disable, true/false
+        readContents: controlBehavior.circuit_read_hand_contents, // circuit_read_hand_contents, true/false
+        readMode: controlBehavior.circuit_contents_read_mode != undefined ? (condition.circuit_contents_read_mode == 0 ? 'pulse' : 'hold') : undefined
       };
       [condition.first_signal, condition.second_signal, condition.output_signal].forEach(signal => {
         if (signal && !entityData[signal.name]) entityData[signal.name] = { type: signal.type };
@@ -519,29 +520,37 @@ module.exports = function(entityData) {
     getData() {
       const useValueOrDefault = (val, def) => val != undefined ? val : def;
 
+      const getOptionData = (append={}) => {
+
+        if (!this.condition) return append;
+
+        append.circuit_enable_disable = this.condition.controlEnable;
+        append.circuit_read_hand_contents = this.condition.readContents;
+        append.circuit_contents_read_mode = this.condition.readMode != undefined ? (this.condition.readMode == 'pulse' ? 0 : 1) : undefined;
+
+        return append;
+      }
+
       const getCondition = () => {
         // let key = this.name == 'arithmetic_combinator' ? 'arithmetic' : (this.name == 'decider_combinator' ? 'decider' : 'circuit');
-        const out = {
-          first_signal: (this.condition.left ? {
-            type: entityData[this.condition.left].type,
-            name: this.condition.left.replace(/_/g, '-')
-          } : undefined),
-          second_signal: (typeof this.condition.right == 'string' ? {
-            type: entityData[this.condition.right].type,
-            name: this.condition.right.replace(/_/g, '-')
-          } : undefined),
-          constant: typeof this.condition.right == 'number' ? this.condition.right : undefined,
-          operation: undefined,
-          comparator: undefined,
-          output_signal: (this.condition.out ? {
-            type: entityData[this.condition.out].type,
-            name: this.condition.out.replace(/_/g, '-')
-          } : undefined),
+        const out = {};
+        
+        out.first_signal = (this.condition.left ? {
+          type: entityData[this.condition.left].type,
+          name: this.condition.left.replace(/_/g, '-')
+        } : undefined);
+        out.second_signal = (typeof this.condition.right == 'string' ? {
+          type: entityData[this.condition.right].type,
+          name: this.condition.right.replace(/_/g, '-')
+        } : undefined);
+        out.constant = typeof this.condition.right == 'number' ? this.condition.right : undefined;
+        out.operation = undefined;
+        out.comparator = undefined;
+        out.output_signal = (this.condition.out ? {
+          type: entityData[this.condition.out].type,
+          name: this.condition.out.replace(/_/g, '-')
+        } : undefined);
 
-          circuit_enable_disable: this.condition.controlEnable,
-          circuit_read_hand_contents: this.condition.readContents,
-          circuit_contents_read_mode: this.condition.readMode != undefined ? (this.condition.readMode == 'pulse' ? 0 : 1) : undefined
-        };
         if (this.name != 'arithmetic_combinator') {
           out.comparator = this.condition.operator;
           out.copy_count_from_input = this.condition.countFromInput != undefined ? (!!this.condition.countFromInput).toString() : undefined;
@@ -611,7 +620,7 @@ module.exports = function(entityData) {
           alert_message: useValueOrDefault(this.alertParameters.message, '')
         } : undefined,
 
-        control_behavior: this.constants || this.condition || this.name == 'decider_combinator' || this.name == 'arithmetic_combinator' ? {
+        control_behavior: this.constants || this.condition || this.name == 'decider_combinator' || this.name == 'arithmetic_combinator' ? getOptionData({
           filters: this.constants && Object.keys(this.constants).length ? Object.keys(this.constants).map((key, i) => {
             const data = this.constants[key];
             return {
@@ -626,14 +635,14 @@ module.exports = function(entityData) {
 
           decider_conditions: this.name == 'decider_combinator' ? getCondition() : undefined,
           arithmetic_conditions: this.name == 'arithmetic_combinator' ? getCondition() : undefined,
-          circuit_condition: !this.name.includes('combinator') && Object.keys(this.condition).length ? getCondition() : undefined,
+          circuit_condition: !this.name.includes('combinator') && this.condition.left ? getCondition() : undefined,
 
           circuit_parameters: this.circuitParameters ? {
             signal_value_is_pitch: useValueOrDefault(this.circuitParameters.signalIsPitch, false),
             instrument_id: useValueOrDefault(this.circuitParameters.instrument, 0),
             note_id: useValueOrDefault(this.circuitParameters.note, 0)
           } : undefined
-        } : undefined,
+        }) : undefined,
       };
     }
   }
