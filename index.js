@@ -11,6 +11,7 @@ const util = require('./util');
 class Blueprint {
 
   constructor(data, opt = {}) {
+    this.name = 'Blueprint';
     this.icons = []; // Icons for Blueprint (up to 4)
     this.entities = []; // List of all entities in Blueprint
     this.tiles = []; // List of all tiles in Blueprint (such as stone path or concrete)
@@ -44,7 +45,9 @@ class Blueprint {
 
     if (!data.tiles) data.tiles = [];
     if (!data.entities) data.entities = [];
+    if (!data.icons) data.icons = [];
 
+    this.name = data.label;
     this.version = data.version;
 
     data.entities.forEach(entity => {
@@ -265,7 +268,8 @@ class Blueprint {
         entities: this.entities.length ? entityInfo : undefined,
         tiles: this.tiles.length ? tileInfo : undefined,
         item: 'blueprint',
-        version: this.version || 0
+        version: this.version || 0,
+        label: this.name
       }
     };
   }
