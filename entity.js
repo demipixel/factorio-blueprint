@@ -28,9 +28,10 @@ module.exports = function(entityData) {
       this.recipe = data.recipe ? this.bp.checkName(data.recipe) : null;
       this.bar = data.bar || -1;
 
-      this.modules = data.items ? data.items.map(module => {
-        return { item: this.bp.checkName(module.item), count: module.count }
-      }) : null;
+      this.modules = data.items ? Object.keys(data.items).reduce((obj, key) => {
+        obj[this.bp.checkName(key)] = data.items[key];
+        return obj;
+      }, {}) : {};
 
 
       this.size = myData ? new Victor(myData.width, myData.height) : // Size in Victor form
@@ -569,9 +570,10 @@ module.exports = function(entityData) {
         recipe: /*this.CAN_HAVE_RECIPE &&*/ this.recipe ? this.bp.fixName(this.recipe) : undefined,
         bar: /*this.INVENTORY_SIZE &&*/ (this.bar != -1) ? this.bar : undefined,
 
-        items: /*this.CAN_HAVE_MODULES &&*/ this.modules ? this.modules.map(module => {
-          return { item: this.bp.fixName(module.item), count: module.count }
-        }) : undefined,
+        items: /*this.CAN_HAVE_MODULES &&*/ this.modules && Object.keys(this.modules).length ? Object.keys(this.modules).reduce((obj, key) => {
+          obj[this.bp.fixName(key)] = this.modules[key];
+          return obj;
+        }, {}) : undefined,
 
         filters: makeEmptyArrayUndefined(Object.keys(this.filters).map(index => {
           const filter = this.filters[index];
