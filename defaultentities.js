@@ -664,6 +664,10 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   iron_stick: {
     type: item
   },
+  iron_gear_wheel: {
+    type: item
+  },
+  
 
   signal_anything: {
     type: virtual,
