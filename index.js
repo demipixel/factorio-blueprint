@@ -335,3 +335,10 @@ const book = require('./book');
 Blueprint.getBook = function (str) {
   return book(str);
 };
+
+Blueprint.toBook = function(Blueprints,orgBook){
+    let obj = util.decode(orgBook);
+
+    obj.blueprint_book.blueprints = Blueprints;
+    return obj.encode();
+}
