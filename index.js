@@ -340,7 +340,7 @@ Blueprint.toBook = function(Blueprints,orgBook){
     let obj = util.decode(orgBook);
 
     obj.blueprint_book.blueprints = Blueprints;
-    return obj.encode();
+    return utils.encode(obj);
 }
 
 Blueprint.isBook = function(string){
