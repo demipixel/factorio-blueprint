@@ -344,7 +344,7 @@ Blueprint.toBook = function(Blueprints,orgBook){
 }
 
 Blueprint.isBook = function(string){
-  let obj = util.decode(str);
+  let obj = util.decode(string);
 
   if(typeof obj.blueprint_book === 'object'){
     return true;
