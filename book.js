@@ -12,7 +12,6 @@ exports = module.exports = (str,opt) => {
     const blueprints = obj.blueprint_book.blueprints;
     const dict = {};
 
-    console.log(obj);
     blueprints.forEach((blueprint) => {
         blueprint = blueprint.blueprint;
         const name = blueprint.label;
