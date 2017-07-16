@@ -342,3 +342,12 @@ Blueprint.toBook = function(Blueprints,orgBook){
     obj.blueprint_book.blueprints = Blueprints;
     return obj.encode();
 }
+
+Blueprint.isBook = function(string){
+  let obj = util.decode(str);
+
+  if(typeof obj.blueprint_book === 'object'){
+    return true;
+  }
+  return false;
+}
