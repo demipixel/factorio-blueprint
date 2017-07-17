@@ -332,6 +332,22 @@ module.exports = Blueprint;
 
 //Blueprint is imported in ./book, so it must be exported before we import ./book here
 const book = require('./book');
-Blueprint.getBook = function (str) {
-  return book(str);
+Blueprint.getBook = function (str,opt) {
+  return book(str,opt);
 };
+
+Blueprint.toBook = function(Blueprints,orgBook){
+    let obj = util.decode(orgBook);
+
+    obj.blueprint_book.blueprints = Blueprints;
+    return util.encode(obj);
+}
+
+Blueprint.isBook = function(string){
+  let obj = util.decode(string);
+
+  if(typeof obj.blueprint_book === 'object'){
+    return true;
+  }
+  return false;
+}

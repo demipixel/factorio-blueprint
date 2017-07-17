@@ -6,7 +6,7 @@
 const Blueprint = require('./index');
 const util = require('./util');
 
-exports = module.exports = (str) => {
+exports = module.exports = (str,opt) => {
     let obj = util.decode(str);
 
     const blueprints = obj.blueprint_book.blueprints;
@@ -15,7 +15,7 @@ exports = module.exports = (str) => {
     blueprints.forEach((blueprint) => {
         blueprint = blueprint.blueprint;
         const name = blueprint.label;
-        dict[name] = new Blueprint(blueprint);
+        dict[name] = new Blueprint(blueprint,opt);
     });
 
     return dict;
