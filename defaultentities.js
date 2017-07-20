@@ -634,6 +634,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   lubricant: {
     type: fluid
   },
+  steam: {
+    type: fluid
+  },
 
   advanced_oil_processing: {
     type: recipe
