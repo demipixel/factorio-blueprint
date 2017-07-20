@@ -6,8 +6,9 @@
 const Blueprint = require('./index');
 const util = require('./util');
 
-exports = module.exports = (str,opt) => {
-    let obj = util.decode(str);
+exports = module.exports = (str, opt={}) => {
+    const version = str.slice(0, 1);
+    let obj = util.decode[version](str);
 
     const blueprints = obj.blueprint_book.blueprints;
     const blueprintList = [];

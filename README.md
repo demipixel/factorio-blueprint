@@ -135,11 +135,23 @@ Object containing all the data (just before being converted to JSON)
 
 Get the JSON data of the blueprint before it's encoded
 
-#### bp.encode()
+#### bp.encode(version="latest")
 
-Get the encoded blueprint string
+Get the encoded blueprint string using optional `version` encoding method (only option is `0` or `latest` at the moment)
 
-#### static setEntityData(data)
+#### static Blueprint.getBook(str, [options])
+
+Returns an array of blueprints in the blueprint book, loading each with the options specified.
+
+#### static Blueprint.isBook(str)
+
+Returns a boolean on whether or not the string is a blueprint book (otherwise it's just a blueprint).
+
+#### static Blueprint.toBook(blueprints, activeIndex=0, version="latest")
+
+Get an encoded string using an array of blueprint objects stored in `blueprints`. `activeIndex` is the currently selected blueprint and `version` is which encoding method to use (which only supports `0` or `latest` at the moment).
+
+#### static Blueprint.setEntityData(data)
 
 Pass it extra items in the `data` object if you need custom entities (such as from mods or entities that aren't included).
 Use the same format as defaultentities.js

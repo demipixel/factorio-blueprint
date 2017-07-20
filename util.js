@@ -5,13 +5,14 @@ const zlib = require("zlib");
 const Buffer = require('buffer').Buffer;
 
 
-exports = module.exports = {
+const toExport = {
     /**
      * Parse blueprint string in .15 format
      * @param str blueprint string to parse
      * @returns {Object} Factorio blueprint object
      */
-    decode: (str) => {
+    decode: {
+      0: (str) => { // Version 0
         let data = null;
         try {
             data = JSON.parse(zlib.inflateSync(Buffer.from(str.slice(1), 'base64')).toString('utf8'));
@@ -20,6 +21,7 @@ exports = module.exports = {
         }
 
         return data;
+      }
     },
 
     /**
@@ -27,7 +29,14 @@ exports = module.exports = {
      * @param obj
      * @returns {string} object encoded in Factorio .15 format
      */
-    encode: (obj) => {
+    encode: {
+      0: (obj) => { // Version 0
         return '0' + zlib.deflateSync(JSON.stringify(obj)).toString('base64');
+      }
     }
 };
+
+toExport.decode.latest = toExport.decode[0];
+toExport.encode.latest = toExport.encode[0];
+
+exports = module.exports = toExport;

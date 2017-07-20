@@ -32,9 +32,10 @@ class Blueprint {
   }
 
   // Load blueprint from an existing one
-  load(data, opt = {}) {
+  load(data, opt={}) {
     if(typeof data === "string") {
-      data = util.decode(data);
+      const version = data.slice(0, 1);
+      data = util.decode[version](data);
     }
     return this.fillFromObject(data, opt);
   }
@@ -279,8 +280,8 @@ class Blueprint {
   }
 
   // Blueprint string! Yay!
-  encode() {
-    return util.encode(this.toObject());
+  encode(version='latest') {
+    return util.encode[version](this.toObject());
   }
 
   // Set entityData
@@ -333,10 +334,10 @@ module.exports = Blueprint;
 //Blueprint is imported in ./book, so it must be exported before we import ./book here
 const book = require('./book');
 Blueprint.getBook = function (str, opt) {
-  return book(str,opt);
+  return book(str, opt);
 };
 
-Blueprint.toBook = function(blueprints, activeIndex=0){
+Blueprint.toBook = (blueprints, activeIndex=0, version='latest') => {
     let obj = {
       blueprint_book: {
         blueprints: blueprints.map(bp => bp.toObject()),
@@ -346,11 +347,12 @@ Blueprint.toBook = function(blueprints, activeIndex=0){
       }
     };
 
-    return util.encode(obj);
+    return util.encode[version](obj);
 }
 
-Blueprint.isBook = function(string){
-  let obj = util.decode(string);
+Blueprint.isBook = (str) => {
+  const version = str.slice(0, 1);
+  let obj = util.decode[version](str);
 
   return typeof obj.blueprint_book === 'object';
 }
