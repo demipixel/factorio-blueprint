@@ -192,6 +192,10 @@ List of wire connections with other entities
 
 Condition if the entity is a combinator
 
+#### entity.constantEnabled
+
+Boolean which specifies whether or not a constant combinator is on or off.
+
 #### entity.filters
 
 Object of filters. Keys are the positions (1 to X). Used for constant combinators and storage containers.

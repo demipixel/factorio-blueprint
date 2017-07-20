@@ -18,6 +18,7 @@ module.exports = function(entityData) {
       this.circuitParameters = data.circuit_parameters || null;
       this.condition = this.parseCondition(data); // Condition in combinator
       this.constants = {};
+      this.constantEnabled = data.control_behavior && data.control_behavior.is_on !== undefined ? data.control_behavior.is_on : true; // Is constant combinator on/off
 
       this.parameters = data.paramaters || (myData.parameters ? {} : null);
       this.alertParameters = data.alert_parameters || (myData.alertParameters ? {} : null);
@@ -44,7 +45,7 @@ module.exports = function(entityData) {
 
       this.setDirection(data.direction || 0);
 
-      this.parseFilters(data.filters);
+      this.parseFilters(this.name == 'constant_combinator' && data.control_behavior ? data.control_behavior.filters : data.filters);
       this.parseRequestFilters(data.request_filters);
 
       if (center) {
@@ -535,7 +536,7 @@ module.exports = function(entityData) {
       const getCondition = () => {
         // let key = this.name == 'arithmetic_combinator' ? 'arithmetic' : (this.name == 'decider_combinator' ? 'decider' : 'circuit');
         const out = {};
-        
+
         out.first_signal = (this.condition.left ? {
           type: entityData[this.condition.left].type,
           name: this.condition.left.replace(/_/g, '-')
@@ -638,6 +639,8 @@ module.exports = function(entityData) {
           decider_conditions: this.name == 'decider_combinator' ? getCondition() : undefined,
           arithmetic_conditions: this.name == 'arithmetic_combinator' ? getCondition() : undefined,
           circuit_condition: !this.name.includes('combinator') && this.condition.left ? getCondition() : undefined,
+
+          is_on: this.name == 'constant_combinator' && !this.constantEnabled ? this.constantEnabled : undefined,
 
           circuit_parameters: this.circuitParameters ? {
             signal_value_is_pitch: useValueOrDefault(this.circuitParameters.signalIsPitch, false),
