@@ -463,7 +463,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   },
   rocket_silo: {
     type: item,
-    width: 10,
+    width: 9,
     height: 10, //unsure about these values, got them from code only (never counted it in game, but 10 sounds right.)
 
     modules: 4
