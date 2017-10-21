@@ -429,7 +429,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 3,
     height: 3
   },
-  rail: {
+  rail: { 
     type: item
   },
   straight_rail: {
@@ -442,7 +442,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
-  // Lets figure out curved rails later.
+  // Lets figure out curved rails later. (1 curved rail deconstructs to 4 straight rails)
   land_mine: {
     type: item,
     width: 1,
