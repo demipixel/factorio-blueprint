@@ -152,6 +152,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   stone_path: {
     type: tile
   },
+  landfill: {
+    type: item
+  },
   concrete: {
     type: tile
   },
