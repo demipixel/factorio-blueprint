@@ -34,6 +34,12 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 5,
     height: 5
   },
+  
+    centrifuge: {
+    type: item,
+    width: 3,
+    height: 3
+  },
 
   steam_turbine: {
     type: item,
