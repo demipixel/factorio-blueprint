@@ -145,6 +145,16 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
 
+  
+  
+  stone: {
+    type: item
+  },
+  
+  solid_fuel: {
+    type: item
+  },
+  
   stone_brick: {
     type: item
   },
