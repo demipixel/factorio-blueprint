@@ -51,6 +51,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item,
     inventorySize: 40
   },
+  fluid_wagon: {
+    type: item,
+  },
   locomotive: {
     type: item
   },
