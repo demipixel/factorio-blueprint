@@ -13,8 +13,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1,
 
+
     parameters: true,
-    alertParameters: true,
+    alertParameters: true
   },
 
   heat_exchanger: {
@@ -33,6 +34,12 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item,
     width: 5,
     height: 5
+  },
+
+  centrifuge: {
+    type: item,
+    width: 3,
+    height: 3
   },
 
   steam_turbine: {
@@ -70,6 +77,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   grenade: {
     type: item
   },
+  cluster_grenade: {
+    type: item
+  },
   flamethrower: {
     type: item
   },
@@ -83,6 +93,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
   explosive_rocket: {
+    type: item
+  },
+  atomic_bomb: {
     type: item
   },
   combat_shotgun: {
@@ -109,14 +122,26 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   piercing_rounds_magazine: {
     type: item
   },
+  uranium_rounds_magazine: {
+    type: item
+  },
   cannon_shell: {
     type: item
   },
   explosive_cannon_shell: {
     type: item
   },
+  uranium_cannon_shell: {
+    type: item
+  },
+  explosive_uranium_cannon_shell: {
+    type: item
+  },
 
   power_armor: {
+    type: item
+  },
+  power_armor_mk2: {
     type: item
   },
   energy_shield_equipment: {
@@ -131,7 +156,34 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   fusion_reactor_equipment: {
     type: item
   },
+  battery_equipment: {
+    type: item
+  },
+  battery_mk2_equipment: {
+    type: item
+  },
+  personal_laser_defense_equipment: {
+    type: item
+  },
+  discharge_defense_equipment: {
+    type: item
+  },
+  exoskeleton_equipment: {
+    type: item
+  },
+  personal_roboport_equipment: {
+    type: item
+  },
+  personal_roboport_mk2_equipment: {
+    type: item
+  },
+  night_vision_equipment: {
+    type: item
+  },
 
+  discharge_defense_remote: {
+    type: item
+  },
   destroyer_capsule: {
     type: item
   },
@@ -165,6 +217,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   stone_path: {
     type: tile
   },
+  landfill: {
+    type: item
+  },
   concrete: {
     type: tile
   },
@@ -191,6 +246,9 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
   deconstruction_planner: {
+    type: item
+  },
+  blueprint_book: {
     type: item
   },
 
@@ -261,7 +319,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
-  
+
   splitter: { // Default position is facing north, 2 wide and 1 high for all splitters.
     type: item,
     width: 2,
@@ -446,7 +504,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 1,
     height: 1
   },
-  // Lets figure out curved rails later.
+  // Lets figure out curved rails later. (1 curved rail deconstructs to 4 straight rails)
   land_mine: {
     type: item,
     width: 1,
@@ -522,6 +580,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 2,
     height: 2
   },
+  
   electric_mining_drill: {
     type: item,
     width: 3,
@@ -583,7 +642,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   power_switch: {
     type: item,
     width: 3,
-    height: 3,
+    height: 3
   },
 
   gun_turret: {
@@ -596,6 +655,12 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 2,
     height: 2
   },
+  flamethrower_turret: {
+    type: item,
+    width: 2,
+    height: 3
+  },
+
 
   productivity_module: {
     type: item
@@ -626,6 +691,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   },
   
 
+
   water: {
     type: fluid
   },
@@ -655,6 +721,15 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: recipe
   },
 
+  raw_fish: {
+    type: item
+  },
+  wood: {
+    type: item
+  },
+  raw_wood: {
+    type: item
+  },
   iron_ore: {
     type: item
   },
@@ -674,6 +749,106 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
   uranium_ore: {
+    type: item
+  },
+  plastic_bar: {
+    type: item
+  },
+  sulfur: {
+    type: item
+  },
+
+  crude_oil_barrel: {
+    type: item
+  },
+  heavy_oil_barrel: {
+    type: item
+  },
+  light_oil_barrel: {
+    type: item
+  },
+  lubricant_barrel: {
+    type: item
+  },
+  petroleum_gas_barrel: {
+    type: item
+  },
+  sulfuric_acid_barrel: {
+    type: item
+  },
+  water_barrel: {
+    type: item
+  },
+  empty_barrel: {
+    type: item
+  },
+
+  processing_unit: {
+    type: item
+  },
+
+  engine_unit: {
+    type: item
+  },
+
+  electric_engine_unit: {
+    type: item
+  },
+
+  battery: {
+    type: item
+  },
+
+  explosives: {
+    type: item
+  },
+  flying_robot_frame: {
+    type: item
+  },
+  low_density_structure: {
+    type: item
+  },
+  rocket_fuel: {
+    type: item
+  },
+  rocket_control_unit: {
+    type: item
+  },
+  satellite: {
+    type: item
+  },
+  uranium_235: {
+    type: item
+  },
+  uranium_238: {
+    type: item
+  },
+
+  uranium_fuel_cell: {
+    type: item
+  },
+  used_up_uranium_fuel_cell: {
+    type: item
+  },
+  science_pack_1: {
+    type: item
+  },
+  science_pack_2: {
+    type: item
+  },
+  science_pack_3: {
+    type: item
+  },
+  military_science_pack: {
+    type: item
+  },
+  production_science_pack: {
+    type: item
+  },
+  high_tech_science_pack: {
+    type: item
+  },
+  space_science_pack: {
     type: item
   },
 
@@ -698,7 +873,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     combinator: true
   },
   signal_0: {
-    type: virtual,
+    type: virtual
   },
   signal_1: {
     type: virtual
@@ -832,5 +1007,5 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   },
   signal_black: {
     type: virtual
-  },
+  }
 };
