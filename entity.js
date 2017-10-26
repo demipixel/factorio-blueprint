@@ -561,6 +561,35 @@ module.exports = function(entityData) {
         }
         return out;
       }
+      
+      const getAlertParameters = ({
+        showAlert,
+        showOnMap,
+        message,
+        icon
+      }) => {
+        if(icon) {
+          // Allow shorthand (icon name only) by
+          // looking up type
+          if(typeof icon === 'string') {
+            icon = {
+              type: entityData[icon].type,
+              name: icon.replace(/_/g, '-'),
+            };
+          } else {
+            icon = {
+              type: icon.type.replace(/_/g, '-'),
+              name: icon.name.replace(/_/g, '-')
+            };
+          }
+        }
+        return {
+          show_alert: useValueOrDefault(showAlert, false),
+          show_on_map: useValueOrDefault(showOnMap, true),
+          alert_message: useValueOrDefault(message, ''),
+          icon_signal_id: useValueOrDefault(icon, undefined)
+        };
+      }
 
       return {
         name: this.bp.fixName(this.name),
@@ -617,11 +646,7 @@ module.exports = function(entityData) {
           allow_polyphony: useValueOrDefault(this.parameters.allowPolyphony, true)
         } : undefined,
 
-        alert_parameters: this.alertParameters ? {
-          show_alert: useValueOrDefault(this.alertParameters.showAlert, false),
-          show_on_map: useValueOrDefault(this.alertParameters.showOnMap, true),
-          alert_message: useValueOrDefault(this.alertParameters.message, '')
-        } : undefined,
+        alert_parameters: this.alertParameters ? getAlertParameters(this.alertParameters) : undefined,
 
         control_behavior: this.constants || this.condition || this.name == 'decider_combinator' || this.name == 'arithmetic_combinator' ? getOptionData({
           filters: this.constants && Object.keys(this.constants).length ? Object.keys(this.constants).map((key, i) => {

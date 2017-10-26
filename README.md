@@ -314,6 +314,7 @@ opt is an object with the following possible key/values. Returns self
 - showAlert: Whether or not to show an alert in the GUI when a sound is played
 - showOnMap: Whether or not the location should appear on the map
 - message: String containing the alert message
+- icon: The name of the icon to be displayed with the message
 
 #### entity.getData()
 
