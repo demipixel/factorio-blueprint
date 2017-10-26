@@ -566,19 +566,28 @@ module.exports = function(entityData) {
         showAlert,
         showOnMap,
         message,
-        iconSignalId
+        icon
       }) => {
-        if(iconSignalId) {
-          iconSignalId = {
-            type: iconSignalId.type.replace(/_/g, '-'),
-            name: iconSignalId.name.replace(/_/g, '-')
-          };
+        if(icon) {
+          // Allow shorthand (icon name only) by
+          // looking up type
+          if(typeof icon === 'string') {
+            icon = {
+              type: entityData[icon].type,
+              name: icon.replace(/_/g, '-'),
+            };
+          } else {
+            icon = {
+              type: icon.type.replace(/_/g, '-'),
+              name: icon.name.replace(/_/g, '-')
+            };
+          }
         }
         return {
           show_alert: useValueOrDefault(showAlert, false),
           show_on_map: useValueOrDefault(showOnMap, true),
           alert_message: useValueOrDefault(message, ''),
-          icon_signal_id: useValueOrDefault(iconSignalId, undefined)
+          icon_signal_id: useValueOrDefault(icon, undefined)
         };
       }
 
