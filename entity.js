@@ -114,13 +114,14 @@ module.exports = function(entityData) {
     parseFilters(filters) { // Parse filters from json (for constructor)
       if (!filters) return [];
       for (let i = 0; i < filters.length; i++) {
+        if (filters[i].signal && !this.FILTER_AMOUNT) this.FILTER_AMOUNT = true;
+        
         const name = this.bp.checkName(this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name);
 
         if (this.FILTER_AMOUNT) filters[i].signal.name = name;
         else filters[i].name = name;
 
         if (filters[i].signal && !entityData[filters[i].signal.name]) entityData[filters[i].signal.name] = { type: filters[i].signal.type };
-        if (filters[i].signal && !myData.filterAmount) myData.filterAmount = true;
 
         this.setFilter(filters[i].index, this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name, this.FILTER_AMOUNT ? filters[i].count : undefined);
       }
@@ -561,7 +562,7 @@ module.exports = function(entityData) {
         }
         return out;
       }
-      
+
       const getAlertParameters = ({
         showAlert,
         showOnMap,
