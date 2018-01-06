@@ -1,15 +1,32 @@
 {
   "name": "factorio-blueprint",
-  "version": "2.0.17",
+  "version": "2.1.1",
   "description": "Factorio Blueprints API",
   "main": "index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "webpack -p"
   },
   "author": "DemiPixel <luke5227@gmail.com>",
+  "contributors": [
+    {
+      "name": "Ryan Davis",
+      "email": "ryepup@gmail.com"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "prettyjson": "^1.2.1",
     "victor": "^1.1.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "webpack": "^3.8.1"
   }
 }
