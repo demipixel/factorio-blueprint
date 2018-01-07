@@ -1,6 +1,6 @@
 
 module.exports = {
-    entry: './index.js',
+    entry: './src/index.js',
     output: {
         filename: './dist/factorio-blueprint.min.js',
         library: 'Blueprint',
