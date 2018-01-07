@@ -15,8 +15,8 @@ const bp = new Blueprint();
 for (let i = 0; i < 20; i += 2) {
   bp.createEntity('straight_rail', { x: i, y: 1 }, Blueprint.RIGHT);
 }
-// Train stops face toward tracks, and positive-y is in the down direction.
-bp.createEntity('train_stop', { x: 0, y: 3}, Blueprint.UP);
+// Train stop faces in the direction that the train should be facing when it arrives
+bp.createEntity('train_stop', { x: 0, y: 3}, Blueprint.RIGHT);
 
 // Center the blueprint around the entities instead of position (0,0)
 bp.fixCenter();

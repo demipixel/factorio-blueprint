@@ -103,9 +103,9 @@ class Blueprint {
     bp.tiles.forEach(tile => {
       const data = tile.getData();
 
-      if (direction == 1) data.position = {x: data.position.y, y: -data.position.x};
-      else if (direction == 2) data.position = {x: data.position.y, y: -data.position.x};
-      else if (direction == 3) data.position = {x: data.position.y, y: -data.position.x};
+      if (direction == 3) data.position = {x: data.position.y, y: -data.position.x};
+      else if (direction == 2) data.position = {x: -data.position.x, y: -data.position.y};
+      else if (direction == 1) data.position = {x: -data.position.y, y: data.position.x};
 
       data.position.x += position.x;
       data.position.y += position.y;
