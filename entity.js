@@ -115,7 +115,7 @@ module.exports = function(entityData) {
       if (!filters) return [];
       for (let i = 0; i < filters.length; i++) {
         if (filters[i].signal && !this.FILTER_AMOUNT) this.FILTER_AMOUNT = true;
-        
+
         const name = this.bp.checkName(this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name);
 
         if (this.FILTER_AMOUNT) filters[i].signal.name = name;

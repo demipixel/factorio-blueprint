@@ -5,8 +5,6 @@ A node.js library created to help you create, modify, and export Factorio bluepr
 This library supports simple tasks such as adding or removing entities to more complex tasks such as connecting
 entities via wires and modifying combinators.
 
-See docs [here](https://demipixel.github.io/factorio-blueprint).
-
 ## Getting Started
 
 ### Install via NPM
@@ -32,5 +30,3 @@ importedBlueprint.entities[0].remove();
 // Export the string to use in-game
 console.log(myBlueprint.encode());
 ```
-
-## [Click here for full documentation!](https://demipixel.github.io/factorio-blueprint)
