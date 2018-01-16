@@ -45,7 +45,15 @@ Boolean which specifies whether or not a constant combinator is on or off.
 
 ### filters
 
-Object of filters. Keys are the positions (1 to X). Used for storage containers.
+Object of filters. Keys are the positions (0 to X), values are item names. Used for storage containers.
+
+### requestFilters
+
+Same format as `filters` but instead used for a chest's request filters.
+
+### constants
+
+Same format as `filters` but instead use for constant combinator values.
 
 ### recipe
 
@@ -115,7 +123,7 @@ Remove all wire connections with this entity. Returns self.
 
 ### setFilter(position, item, [amount])
 
-Sets filter at `position` (this is 1-indexed) with `amount` of `item` (an entity name).
+Sets filter at `position` (this is 0-indexed) with `amount` of `item` (an entity name).
 
 Returns self.
 

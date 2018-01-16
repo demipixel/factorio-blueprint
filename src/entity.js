@@ -123,7 +123,12 @@ module.exports = function(entityData) {
 
         if (filters[i].signal && !entityData[filters[i].signal.name]) entityData[filters[i].signal.name] = { type: filters[i].signal.type };
 
-        this.setFilter(filters[i].index, this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name, this.FILTER_AMOUNT ? filters[i].count : undefined);
+        const final_position = filters[i].index - 1;
+        const final_name = this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name;
+        const final_amount = this.FILTER_AMOUNT ? filters[i].count : undefined;
+
+        if (this.name == 'constant_combinator') this.setConstant(final_position, final_name, final_amount);
+        else this.setFilter(final_position, final_name, final_amount);
       }
     }
 
@@ -132,7 +137,7 @@ module.exports = function(entityData) {
       if (!request_filters) return [];
       for (let i = 0; i < request_filters.length; i++) {
         request_filters[i].name = this.bp.checkName(request_filters[i].name);
-        this.setRequestFilter(request_filters[i].index, request_filters[i].name, request_filters[i].count);
+        this.setRequestFilter(request_filters[i].index - 1, request_filters[i].name, request_filters[i].count);
       }
     }
 
@@ -308,6 +313,7 @@ module.exports = function(entityData) {
     }
 
     setFilter(pos, name, amt, request) {
+      if (pos < 0) throw new Error('Filter index cannot be less than 0!');
       const filter = request ? 'requestFilters' : 'filters';
       name = this.bp.checkName(name);
       if (name == null) delete this[filter][pos];
@@ -609,7 +615,7 @@ module.exports = function(entityData) {
         filters: makeEmptyArrayUndefined(Object.keys(this.filters).map(index => {
           const filter = this.filters[index];
 
-          const obj = { index: parseInt(index) };
+          const obj = { index: parseInt(index) + 1 };
           if (this.FILTER_AMOUNT) {
             const type = entityData[filter.name].type;
             obj.signal = {
@@ -628,7 +634,7 @@ module.exports = function(entityData) {
           return {
             name: this.bp.fixName(rFilter.name),
             count: rFilter.count,
-            index: parseInt(index)
+            index: parseInt(index) + 1
           }
         })),
 
