@@ -1,5 +1,7 @@
 # factorio-blueprint
 
+[![npm version](https://badge.fury.io/js/factorio-blueprint.svg)](https://badge.fury.io/js/factorio-blueprint)
+
 A node.js library created to help you create, modify, and export Factorio blueprints and blueprint strings!
 
 This library supports simple tasks such as adding or removing entities to more complex tasks such as connecting
