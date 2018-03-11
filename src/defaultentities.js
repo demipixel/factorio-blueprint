@@ -5,7 +5,7 @@ const tile = 'tile'
 const recipe = 'recipe';
 
 
-module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)! 
+module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)!
                    // Somebody will probably automate the gathering of this data soon...
 
   programmable_speaker: {
@@ -200,16 +200,16 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: item
   },
 
-  
-  
+
+
   stone: {
     type: item
   },
-  
+
   solid_fuel: {
     type: item
   },
-  
+
   stone_brick: {
     type: item
   },
@@ -230,6 +230,18 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     type: tile
   },
   hazard_concrete_right: {
+    type: tile
+  },
+  refined_concrete: {
+    type: tile
+  },
+  refined_hazard_concrete: {
+    type: item
+  },
+  refined_hazard_concrete_left: {
+    type: tile
+  },
+  refined_hazard_concrete_right: {
     type: tile
   },
 
@@ -580,7 +592,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     width: 2,
     height: 2
   },
-  
+
   electric_mining_drill: {
     type: item,
     width: 3,
@@ -689,7 +701,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   speed_module_3: {
     type: item
   },
-  
+
 
 
   water: {
@@ -858,7 +870,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   iron_gear_wheel: {
     type: item
   },
-  
+
 
   signal_anything: {
     type: virtual,
