@@ -73,9 +73,9 @@ Creates a tile (such as concrete or stone bricks) of type `name` at `position`.
 
 Returns the newly created [Tile](./classes/Tile.md).
 
-### placeBlueprint(otherBlueprint, position, direction=0, allowOverlap=false)
+### placeBlueprint(otherBlueprint, position, rotations=0, allowOverlap=false)
 
-Places `otherBlueprint` at `position` (being the center of `otherBlueprint`) with rotations direction (0, 1, 2, or 3 rotating clockwise each time). `allowOverlap` works the same as in createEntity(). Clones both entities and tiles.
+Places `otherBlueprint` at `position` (being the center of `otherBlueprint`) with `rotations` (0, 1, 2, or 3 rotating clockwise each time). `allowOverlap` works the same as in createEntity(). Clones both entities and tiles.
 
 Returns self.
 

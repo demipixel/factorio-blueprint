@@ -6,17 +6,17 @@
 const Blueprint = require('./index');
 const util = require('./util');
 
-exports = module.exports = (str, opt={}) => {
-    const version = str.slice(0, 1);
-    let obj = util.decode[version](str);
+module.exports = (str, opt = {}) => {
+  const version = str.slice(0, 1);
+  let obj = util.decode[version](str);
 
-    const blueprints = obj.blueprint_book.blueprints;
-    const blueprintList = [];
+  const blueprints = obj.blueprint_book.blueprints;
+  const blueprintList = [];
 
-    blueprints.forEach((blueprint) => {
-        blueprint = blueprint.blueprint;
-        blueprintList.push(new Blueprint(blueprint,opt));
-    });
+  blueprints.forEach((blueprint) => {
+    blueprint = blueprint.blueprint;
+    blueprintList.push(new Blueprint(blueprint, opt));
+  });
 
-    return blueprintList;
+  return blueprintList;
 };

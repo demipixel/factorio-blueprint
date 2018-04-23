@@ -6,7 +6,7 @@ const recipe = 'recipe';
 
 
 module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)!
-                   // Somebody will probably automate the gathering of this data soon...
+  // Somebody will probably automate the gathering of this data soon...
 
   programmable_speaker: {
     type: item,

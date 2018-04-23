@@ -32,8 +32,8 @@ class Blueprint {
   }
 
   // Load blueprint from an existing one
-  load(data, opt={}) {
-    if(typeof data === "string") {
+  load(data, opt = {}) {
+    if (typeof data === 'string') {
       const version = data.slice(0, 1);
       data = util.decode[version](data);
     }
@@ -54,7 +54,7 @@ class Blueprint {
     data.entities.forEach(entity => {
       if (opt.fixEntityData) {
         const data = {};
-        data[this.jsName(entity.name)] = {type: 'item', width: 1, height: 1};
+        data[this.jsName(entity.name)] = { type: 'item', width: 1, height: 1 };
         Blueprint.setEntityData(data);
       }
       this.createEntityWithData(entity, opt.allowOverlap, true, true); // no overlap (unless option allows it), place altogether later, positions are their center
@@ -77,18 +77,18 @@ class Blueprint {
     return this;
   }
 
-  placeBlueprint(bp, position, direction, allowOverlap) { // direction is 0, 1, 2, or 3
+  placeBlueprint(bp, position, rotations, allowOverlap) { // rotations is 0, 1, 2, or 3
     const entitiesCreated = []
     bp.entities.forEach(ent => {
       const data = ent.getData();
 
-      data.direction += (direction || 0) * 2;
+      data.direction += (rotations || 0) * 2;
       // data.direction += 8;
       data.direction %= 8;
 
-      if (direction == 3) data.position = {x: data.position.y, y: -data.position.x};
-      else if (direction == 2) data.position = {x: -data.position.x, y: -data.position.y};
-      else if (direction == 1) data.position = {x: -data.position.y, y: data.position.x};
+      if (rotations == 3) data.position = { x: data.position.y, y: -data.position.x };
+      else if (rotations == 2) data.position = { x: -data.position.x, y: -data.position.y };
+      else if (rotations == 1) data.position = { x: -data.position.y, y: data.position.x };
 
       data.position.x += position.x;
       data.position.y += position.y;
@@ -97,15 +97,15 @@ class Blueprint {
     });
 
     entitiesCreated.forEach(e => {
-      e.place(this.entityPositionGrid, this.entitiesCreated);
+      e.place(this.entityPositionGrid, entitiesCreated);
     });
 
     bp.tiles.forEach(tile => {
       const data = tile.getData();
 
-      if (direction == 3) data.position = {x: data.position.y, y: -data.position.x};
-      else if (direction == 2) data.position = {x: -data.position.x, y: -data.position.y};
-      else if (direction == 1) data.position = {x: -data.position.y, y: data.position.x};
+      if (rotations == 3) data.position = { x: data.position.y, y: -data.position.x };
+      else if (rotations == 2) data.position = { x: -data.position.x, y: -data.position.y };
+      else if (rotations == 1) data.position = { x: -data.position.y, y: data.position.x };
 
       data.position.x += position.x;
       data.position.y += position.y;
@@ -140,25 +140,26 @@ class Blueprint {
   }
 
   createTile(name, position) {
-    return this.createTileWithData({name: name, position: position});
+    return this.createTileWithData({ name: name, position: position });
   }
 
   createTileWithData(data) {
     const tile = new Tile(data, this);
-    if (this.tilePositionGrid[data.position.x+','+data.position.y]) this.removeTile(this.tilePositionGrid[data.position.x+','+data.position.y]);
+    if (this.tilePositionGrid[data.position.x + ',' + data.position.y]) this.removeTile(this.tilePositionGrid[data.position.x + ',' + data.position
+      .y]);
 
-    this.tilePositionGrid[data.position.x+','+data.position.y] = tile;
+    this.tilePositionGrid[data.position.x + ',' + data.position.y] = tile;
     this.tiles.push(tile);
     return tile;
   }
 
   // Returns entity at a position (or null)
   findEntity(pos) {
-    return this.entityPositionGrid[Math.floor(pos.x)+','+(pos.y)] || null;
+    return this.entityPositionGrid[Math.floor(pos.x) + ',' + (pos.y)] || null;
   }
 
   findTile(pos) {
-    return this.tilePositionGrid[Math.floor(pos.x)+','+(pos.y)] || null;
+    return this.tilePositionGrid[Math.floor(pos.x) + ',' + (pos.y)] || null;
   }
 
   // Removes a specific entity
@@ -185,13 +186,13 @@ class Blueprint {
 
   // Removes an entity at a position (returns false if no entity is there)
   removeEntityAtPosition(position) {
-    if (!this.entityPositionGrid[position.x+','+position.y]) return false;
-    return this.removeEntity(this.entityPositionGrid[position.x+','+position.y]);
+    if (!this.entityPositionGrid[position.x + ',' + position.y]) return false;
+    return this.removeEntity(this.entityPositionGrid[position.x + ',' + position.y]);
   }
 
   removeTileAtPosition(position) {
-    if (!this.tilePositionGrid[position.x+','+position.y]) return false;
-    return this.removeTile(this.tilePositionGrid[position.x+','+position.y]);
+    if (!this.tilePositionGrid[position.x + ',' + position.y]) return false;
+    return this.removeTile(this.tilePositionGrid[position.x + ',' + position.y]);
   }
 
   // Set ids for entities, called in toJSON()
@@ -208,7 +209,8 @@ class Blueprint {
   // Get corner/center positions
   getPosition(f, xcomp, ycomp) {
     if (!this.entities.length) return new Victor(0, 0);
-    return new Victor(this.entities.reduce((best, ent) => xcomp(best, ent[f]().x), this.entities[0][f]().x), this.entities.reduce((best, ent) => ycomp(best, ent[f]().y), this.entities[0][f]().y));
+    return new Victor(this.entities.reduce((best, ent) => xcomp(best, ent[f]().x), this.entities[0][f]().x), this.entities.reduce((best, ent) =>
+      ycomp(best, ent[f]().y), this.entities[0][f]().y));
   }
 
   center() { return new Victor((this.topLeft().x + this.topRight().x) / 2, (this.topLeft().y + this.bottomLeft().y) / 2) }
@@ -229,10 +231,10 @@ class Blueprint {
       entity.position.add(offset);
       entity.setTileData(this.entityPositionGrid);
     });
-    this.tiles.forEach(tile => delete this.tilePositionGrid[tile.position.x+','+tile.position.y]);
+    this.tiles.forEach(tile => delete this.tilePositionGrid[tile.position.x + ',' + tile.position.y]);
     this.tiles.forEach(tile => {
       tile.position.add(offset);
-      this.tilePositionGrid[tile.position.x+','+tile.position.y] = tile;
+      this.tilePositionGrid[tile.position.x + ',' + tile.position.y] = tile;
     });
     return this;
   }
@@ -260,7 +262,7 @@ class Blueprint {
     });
     const tileInfo = this.tiles.map((tile, i) => tile.getData());
     const iconData = this.icons.map((icon, i) => {
-      return {signal: {type: entityData[icon].type, name: this.fixName(icon)}, index: i + 1};
+      return { signal: { type: entityData[icon].type, name: this.fixName(icon) }, index: i + 1 };
     });
 
     return {
@@ -280,7 +282,7 @@ class Blueprint {
   }
 
   // Blueprint string! Yay!
-  encode(version='latest') {
+  encode(version = 'latest') {
     return util.encode[version](this.toObject());
   }
 
@@ -333,21 +335,21 @@ module.exports = Blueprint;
 
 //Blueprint is imported in ./book, so it must be exported before we import ./book here
 const book = require('./book');
-Blueprint.getBook = function (str, opt) {
+Blueprint.getBook = function(str, opt) {
   return book(str, opt);
 };
 
-Blueprint.toBook = (blueprints, activeIndex=0, version='latest') => {
-    let obj = {
-      blueprint_book: {
-        blueprints: blueprints.map(bp => bp.toObject()),
-        item: 'blueprint-book',
-        active_index: activeIndex,
-        version: 0
-      }
-    };
+Blueprint.toBook = (blueprints, activeIndex = 0, version = 'latest') => {
+  let obj = {
+    blueprint_book: {
+      blueprints: blueprints.map(bp => bp.toObject()),
+      item: 'blueprint-book',
+      active_index: activeIndex,
+      version: 0
+    }
+  };
 
-    return util.encode[version](obj);
+  return util.encode[version](obj);
 }
 
 Blueprint.isBook = (str) => {

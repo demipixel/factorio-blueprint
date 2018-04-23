@@ -1,6 +1,6 @@
 {
   "name": "factorio-blueprint",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Factorio Blueprints API",
   "main": "src/index.js",
   "scripts": {
@@ -8,12 +8,10 @@
     "prepublish": "webpack -p"
   },
   "author": "DemiPixel <luke5227@gmail.com>",
-  "contributors": [
-    {
-      "name": "Ryan Davis",
-      "email": "ryepup@gmail.com"
-    }
-  ],
+  "contributors": [{
+    "name": "Ryan Davis",
+    "email": "ryepup@gmail.com"
+  }],
   "license": "ISC",
   "dependencies": {
     "prettyjson": "^1.2.1",
