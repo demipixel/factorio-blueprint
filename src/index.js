@@ -77,7 +77,7 @@ class Blueprint {
     return this;
   }
 
-  placeBlueprint(bp, position, rotations, allowOverlap) { // rotations is 0, 1, 2, or 3
+  placeBlueprint(bp, position, rotations, allowOverlap) { // rotations is 0, 1, 2, 3 or any of the Blueprint.ROTATION_* constants.
     const entitiesCreated = []
     bp.entities.forEach(ent => {
       const data = ent.getData();
@@ -313,6 +313,34 @@ class Blueprint {
 
   static get LEFT() {
     return 6;
+  }
+
+  static get ROTATION_NONE() {
+    return 0;
+  }
+
+  static get ROTATION_90_CW() {
+    return 1;
+  }
+
+  static get ROTATION_180_CW() {
+    return 2;
+  }
+
+  static get ROTATION_270_CW() {
+    return 3;
+  }
+
+  static get ROTATION_270_CCW() {
+    return this.ROTATION_90_CW;
+  }
+
+  static get ROTATION_180_CCW() {
+    return this.ROTATION_180_CW;
+  }
+
+  static get ROTATION_90_CCW() {
+    return this.ROTATION_270_CW;
   }
 
   checkName(name) {
