@@ -27,6 +27,10 @@ Returns the integer for the direction up, helpful in Blueprint.createEntity()
 
 ### static LEFT
 
+### static ROTATION_NONE, ROTATION_90_CW, ROTATION_180_CW, ROTATION_270_CW, ROTATION_270_CCW, ROTATION_180_CCW, ROTATION_90_CCW
+
+Rotation parameters for the `placeBlueprint` function.
+
 ## Methods
 
 ### Blueprint([data], [opt])
@@ -75,7 +79,7 @@ Returns the newly created [Tile](./classes/Tile.md).
 
 ### placeBlueprint(otherBlueprint, position, rotations=0, allowOverlap=false)
 
-Places `otherBlueprint` at `position` (being the center of `otherBlueprint`) with `rotations` (0, 1, 2, or 3 rotating clockwise each time). `allowOverlap` works the same as in createEntity(). Clones both entities and tiles.
+Places `otherBlueprint` at `position` (being the center of `otherBlueprint`) with `rotations`; Supply one of the `Blueprint.ROTATION_*` constants. `allowOverlap` works the same as in createEntity(). Clones both entities and tiles.
 
 Returns self.
 
