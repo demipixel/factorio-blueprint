@@ -60,9 +60,37 @@ describe('Blueprints', function () {
   });
 
   describe('recipes', function () {
+    it('supports recipes in assemblers', function () {
+      const input = '0eJx9UMuOwyAM/Jc5U2l75dbvWFUVpFZrCUwEpG0U8e9rQne1px499ry8wYeF5sxSYTfwlKTAfm8ofBMXOlbXmWDBlSIMxMU+uVIo+sByO0Q33VnocEQzYLnSC/bYzgYklSvT0PvEM5hT0dMk3a/TDdYuYnDlTNPYfJm/KDIvVVm64h0oNanQ04WgqFaQwVHnre1AzSlcPN3dg1Me6J5uvcgSPeV34r2j/fcSgwfl8msfnCd9CU6jhNJa+wG0Pm2x';
+      var bp = new Blueprint().load(input);
+      console.log(bp.toJSON());
+      var assembler = bp.findEntity(new Victor(1,1));
+
+      assert.equal(assembler.name, "assembling-machine-1");
+      assert.equal(assembler.direction, Blueprint.UP);
+      assert.equal(assembler.position.x, 0);
+      assert.equal(assembler.position.y, 0);
+      assert.equal(assembler.recipe, 'stone_wall'); // XXX should be stone-wall?
+    });
   });
 
   describe('modules', function () {
+    it('supports modules in assemblers', function () {
+      const input = '0eJx9kMFqxDAMRP9FZwe27c23/Y5SFjvR7gps2dhOtiHk3yvFbVko9KgZ63k0G/gwYy7EDewGNCauYN83qHRjF1Rra0awQA0jGGAXdXK1YvSB+DZEN96JcXiD3QDxhJ9gX/YPA8iNGmHn/bdnIKcqTxPrf7puYFWIgYkKjt05md8onOcmW2LRIdSWBPRwIYiqQauCakachpimOegvSs1FJuEt1NYn51XCXq/419AIUgn3DErtQispXDze3UKpdPW4dr3wHD2W7waOzuxTxQYWLPXnnOA8SsVw7qVgkQr3L2ZAiTQ=';
+      var bp = new Blueprint().load(input);
+      console.log(bp.toJSON());
+      var assembler = bp.findEntity(new Victor(1,1));
+
+      assert.equal(assembler.name, "assembling-machine-3");
+      assert.equal(assembler.direction, Blueprint.UP);
+      assert.equal(assembler.position.x, 0);
+      assert.equal(assembler.position.y, 0);
+      assert.equal(assembler.recipe, 'stone_wall'); // XXX should be stone-wall?
+      assert.equal(assembler.modules['speed_module_3'], 1);
+      assert.equal(assembler.modules['effectivity_module_3'], 1);
+      assert.equal(assembler.modules['productivity_module_3'], 2);
+      //assert.equal(assembler.modules, {'speed_module_3': 1, 'productivity_module_3': 2, 'effectivity_module_3': 1}); // Should work out why this assertion does not pass.
+    });
   });
   
   describe('filter inserters', function () {
