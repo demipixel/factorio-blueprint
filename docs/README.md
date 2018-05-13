@@ -7,6 +7,10 @@ entities via wires and modifying combinators.
 
 ## Getting Started
 
+### Website Usage
+
+If you want to use this on a site, you can access the latest build in /dist
+
 ### Install via NPM
 
 ```
