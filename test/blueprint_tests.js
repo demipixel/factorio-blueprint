@@ -94,10 +94,10 @@ describe('Blueprints', function () {
   });
   
   describe('filter inserters', function () {
-    it('buffer chest', function () {
+    it('stack filter inserters have only one item', function () {
 
     });
-    it('buffer chest', function () {
+    it('have multiple filters', function () {
 
     });
   });
