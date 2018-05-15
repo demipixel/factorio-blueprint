@@ -94,18 +94,54 @@ describe('Blueprints', function () {
   });
   
   describe('filter inserters', function () {
+    it('buffer chest', function () {
+
+    });
+    it('buffer chest', function () {
+
+    });
   });
 
   describe('inventory filters', function () {
   });
 
   describe('logistic request filters', function () {
+    it('storage chest ?', function () {
+
+    });
+    it('request chest', function () {
+
+    });
+    it('buffer chest', function () {
+
+    });
   });
 
   describe('bars', function () {
+    it('has a box with no bar', function () {
+
+    });
+    it('has a box with some bar', function () {
+
+    });
+    it('fails when trying to add a bigger bar than the box has inventory', function () {
+
+    });
   });
 
   describe('circuit conditions', function () {
+    it('can handle train stops', function () {
+
+    });
+    it('can handle signals', function () {
+
+    });
+    it('can handle coloured lamps', function () {
+
+    });
+    it('can handle programmable speakers', function () {
+
+    });
   });
 
   describe('connections', function () {
