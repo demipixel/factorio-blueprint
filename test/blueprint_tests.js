@@ -19,12 +19,12 @@ describe('Blueprints', function () {
       console.log(bp.toJSON());
       var wall1 = bp.findEntity(new Victor(0,0));
 
-      assert.equal(wall1.name, "stone-wall");
+      assert.equal(wall1.name, "stone_wall");
       assert.equal(wall1.position.x, 0);
       assert.equal(wall1.position.y, 0);
 
       var wall2 = bp.findEntity(new Victor(5,5));
-      assert.equal(wall2.name, "stone-wall");
+      assert.equal(wall2.name, "stone_wall");
       assert.equal(wall2.position.x, 5);
       assert.equal(wall2.position.y, 5);
     });
@@ -40,19 +40,19 @@ describe('Blueprints', function () {
       var s = bp.findEntity(new Victor(1,2));
       var w = bp.findEntity(new Victor(0,1));
 
-      assert.equal(n.name, "transport-belt");
+      assert.equal(n.name, "transport_belt");
       assert.equal(n.direction, Blueprint.UP);
       assert.equal(n.position.x, 1);
       assert.equal(n.position.y, 0);
-      assert.equal(e.name, "fast-transport-belt");
+      assert.equal(e.name, "fast_transport_belt");
       assert.equal(e.direction, Blueprint.RIGHT);
       assert.equal(e.position.x, 2);
       assert.equal(e.position.y, 1);
-      assert.equal(s.name, "transport-belt");
+      assert.equal(s.name, "transport_belt");
       assert.equal(s.direction, Blueprint.DOWN);
       assert.equal(s.position.x, 1);
       assert.equal(s.position.y, 2);
-      assert.equal(w.name, "express-transport-belt");
+      assert.equal(w.name, "express_transport_belt");
       assert.equal(w.direction, Blueprint.LEFT);
       assert.equal(w.position.x, 0);
       assert.equal(w.position.y, 1);
@@ -66,7 +66,7 @@ describe('Blueprints', function () {
       console.log(bp.toJSON());
       var assembler = bp.findEntity(new Victor(1,1));
 
-      assert.equal(assembler.name, "assembling-machine-1");
+      assert.equal(assembler.name, "assembling_machine_1");
       assert.equal(assembler.direction, Blueprint.UP);
       assert.equal(assembler.position.x, 0);
       assert.equal(assembler.position.y, 0);
@@ -81,7 +81,7 @@ describe('Blueprints', function () {
       console.log(bp.toJSON());
       var assembler = bp.findEntity(new Victor(1,1));
 
-      assert.equal(assembler.name, "assembling-machine-3");
+      assert.equal(assembler.name, "assembling_machine_3");
       assert.equal(assembler.direction, Blueprint.UP);
       assert.equal(assembler.position.x, 0);
       assert.equal(assembler.position.y, 0);
@@ -136,7 +136,7 @@ describe('Blueprints', function () {
       console.log(bp.toJSON());
       var train_stop = bp.findEntity(new Victor(-12, -2));
 
-      assert.equal(train_stop.name, "train-stop");
+      assert.equal(train_stop.name, "train_stop");
       assert.equal(train_stop.position.x, -12.5);
       assert.equal(train_stop.position.y, -2.5);
       assert.equal(train_stop.condition.controlEnable, true);
