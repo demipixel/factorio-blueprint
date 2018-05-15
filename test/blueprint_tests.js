@@ -130,8 +130,21 @@ describe('Blueprints', function () {
   });
 
   describe('circuit conditions', function () {
-    it('can handle train stops', function () {
+    it('can enable/disable train stops', function () {
+      const input = '0eNqdlsFu2zAMht+FZ7uIZCf1fOihxwK9DdihKAzFZhMCtmxIctAg8LtPtIcsWxKA7SUGJfHjT1KEcoJtO+LgyAYoT0B1bz2UbyfwtLOm5bVwHBBKoIAdJGBNx5Yz1MKUANkGP6FU03sCaAMFwsV/No6VHbstunjg7Bmiq0196IdIG3ofXXrLcSImVTqBY/zqiG7IYb1sbhKIwoLr22qLe3Og3rFHTa4eKVRxrzljPsj5UF3JP5ALY1w561hOpMYew57sjpPh5IPhSqzY6AbjTOBQ8DRv/wmH1mxbrBry/IUyuBET8GibKvTVnB+UH6b1cXW2Ks52wEau6idMix67lMCzj+Ifh81lfSlaenrn01H6UgN4/fXy8hwVX3VBn+N02NDYpdhGvqM6HfqYyXU/1g/rpSHqYS0XpC5Cs52xwBtysi/KUd9So/9Tk99Rk39RTfEtNfdqsf57BfjO7PYhnWfsxozkc9jVvyOibzA3cqaWMh/lzJWUWYiZhRT5Q4zcSJGcj5Ap7pBSYqa4Q0pLmeIGqUyKlKvMpUh5McUzJO+5eITEN1OJJ0g+QEo8QfcGPT7f8wNfXvwfSOCAzi8PcPGoVZFtVlk+Tb8BQcK+7A==';
+      var bp = new Blueprint().load(input);
+      console.log(bp.toJSON());
+      var train_stop = bp.findEntity(new Victor(-12, -2));
 
+      assert.equal(train_stop.name, "train-stop");
+      assert.equal(train_stop.position.x, -12.5);
+      assert.equal(train_stop.position.y, -2.5);
+      assert.equal(train_stop.condition.controlEnable, true);
+      assert.equal(train_stop.condition.left, 'signal_anything');
+      assert.equal(train_stop.condition.operator, '>');
+
+    // TODO modes? some modes have more parameters?
+    // assert.equal(train_stop.condition.modes['send_to_train'], 'false');
     });
     it('can handle signals', function () {
 
@@ -142,6 +155,17 @@ describe('Blueprints', function () {
     it('can handle programmable speakers', function () {
 
     });
+    it('can read electric ore miners', function () {
+      const input = '0eNrVVW1rwjAQ/ivjPqejSTt1/StDpC83PUhTSdIxkfz3JSkTdROjg7F9SXu95nm5Nnd7aOSIW03KQrUHagdloHrZg6G1qmV4ZndbhArIYg8MVN2HCCW2VlOb9aRIrbNOk5TgGJDq8B0q7thVDF3T8RbhlgxQWbKEk4YY7FZq7BvUHvMKO4PtYPzuQQVKj5iJxycGu+nGE3Wk/b6YLxl4q1YPctXgpn6jQYdNLel2JLtCVTcSVx2ZcIXqtZYG2SGtse78YoZRt0Gr1eNJdkpMr/VD5wFyFwnVxG8CFw+Lxu7YKvmocEvnQvnO7Itb7ef/0X15wX1xcN9jR2OfHYqwHbzGr9++/HTPo/tEen5EPck5jTm/oK+8UZ+4S544k1OcyxMX5D0d5Bnrz916Y7N4/L7WbRZl5ac/jPgGcpYMWaZCzpMhRSrkIhUyT0V8TkVM1sjzVMjkSvL7m6X4/CF/rz/wn3dHfnd7/Nt+p37oJ2OcndXRuGYg6wZlGKQe2Rt9iEaNT7yhNtHobDEXfFHM8qJ07gOJG7mk';
+      var bp = new Blueprint().load(input);
+      console.log(bp.toJSON());
+      miner_1 = bp.findEntity(new Victor(-2, -2));
+      console.log(miner_1);
+
+      // TODO circuit_read_resources & circuit_resource_read_mode
+    });
+
+
   });
 
   describe('connections', function () {
