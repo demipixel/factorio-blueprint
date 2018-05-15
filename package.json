@@ -15,8 +15,11 @@
   ],
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --verbose --runInBand",
+    "test": "mocha && jest --verbose --runInBand",
     "prepublish": "webpack -p"
+  },
+  "directories": {
+    "test": "test"
   },
   "author": "DemiPixel <luke5227@gmail.com>",
   "contributors": [
@@ -27,6 +30,8 @@
   ],
   "license": "ISC",
   "dependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1",
     "prettyjson": "^1.2.1",
     "victor": "^1.1.0"
   },
