@@ -90,39 +90,31 @@ describe('Blueprints', function () {
   });
   
   describe('filter inserters', function () {
-    it('stack filter inserters have only one filter', function () {
-
-    });
-    it('have multiple filters', function () {
-
-    });
+//    it('stack filter inserters have only one filter', function () {
+//    });
+//    it('have multiple filters', function () {
+//    });
   });
 
   describe('inventory filters', function () {
   });
 
   describe('logistic request filters', function () {
-    it('storage chest ?', function () {
-
-    });
-    it('request chest', function () {
-
-    });
-    it('buffer chest', function () {
-
-    });
+//    it('storage chest ?', function () {
+//    });
+//    it('request chest', function () {
+//    });
+//    it('buffer chest', function () {
+//    });
   });
 
   describe('bars', function () {
-    it('has a box with no bar', function () {
-
-    });
-    it('has a box with some bar', function () {
-
-    });
-    it('fails when trying to add a bigger bar than the box has inventory', function () {
-
-    });
+//    it('has a box with no bar', function () {
+//    });
+//    it('has a box with some bar', function () {
+//    });
+//    it('fails when trying to add a bigger bar than the box has inventory', function () {
+//    });
   });
 
   describe('circuit conditions', function () {
@@ -141,26 +133,20 @@ describe('Blueprints', function () {
       // TODO modes? some modes have more parameters?
       // assert.equal(train_stop.condition.modes['send_to_train'], 'false');
     });
-    it('can handle signals', function () {
-
-    });
-    it('can handle coloured lamps', function () {
-
-    });
-    it('can handle programmable speakers', function () {
-
-    });
+//    it('can handle signals', function () {
+//    });
+//    it('can handle coloured lamps', function () {
+//    });
+//    it('can handle programmable speakers', function () {
+//    });
     it('can read electric ore miners', function () {
       const input = '0eNrVVW1rwjAQ/ivjPqejSTt1/StDpC83PUhTSdIxkfz3JSkTdROjg7F9SXu95nm5Nnd7aOSIW03KQrUHagdloHrZg6G1qmV4ZndbhArIYg8MVN2HCCW2VlOb9aRIrbNOk5TgGJDq8B0q7thVDF3T8RbhlgxQWbKEk4YY7FZq7BvUHvMKO4PtYPzuQQVKj5iJxycGu+nGE3Wk/b6YLxl4q1YPctXgpn6jQYdNLel2JLtCVTcSVx2ZcIXqtZYG2SGtse78YoZRt0Gr1eNJdkpMr/VD5wFyFwnVxG8CFw+Lxu7YKvmocEvnQvnO7Itb7ef/0X15wX1xcN9jR2OfHYqwHbzGr9++/HTPo/tEen5EPck5jTm/oK+8UZ+4S544k1OcyxMX5D0d5Bnrz916Y7N4/L7WbRZl5ac/jPgGcpYMWaZCzpMhRSrkIhUyT0V8TkVM1sjzVMjkSvL7m6X4/CF/rz/wn3dHfnd7/Nt+p37oJ2OcndXRuGYg6wZlGKQe2Rt9iEaNT7yhNtHobDEXfFHM8qJ07gOJG7mk';
       var bp = new Blueprint().load(input);
       miner_1 = bp.findEntity(new Victor(-2, -2));
-      console.log(miner_1);
 
       assert.equal(miner_1.name, "electric_mining_drill");
       // TODO circuit_read_resources & circuit_resource_read_mode
     });
-
-
   });
 
   describe('connections', function () {
