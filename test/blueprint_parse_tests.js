@@ -4,14 +4,14 @@ const Victor = require('victor');
 
 /*
  *
- * Tests that are aimed at end-to-end tests.
+ * Parsing tests that are aimed at end-to-end tests.
  *
  * Format should be a simple blueprint from in-game that demonstrates
  * features. Then various assertions based on that.
  *
  */
 
-describe('Blueprints', function () {
+describe('Blueprint Parsing', function () {
   describe('simple, small', function () {
     it('2x walls centered on one of them', function () {
       const input = '0eJy1UUGKwzAM/MucXegWevGx31iW4DSiFThysJ22IfjvVZxmWdjLstCLQTPSzEie0fqRhsiSYWfwOUiC/ZyR+CLOL1ieBoIFZ+phIK5fqpSD0O7uvEcxYOnoAftRzP8GD+XLgCRzZlrtf3cbDCFpQ5BFW4f2BpO+qtJxpPPKKLjZyjBmndKNZGVVeS4VyDH4pqWru3GIK1rdp0bGvqX4WuUPIY41xPE9IepZ6vnsj28yuFFMm5F3Lem1cfrmS3kCsmSfyg=='; // TODO replace with version from in-game
