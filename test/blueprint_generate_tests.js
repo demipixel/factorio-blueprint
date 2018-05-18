@@ -6,8 +6,10 @@ const Victor = require('victor');
  *
  * Generation tests that are aimed at end-to-end tests.
  *
- * Format should be a simple blueprint from in-game that demonstrates
- * features. Then various assertions based on that.
+ * Format should be create a Blueprint object and add things to it; then test
+ * via the 'toObject' method as that's the easiest way to get assertions.
+ * Alternatives are: (a) use 'toJSON' and (b) use 'encode', however,
+ * those two are standard transformations and can be tested elsewhere.
  *
  */
 
@@ -17,7 +19,7 @@ describe('Blueprint Generation', function () {
       const bp = new Blueprint();
       bp.createEntity('stone_wall', {x: 3, y: 4});
       const obj = bp.toObject();
-      
+
       assert.equal(obj.blueprint.entities[0].name, "stone-wall");
     });
   });
@@ -30,9 +32,6 @@ describe('Blueprint Generation', function () {
       bp.createEntity('express_transport_belt', {x: 1, y: 2}, Blueprint.UP);
       bp.createEntity('express_transport_belt', {x: 0, y: 1}, Blueprint.RIGHT);
       const obj = bp.toObject();
-      console.log("first", obj.blueprint.entities[0]);
-      console.log("all", obj);
-      console.log("json", bp.toJSON());
 
       assert.equal(obj.blueprint.entities[0].direction, 4);
       assert.equal(obj.blueprint.entities[0].name, "express-transport-belt");
@@ -46,15 +45,42 @@ describe('Blueprint Generation', function () {
   });
 
   describe('recipes', function () {
-//    it('supports recipes in assemblers', function () {
-//    });
+    it('supports recipes in assemblers', function () {
+      const bp = new Blueprint();
+      bp.name = "Stone Assembler3";
+      e = bp.createEntity("assembling_machine_3", {x: 0, y: 0}, Blueprint.DOWN);
+      e.setRecipe("stone_wall");
+
+      const obj = bp.toObject();
+
+      assert.equal(obj.blueprint.entities[0].direction, 4);
+      assert.equal(obj.blueprint.entities[0].recipe, "stone-wall");
+      assert.equal(obj.blueprint.entities[0].name, "assembling-machine-3");
+    });
   });
 
   describe('modules', function () {
-//    it('supports modules in assemblers', function () {
-//    });
+    it('supports modules in assemblers', function () {
+      const bp = new Blueprint();
+      bp.name = "Stone Assembler3";
+      e = bp.createEntity("assembling_machine_3", {x: 0, y: 0}, Blueprint.UP);
+      e.setRecipe("stone_wall");
+      e.modules['speed_module_3'] = 1;
+      e.modules['productivity_module_3'] = 2;
+      e.modules['effectivity_module_3'] = 1;
+
+      const obj = bp.toObject();
+
+      assert.equal(obj.blueprint.entities[0].direction, 0);
+      assert.equal(obj.blueprint.entities[0].recipe, "stone-wall");
+      assert.equal(obj.blueprint.entities[0].name, "assembling-machine-3");
+      assert.equal(obj.blueprint.entities[0].items["productivity-module-3"], 2);
+      assert.equal(obj.blueprint.entities[0].items["effectivity-module-3"], 1);
+      assert.equal(obj.blueprint.entities[0].items["speed-module-3"], 1);
+
+    });
   });
-  
+
   describe('filter inserters', function () {
 //    it('stack filter inserters have only one filter', function () {
 //    });
