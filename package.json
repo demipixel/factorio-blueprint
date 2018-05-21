@@ -1,6 +1,6 @@
 {
   "name": "factorio-blueprint",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "Factorio Blueprints API",
   "keywords": ["factorio", "blueprint", "api", "generator", "library", "autotorio", "mod", "encode", "decode"],
   "main": "src/index.js",

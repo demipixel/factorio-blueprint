@@ -177,7 +177,7 @@ module.exports = function(entityData) {
 
       data.control_behavior.filters.forEach(filter => {
         constants[parseInt(filter.index) - 1] = {
-          name: this.bp.checkName(name),
+          name: this.bp.checkName(filter.signal.name),
           count: filter.count || 0
         };
       });
