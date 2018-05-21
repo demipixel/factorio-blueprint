@@ -48,7 +48,7 @@ describe('Blueprint Generation', function () {
     it('supports recipes in assemblers', function () {
       const bp = new Blueprint();
       bp.name = "Stone Assembler3";
-      e = bp.createEntity("assembling_machine_3", {x: 0, y: 0}, Blueprint.DOWN);
+      const e = bp.createEntity("assembling_machine_3", {x: 0, y: 0}, Blueprint.DOWN);
       e.setRecipe("stone_wall");
 
       const obj = bp.toObject();
@@ -63,7 +63,7 @@ describe('Blueprint Generation', function () {
     it('supports modules in assemblers', function () {
       const bp = new Blueprint();
       bp.name = "Stone Assembler3";
-      e = bp.createEntity("assembling_machine_3", {x: 0, y: 0}, Blueprint.UP);
+      const e = bp.createEntity("assembling_machine_3", {x: 0, y: 0}, Blueprint.UP);
       e.setRecipe("stone_wall");
       e.modules['speed_module_3'] = 1;
       e.modules['productivity_module_3'] = 2;
@@ -123,6 +123,23 @@ describe('Blueprint Generation', function () {
   });
 
   describe('connections', function () {
+    it('has two power poles connected with red wire', function () {
+      const bp = new Blueprint();
+      bp.name = "Connected Wires";
+      const e1 = bp.createEntity("medium_electric_pole", {x: 0, y: 0}, Blueprint.UP);
+      const e2 = bp.createEntity("medium_electric_pole", {x: 0, y: 5}, Blueprint.UP);
+      e1.connect(e2, null, null, 'red');
+
+      const obj = bp.toObject();
+
+      assert.equal(obj.blueprint.entities[0].name, "medium-electric-pole");
+      assert.equal(obj.blueprint.entities[0].entity_number, 1);
+      assert.equal(obj.blueprint.entities[0].connections['1'].red[0].entity_id, 2);
+
+      assert.equal(obj.blueprint.entities[1].name, "medium-electric-pole");
+      assert.equal(obj.blueprint.entities[1].entity_number, 2);
+      assert.equal(obj.blueprint.entities[1].connections['1'].red[0].entity_id, 1);
+    });
   });
 });
 
