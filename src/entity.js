@@ -17,13 +17,13 @@ module.exports = function(entityData) {
       this.connections = []; // Wire connections
       this.circuitParameters = data.circuit_parameters || null;
       this.condition = this.parseCondition(data); // Condition in combinator
-      this.constants = {};
+      this.constants = this.parseConstants(data);
       this.constantEnabled = data.control_behavior && data.control_behavior.is_on !== undefined ? data.control_behavior.is_on : true; // Is constant combinator on/off
 
       this.parameters = data.paramaters || (myData.parameters ? {} : null);
       this.alertParameters = data.alert_parameters || (myData.alertParameters ? {} : null);
 
-      this.filters = {}; // Filters for container or signals in constant combinator
+      this.filters = {}; // Filters for container
       this.requestFilters = {}; // Request filters for requester chest
       this.directionType = data.type || 'input'; // Underground belts input/output
       this.recipe = data.recipe ? this.bp.checkName(data.recipe) : null;
@@ -37,7 +37,6 @@ module.exports = function(entityData) {
 
       this.size = myData ? new Victor(myData.width, myData.height) : // Size in Victor form
         (entityData[this.name] ? new Victor(entityData[this.name].width, entityData[this.name].height) : new Victor(1, 1));
-      this.FILTER_AMOUNT = myData.filterAmount !== false; // Should filters have an amount (e.g. constant combinators have an amount, cargo wagon filter would not)
       this.HAS_DIRECTION_TYPE = myData.directionType;
       this.CAN_HAVE_RECIPE = myData.recipe;
       this.CAN_HAVE_MODULES = myData.modules;
@@ -114,21 +113,16 @@ module.exports = function(entityData) {
     parseFilters(filters) { // Parse filters from json (for constructor)
       if (!filters) return [];
       for (let i = 0; i < filters.length; i++) {
-        if (filters[i].signal && !this.FILTER_AMOUNT) this.FILTER_AMOUNT = true;
+        const name = this.bp.checkName(filters[i].name);
 
-        const name = this.bp.checkName(this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name);
-
-        if (this.FILTER_AMOUNT) filters[i].signal.name = name;
-        else filters[i].name = name;
+        filters[i].name = name;
 
         if (filters[i].signal && !entityData[filters[i].signal.name]) entityData[filters[i].signal.name] = { type: filters[i].signal.type };
 
         const final_position = filters[i].index - 1;
-        const final_name = this.FILTER_AMOUNT ? filters[i].signal.name : filters[i].name;
-        const final_amount = this.FILTER_AMOUNT ? filters[i].count : undefined;
+        const final_name = filters[i].name;
 
-        if (this.name == 'constant_combinator') this.setConstant(final_position, final_name, final_amount);
-        else this.setFilter(final_position, final_name, final_amount);
+        this.setFilter(final_position, final_name);
       }
     }
 
@@ -172,6 +166,22 @@ module.exports = function(entityData) {
         out.operator = condition.operation;
 
       return out;
+    }
+
+    // Parse constants if this is a constant combinator
+    parseConstants(data) {
+      if (this.name != 'constant_combinator') return null;
+      else if (!data.control_behavior || !data.control_behavior.filters) return {};
+      const constants = {};
+
+      data.control_behavior.filters.forEach(filter => {
+        constants[parseInt(filter.index) - 1] = {
+          name: this.bp.checkName(name),
+          count: filter.count || 0
+        };
+      });
+
+      return constants;
     }
 
     ////////////////
@@ -313,20 +323,23 @@ module.exports = function(entityData) {
       return this;
     }
 
-    setFilter(pos, name, amt, request) {
+    setFilter(pos, name, request) {
       if (pos < 0) throw new Error('Filter index cannot be less than 0!');
-      const filter = request ? 'requestFilters' : 'filters';
       name = this.bp.checkName(name);
-      if (name == null) delete this[filter][pos];
-      else this[filter][pos] = {
-        name: name,
-        count: amt || 0
-      };
+      if (name == null) delete this.filters[pos];
+      else this.filters[pos] = name;
       return this;
     }
 
-    setRequestFilter(pos, name, amt) {
-      return this.setFilter(pos, name, amt, true);
+    setRequestFilter(pos, name, count) {
+      if (pos < 0) throw new Error('Filter index cannot be less than 0!');
+      name = this.bp.checkName(name);
+      if (name == null) delete this.requestFilters[pos];
+      else this.requestFilters[pos] = {
+        name,
+        count
+      };
+      return this;
     }
 
     removeAllFilters() {
@@ -444,92 +457,6 @@ module.exports = function(entityData) {
       return this;
     }
 
-    // Convert condition to lua format
-    /*luaConnections() {
-      const out = {};
-      for (let i = 0; i < this.connections.length; i++) {
-        let side = this.connections[i].side;
-        let color = this.connections[i].color;
-        if (!out[side]) out[side] = {};
-        if (!out[side][color]) out[side][color] = [];
-        out[side][color].push({ entity_id: this.connections[i].entity.id, circuit_id: this.connections[i].id });
-      }
-      return toLuaFixer(JSON.stringify(out)).replace(/([12])=/g, '["\$1"]=');
-    }
-
-    // Convert filter to lua format
-    luaFilter() {
-      return toLuaFixer(JSON.stringify(Object.keys(this.filters).map(key => {
-        const obj = {
-          index: parseInt(key)
-        };
-        const name = this.filters[key].name.replace(/_/g, '-');
-        if (this.FILTER_AMOUNT) {
-          const type = entityData[this.filters[key].name].type;
-          obj.signal = {
-            type: type,
-            name: name,
-          };
-          obj.count = this.filters[key].count;
-        } else {
-          obj.name = name;
-        }
-        return obj;
-      })));
-    }
-
-    // Convert request filter to lua format
-    luaRequestFilter() {
-      return toLuaFixer(JSON.stringify(Object.keys(this.requestFilters).map(key => {
-        return {
-          name: this.requestFilters[key].name.replace(/_/g, '-'),
-          count: this.requestFilters[key].count,
-          index: parseInt(key)
-        };
-      })));
-    }
-
-    // Convert condition to Lua format
-    luaCondition() {
-      let key = this.name == 'arithmetic_combinator' ? 'arithmetic' : (this.name == 'decider_combinator' ? 'decider' : 'circuit');
-      let out = {};
-      out[key] = {
-        first_signal: (this.condition.left ? {
-          type: entityData[this.condition.left].type,
-          name: this.condition.left.replace(/_/g, '-')
-        } : undefined),
-        second_signal: (typeof this.condition.right == 'string' ? {
-          type: entityData[this.condition.right].type,
-          name: this.condition.right.replace(/_/g, '-')
-        } : undefined),
-        constant: typeof this.condition.right == 'number' ? this.condition.right : undefined,
-        operation: undefined,
-        comparator: undefined,
-        output_signal: (this.condition.out ? {
-          type: entityData[this.condition.out].type,
-          name: this.condition.out.replace(/_/g, '-')
-        } : undefined)
-      };
-      if (key != 'arithmetic') {
-        out[key].comparator = this.condition.operator;
-        out[key].copy_count_from_input = this.condition.countFromInput != undefined ? (!!this.condition.countFromInput).toString() : undefined;
-      } else {
-        out[key].operation = this.condition.operator;
-      }
-      return toLuaFixer(JSON.stringify(out));
-    }
-
-    // Entity luaString that gets merged in Blueprint.luaString()
-    luaString() {
-      const direction = this.direction ? ',direction='+this.direction : '';
-      const connections = this.connections.length ? ',connections='+this.luaConnections() : '';
-      const filters = Object.keys(this.filters).length ? ',filters='+this.luaFilter() : '';
-      const request_filters = Object.keys(this.requestFilters).length ? ',request_filters='+this.luaRequestFilter() : '';
-      const condition = this.condition ? ',conditions='+this.luaCondition() : '';
-      const centerPos = this.center();
-      return '{name="'+this.name.replace(/_/g, '-')+'",position={x='+centerPos.x+',y='+centerPos.y+'}'+direction+connections+filters+request_filters+condition+'}';
-    }*/
-
     getData() {
       const useValueOrDefault = (val, def) => val != undefined ? val : def;
 
@@ -616,21 +543,11 @@ module.exports = function(entityData) {
           return obj;
         }, {}) : undefined,
 
-        filters: makeEmptyArrayUndefined(Object.keys(this.filters).map(index => {
-          const filter = this.filters[index];
-
-          const obj = { index: parseInt(index) + 1 };
-          if (this.FILTER_AMOUNT) {
-            const type = entityData[filter.name].type;
-            obj.signal = {
-              name: this.bp.fixName(filter.name),
-              type: type
-            };
-            obj.count = filter.count;
-          } else {
-            obj.name = filter.name;
-          }
-          return obj;
+        filters: makeEmptyArrayUndefined(Object.keys(this.filters).map(filterPosition => {
+          return {
+            index: parseInt(filterPosition) + 1,
+            name: this.bp.fixName(this.filters[filterPosition])
+          };
         })),
 
         request_filters: makeEmptyArrayUndefined(Object.keys(this.requestFilters).map(index => {
@@ -691,11 +608,6 @@ module.exports = function(entityData) {
   }
 
   // Lib Functions
-
-  // Convert to lua
-  /*function toLuaFixer(str) {
-    return str.replace(/\[/g, '{').replace(/\]/g, '}').replace(/"([a-z0-9_]+)":/g, '\$1=')
-  }*/
 
   // Convert 'in' or 'out' of wires (only combinators have both of these) to a 1 or 2.
   function convertSide(side, ent) {

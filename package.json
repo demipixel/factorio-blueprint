@@ -1,6 +1,6 @@
 {
   "name": "factorio-blueprint",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "Factorio Blueprints API",
   "keywords": ["factorio", "blueprint", "api", "generator", "library", "autotorio", "mod", "encode", "decode"],
   "main": "src/index.js",
@@ -24,5 +24,9 @@
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "webpack": "^3.8.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/demipixel/factorio-blueprint.git"
   }
 }
