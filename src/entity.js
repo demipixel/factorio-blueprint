@@ -113,7 +113,8 @@ module.exports = function(entityData) {
     parseFilters(filters) { // Parse filters from json (for constructor)
       if (!filters) return [];
       for (let i = 0; i < filters.length; i++) {
-        const name = this.bp.checkName(filters[i].name);
+        if (!filters[i] || !filters[i].signal) continue;
+        const name = this.bp.checkName(filters[i].signal.name);
 
         filters[i].name = name;
 
