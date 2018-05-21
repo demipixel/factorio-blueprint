@@ -2,17 +2,29 @@
   "name": "factorio-blueprint",
   "version": "2.1.9",
   "description": "Factorio Blueprints API",
-  "keywords": ["factorio", "blueprint", "api", "generator", "library", "autotorio", "mod", "encode", "decode"],
+  "keywords": [
+    "factorio",
+    "blueprint",
+    "api",
+    "generator",
+    "library",
+    "autotorio",
+    "mod",
+    "encode",
+    "decode"
+  ],
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --verbose --runInBand",
     "prepublish": "webpack -p"
   },
   "author": "DemiPixel <luke5227@gmail.com>",
-  "contributors": [{
-    "name": "Ryan Davis",
-    "email": "ryepup@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Ryan Davis",
+      "email": "ryepup@gmail.com"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "prettyjson": "^1.2.1",
@@ -20,10 +32,11 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
-    "webpack": "^3.8.1"
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^22.4.4",
+    "webpack": "^3.12.0"
   },
   "repository": {
     "type": "git",
