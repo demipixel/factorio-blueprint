@@ -14,74 +14,74 @@ const Victor = require('victor');
 describe('Blueprint Parsing', function () {
   describe('simple, small', function () {
     it('2x walls centered on one of them', function () {
-      const input = '0eJy1UUGKwzAM/MucXegWevGx31iW4DSiFThysJ22IfjvVZxmWdjLstCLQTPSzEie0fqRhsiSYWfwOUiC/ZyR+CLOL1ieBoIFZ+phIK5fqpSD0O7uvEcxYOnoAftRzP8GD+XLgCRzZlrtf3cbDCFpQ5BFW4f2BpO+qtJxpPPKKLjZyjBmndKNZGVVeS4VyDH4pqWru3GIK1rdp0bGvqX4WuUPIY41xPE9IepZ6vnsj28yuFFMm5F3Lem1cfrmS3kCsmSfyg=='; // TODO replace with version from in-game
+      const input = '0eNqNj8EKgzAQRP9lzhGqFiv5lVKKtktZiBsx0TZI/r2JXgrtoadllpm3syt6M9M4sXjoFXyz4qDPKxw/pDN558NI0GBPAxSkG7Jy3goVz84YRAWWO72gy3hRIPHsmXbKJsJV5qGnKRl+5RVG61LESr6WMEWyhTxiVF+I6i/ETkiAVGgrrj/+VFhocpu5aU9V2dbNoT7G+AaeUViT';
       var bp = new Blueprint().load(input);
-      var wall1 = bp.findEntity(new Victor(0,0));
+      var wall1 = bp.findEntity(new Victor(-1,-1));
 
       assert.equal(wall1.name, "stone_wall");
-      assert.equal(wall1.position.x, 0);
-      assert.equal(wall1.position.y, 0);
+      assert.equal(wall1.position.x, -1);
+      assert.equal(wall1.position.y, -1);
 
-      var wall2 = bp.findEntity(new Victor(5,5));
+      var wall2 = bp.findEntity(new Victor(1,1));
       assert.equal(wall2.name, "stone_wall");
-      assert.equal(wall2.position.x, 5);
-      assert.equal(wall2.position.y, 5);
+      assert.equal(wall2.position.x, 1);
+      assert.equal(wall2.position.y, 1);
     });
   });
 
   describe('directions', function () {
     it('supports belts going in all directions', function () {
-      const input = '0eJytksFqwzAMht9FZxdSr+zg415jjOK02iZwZGMrpSH43WsnW0lZt+6Qo//fkj6Jf4TW9RgisYAZgQ6eE5jXERJ9sHVVkyEgGCDBDhSw7epLouUUfJRNi04gKyA+4hnMNquHxe82yebXDjq/KUAWEsKZ5f5MBcGn8slzHVRHKxjANKXTkSIeZqdRVwYOfa0qK/Lslu5jngSJ3u1b/LQn8nFWJ4Jhz33XYvza6w/+HzR6otne0uiVaPSC5n9n0bcgu5VAnhYgeA4RU3p4mebeZZ5XAtrV9ExxM4toKzhhTN+BcLaAFf/l6ud8ATHTDFU='; // TODO replace with version from in-game
+      const input = '0eNqV0dFqwzAMBdB/uc82xEnoin9ljJG02jAkirHV0hD874sTGO2atuzRNjq6sia03Yl8cCywE9xh4Aj7PiG6b266fCejJ1g4oR4K3PT5JKHh6IcguqVOkBQcH+kCa5J6WfzVRNEPhTJ9KBCLE0drluUwfvKpbynMLR6lUPBDnMsGzq1nqlAYYbVJOdQfpfxV6OIDxahfadosXDFHPbpAh/Vpt2FXT0e9gzfdcsOt/zm5uSXr/LPLKuzV2hXOFOI6y/6tNPtqV1R1Sj8D1bWS';
       var bp = new Blueprint().load(input);
-      var n = bp.findEntity(new Victor(1,0));
-      var e = bp.findEntity(new Victor(2,1));
-      var s = bp.findEntity(new Victor(1,2));
-      var w = bp.findEntity(new Victor(0,1));
+      var n = bp.findEntity(new Victor(0,-1));
+      var e = bp.findEntity(new Victor(1,0));
+      var s = bp.findEntity(new Victor(0,1));
+      var w = bp.findEntity(new Victor(-1,0));
 
       assert.equal(n.name, "transport_belt");
       assert.equal(n.direction, Blueprint.UP);
-      assert.equal(n.position.x, 1);
-      assert.equal(n.position.y, 0);
+      assert.equal(n.position.x, 0);
+      assert.equal(n.position.y, -1);
       assert.equal(e.name, "fast_transport_belt");
       assert.equal(e.direction, Blueprint.RIGHT);
-      assert.equal(e.position.x, 2);
-      assert.equal(e.position.y, 1);
+      assert.equal(e.position.x, 1);
+      assert.equal(e.position.y, 0);
       assert.equal(s.name, "transport_belt");
       assert.equal(s.direction, Blueprint.DOWN);
-      assert.equal(s.position.x, 1);
-      assert.equal(s.position.y, 2);
+      assert.equal(s.position.x, 0);
+      assert.equal(s.position.y, 1);
       assert.equal(w.name, "express_transport_belt");
       assert.equal(w.direction, Blueprint.LEFT);
-      assert.equal(w.position.x, 0);
-      assert.equal(w.position.y, 1);
+      assert.equal(w.position.x, -1);
+      assert.equal(w.position.y, 0);
     });
   });
 
   describe('recipes', function () {
     it('supports recipes in assemblers', function () {
-      const input = '0eJx9UMuOwyAM/Jc5U2l75dbvWFUVpFZrCUwEpG0U8e9rQne1px499ry8wYeF5sxSYTfwlKTAfm8ofBMXOlbXmWDBlSIMxMU+uVIo+sByO0Q33VnocEQzYLnSC/bYzgYklSvT0PvEM5hT0dMk3a/TDdYuYnDlTNPYfJm/KDIvVVm64h0oNanQ04WgqFaQwVHnre1AzSlcPN3dg1Me6J5uvcgSPeV34r2j/fcSgwfl8msfnCd9CU6jhNJa+wG0Pm2x'; // TODO replace with version from in-game
+      const input = '0eNp9j8EKwjAQRP9lzim0KrXkV0QkrUtdSDalSdVS+u8m8eLJy8Iss29mN/R2oWlmidAbePASoC8bAo9ibN7FdSJocCQHBTEuKxMCud6yjJUzw4OFqga7Asud3tDNflUgiRyZvrwi1pssrqc5Gf6TFCYf0rGX3CABa4U1zZQw08ClUIg+eV/GWuS00k//vKPwpDkURNudD013bOvjad8/hm1RIQ==';
       var bp = new Blueprint().load(input);
-      var assembler = bp.findEntity(new Victor(1,1));
+      var assembler = bp.findEntity(new Victor(0,0));
 
       assert.equal(assembler.name, "assembling_machine_1");
       assert.equal(assembler.direction, Blueprint.UP);
-      assert.equal(assembler.position.x, 0);
-      assert.equal(assembler.position.y, 0);
-      assert.equal(assembler.recipe, 'stone_wall'); // XXX should be stone-wall?
+      assert.equal(assembler.position.x, -1);
+      assert.equal(assembler.position.y, -1);
+      assert.equal(assembler.recipe, 'stone_wall');
     });
   });
 
   describe('modules', function () {
     it('supports modules in assemblers', function () {
-      const input = '0eJx9kMFqxDAMRP9FZwe27c23/Y5SFjvR7gps2dhOtiHk3yvFbVko9KgZ63k0G/gwYy7EDewGNCauYN83qHRjF1Rra0awQA0jGGAXdXK1YvSB+DZEN96JcXiD3QDxhJ9gX/YPA8iNGmHn/bdnIKcqTxPrf7puYFWIgYkKjt05md8onOcmW2LRIdSWBPRwIYiqQauCakachpimOegvSs1FJuEt1NYn51XCXq/419AIUgn3DErtQispXDze3UKpdPW4dr3wHD2W7waOzuxTxQYWLPXnnOA8SsVw7qVgkQr3L2ZAiTQ='; // TODO replace with version from in-game
+      const input = '0eNp9kNFqwzAMRf9Fzw60zeiKf2WMkTg3rZgtG9spC8H/Pjt96Rj0xXCtq6sjbTTaBSGyZNIbsfGSSH9slPgqg21/eQ0gTZzhSJEMrqkhJbjRslw7N5gbC7qeiiKWCT+kj+VTESRzZjzydrF+yeJGxGp4naQo+FSbvTSCGnhQtNa3TogwvANFb76Ru3mBrf6Gl5o5BWDqnJ8W25LaJMwzTOZ7BfhbCLGq/5VTafj7wvrpPoruiGlnOl/eT8dLfz70b6X8AvmFbMw=';
       var bp = new Blueprint().load(input);
-      var assembler = bp.findEntity(new Victor(1,1));
+      var assembler = bp.findEntity(new Victor(0,0));
 
       assert.equal(assembler.name, "assembling_machine_3");
       assert.equal(assembler.direction, Blueprint.UP);
-      assert.equal(assembler.position.x, 0);
-      assert.equal(assembler.position.y, 0);
-      assert.equal(assembler.recipe, 'stone_wall'); // XXX should be stone-wall?
+      assert.equal(assembler.position.x, -1);
+      assert.equal(assembler.position.y, -1);
+      assert.equal(assembler.recipe, 'rocket_fuel'); // XXX should be stone-wall?
       assert.equal(assembler.modules['speed_module_3'], 1);
       assert.equal(assembler.modules['effectivity_module_3'], 1);
       assert.equal(assembler.modules['productivity_module_3'], 2);
@@ -90,10 +90,35 @@ describe('Blueprint Parsing', function () {
   });
   
   describe('filter inserters', function () {
-//    it('stack filter inserters have only one filter', function () {
-//    });
-//    it('have multiple filters', function () {
-//    });
+    it('stack filter inserters have only one filter', function () {
+      const input = '0eNqFj9EKgzAMRf/lPlfQOZz0V4YMddkI01TaOibSf1+rbOxtLyE35J7crOiGmSbL4qFXcG/EQZ9XOL5LO6SZXyaCBnsaoSDtmJTzbf/Ibjx4shmLIxsbBAWWK72gi9AokHj2TDtwE8tF5rGLm7r4g1KYjItuIylDJOYKS6zxxL66Uz/nvjS2RjJjCaFJEbbU+udJhWf0btiqPh2Kuqzy8hjCG3KaWUM=';
+      var bp = new Blueprint().load(input);
+
+      const entity = bp.findEntity(new Victor(0,0));
+      console.log(entity.filters);
+
+      assert.equal(entity.name, "stack_filter_inserter");
+      assert.equal(entity.direction, Blueprint.UP);
+      assert.equal(entity.position.x, 0);
+      assert.equal(entity.position.y, 0);
+      assert.equal(entity.filters['0'], 'iron_ore');
+    });
+    it('have multiple filters', function () {
+      const input = '0eNp1j90KgzAMhd8l1x34M5z0VYYMddkIaFraOibSd19amexmNyHJSb6TbDBMC1pHHEBvQKNhD/q6gacn91PqhdUiaKCAMyjgfk7Vg6aA7kTs0UkCUQHxHd+gy9gpQA4UCHdULtYbL/Mgk7r8C1FgjZc9w8lXWIWCVaLA99Gd9zU6OOQMn4xDueJQq0MdjbXikvUuHZc/0T+PK3gJO9s27aUq27op6nOMH0+tXzQ=';
+      var bp = new Blueprint().load(input);
+      console.log(bp);
+      console.log(bp.toJSON());
+
+      const entity = bp.findEntity(new Victor(0,0));
+      console.log(entity.filters);
+
+      assert.equal(entity.name, "filter_inserter");
+      assert.equal(entity.direction, Blueprint.UP);
+      assert.equal(entity.position.x, 0);
+      assert.equal(entity.position.y, 0);
+      assert.equal(entity.filters['0'], 'iron_ore');
+      assert.equal(entity.filters['1'], 'copper_ore');
+    });
   });
 
   describe('inventory filters', function () {
