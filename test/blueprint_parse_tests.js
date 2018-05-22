@@ -95,7 +95,6 @@ describe('Blueprint Parsing', function () {
       var bp = new Blueprint().load(input);
 
       const entity = bp.findEntity(new Victor(0,0));
-      console.log(entity.filters);
 
       assert.equal(entity.name, "stack_filter_inserter");
       assert.equal(entity.direction, Blueprint.UP);
@@ -106,11 +105,8 @@ describe('Blueprint Parsing', function () {
     it('have multiple filters', function () {
       const input = '0eNp1j90KgzAMhd8l1x34M5z0VYYMddkIaFraOibSd19amexmNyHJSb6TbDBMC1pHHEBvQKNhD/q6gacn91PqhdUiaKCAMyjgfk7Vg6aA7kTs0UkCUQHxHd+gy9gpQA4UCHdULtYbL/Mgk7r8C1FgjZc9w8lXWIWCVaLA99Gd9zU6OOQMn4xDueJQq0MdjbXikvUuHZc/0T+PK3gJO9s27aUq27op6nOMH0+tXzQ=';
       var bp = new Blueprint().load(input);
-      console.log(bp);
-      console.log(bp.toJSON());
 
       const entity = bp.findEntity(new Victor(0,0));
-      console.log(entity.filters);
 
       assert.equal(entity.name, "filter_inserter");
       assert.equal(entity.direction, Blueprint.UP);
