@@ -82,10 +82,35 @@ describe('Blueprint Generation', function () {
   });
 
   describe('filter inserters', function () {
-//    it('stack filter inserters have only one filter', function () {
-//    });
-//    it('have multiple filters', function () {
-//    });
+    it('stack filter inserters have only one filter', function () {
+      const bp = new Blueprint();
+      bp.name = "stack filter inserter";
+      const e = bp.createEntity("stack_filter_inserter", {x: 0, y: 0}, Blueprint.UP);
+      e.setFilter(0, 'stone_wall');
+      
+      const obj = bp.toObject();
+
+      assert.equal(obj.blueprint.entities[0].direction, 0);
+      assert.equal(obj.blueprint.entities[0].name, "stack-filter-inserter");
+      assert.equal(obj.blueprint.entities[0].filters[0].index, 1); // TODO possible bug here; the parse test has it indexed from 0.
+      assert.equal(obj.blueprint.entities[0].filters[0].name, 'stone-wall');
+    });
+    it('have multiple filters', function () {
+      const bp = new Blueprint();
+      bp.name = "filter inserter";
+      const e = bp.createEntity("filter_inserter", {x: 0, y: 0}, Blueprint.UP);
+      e.setFilter(0, 'stone_wall');
+      e.setFilter(4, 'iron_plate');
+
+      const obj = bp.toObject();
+
+      assert.equal(obj.blueprint.entities[0].direction, 0);
+      assert.equal(obj.blueprint.entities[0].name, "filter-inserter");
+      assert.equal(obj.blueprint.entities[0].filters[0].index, 1); // TODO possible bug here; the parse test has it indexed from 0.
+      assert.equal(obj.blueprint.entities[0].filters[0].name, 'stone-wall');
+      assert.equal(obj.blueprint.entities[0].filters[1].index, 5); // TODO possible bug here; the parse test has it indexed from 0.
+      assert.equal(obj.blueprint.entities[0].filters[1].name, 'iron-plate');
+    });
   });
 
   describe('inventory filters', function () {
