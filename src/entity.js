@@ -113,15 +113,7 @@ module.exports = function(entityData) {
     parseFilters(filters) { // Parse filters from json (for constructor)
       if (!filters) return [];
       for (let i = 0; i < filters.length; i++) {
-        // blocks filter inserters from parsing.
-        // if (!filters[i] || !filters[i].signal) continue;
         const name = this.bp.checkName(filters[i].name);
-
-        // changes input field, use the `name` field.
-        // filters[i].name = name;
-
-        // causes an edit to 'static' data.
-        //  if (filters[i].signal && !entityData[filters[i].signal.name]) entityData[filters[i].signal.name] = { type: filters[i].signal.type };
 
         const final_position = filters[i].index - 1;
         const final_name = name;
