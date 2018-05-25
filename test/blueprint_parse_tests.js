@@ -117,6 +117,11 @@ describe('Blueprint Parsing', function () {
     });
   });
 
+  describe('constant combiners', function () {
+//    it('understands the control-behaviour section', function () {
+//    });
+  });
+
   describe('inventory filters', function () {
   });
 
