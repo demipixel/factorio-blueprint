@@ -126,12 +126,49 @@ describe('Blueprint Generation', function () {
   });
 
   describe('bars', function () {
-//    it('has a box with no bar', function () {
-//    });
-//    it('has a box with some bar', function () {
-//    });
-//    it('fails when trying to add a bigger bar than the box has inventory', function () {
-//    });
+    it('has a box with no bar', function () {
+      const bp = new Blueprint();
+      bp.name = "box with bar";
+      const e = bp.createEntity("wooden_chest", {x: 0, y: 0}, Blueprint.UP);
+
+      // XXX BUG? Documentation suggests that -1 should disable the bar
+      // e.setBar(-1); // disable the bar (all slots available)
+
+      const obj = bp.toObject();
+
+      assert.equal(obj.blueprint.entities[0].name, "wooden-chest");
+      assert.equal('undefined', typeof obj.blueprint.entities[0].bar);
+    });
+    it('has a box with some bar', function () {
+      const bp = new Blueprint();
+      bp.name = "box with bar";
+      const e = bp.createEntity("wooden_chest", {x: 0, y: 0}, Blueprint.UP);
+
+      e.setBar(4); // Allow 4 slots to be used by machines.
+
+      const obj = bp.toObject();
+
+      assert.equal(obj.blueprint.entities[0].name, "wooden-chest");
+      assert.equal(obj.blueprint.entities[0].bar, 4);
+    });
+    it('fails when trying to add a bar to something that does not have an inventory', function () {
+      const bp = new Blueprint();
+      bp.name = "box with bar";
+      const e = bp.createEntity("stone_wall", {x: 0, y: 0}, Blueprint.UP);
+
+      assert.throws(function() {
+        e.setBar("not a number");
+      }, Error);
+    });
+    it('fails when trying to add a bar with a negative number', function () {
+      const bp = new Blueprint();
+      bp.name = "box with bar";
+      const e = bp.createEntity("wooden_chest", {x: 0, y: 0}, Blueprint.UP);
+
+      assert.throws(function() {
+        e.setBar(-9001);
+      }, Error);
+    });
   });
 
   describe('circuit conditions', function () {
