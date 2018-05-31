@@ -106,9 +106,9 @@ describe('Blueprint Generation', function () {
 
       assert.equal(obj.blueprint.entities[0].direction, 0);
       assert.equal(obj.blueprint.entities[0].name, "filter-inserter");
-      assert.equal(obj.blueprint.entities[0].filters[0].index, 1); // TODO possible bug here; the parse test has it indexed from 0.
+      assert.equal(obj.blueprint.entities[0].filters[0].index, 1);
       assert.equal(obj.blueprint.entities[0].filters[0].name, 'stone-wall');
-      assert.equal(obj.blueprint.entities[0].filters[1].index, 5); // TODO possible bug here; the parse test has it indexed from 0.
+      assert.equal(obj.blueprint.entities[0].filters[1].index, 5);
       assert.equal(obj.blueprint.entities[0].filters[1].name, 'iron-plate');
     });
   });
