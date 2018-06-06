@@ -118,30 +118,170 @@ describe('Blueprint Parsing', function () {
     });
   });
 
-  describe('constant combiners', function () {
-//    it('understands the control-behaviour section', function () {
-//    });
-  });
-
   describe('inventory filters', function () {
+    // What sort of entity has inventory filters?
   });
 
-  describe('logistic request filters', function () {
-//    it('storage chest ?', function () {
-//    });
-//    it('request chest', function () {
-//    });
-//    it('buffer chest', function () {
-//    });
+  describe('logistic filters', function () {
+    it('knows about requester chests', function () {
+      const input = '0eNqFkN1uwjAMhd/F14nUlomhvMqEUEhNsdQ6XX5gVdV3x2kH7G5Xlq1zvmN7hnOfcQzECcwM5DxHMF8zROrY9mWWphHBACUcQAHboXS97ygmctpdMSYd8DtLxQCLAuIWf8DUy1EBcqJEuDHXZjpxHs6iNPX/NAWjjwLwXDYRqBbTBKaSmF/V6UK9SLeEZ/SLbNubZYetdhRcpiRE53M5tqkE8nY0L0uwd333vn1La5EeyzXrD8yflym4SfS63v7w2dSH3b7afSzLA3pZc0M=';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject());
+
+      const entity = bp.findEntity(new Victor(-1,0));
+
+      assert.equal(entity.name, 'logistic_chest_requester');
+      assert.equal(entity.requestFilters['0'].name, 'advanced_circuit');
+      assert.equal(entity.requestFilters['0'].count, 200);
+      assert.equal(entity.requestFilters['11'].name, 'raw_wood');
+      assert.equal(entity.requestFilters['11'].count, 100);
+    });
+    it('knows about storage chests', function () {
+      const input = '0eNqFjsEKgzAQRP9lzhG0LVbyK6UUtYtd0I0ka1Ek/16TXnrrcYaZx9vRjQvNnkVhd3DvJMDedgQepB1Tp9tMsGClCQbSTimNbuCg3Bf9i4IWQZ1vB0I0YHnSClvFuwGJsjJ9iTlsD1mmjvwx+McymF047k6SxZofG2wZEznb2B95gzf5kMd1cz1Vzbkuz5cYP3muTDQ=';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+
+      const entity = bp.findEntity(new Victor(1,0));
+      assert.equal(entity.name, 'logistic_chest_storage');
+    });
+    it('knows about storage chests with filters', function () {
+      const input = '0eNqFj8EKgzAQRP9lzxG0Fiv5lSKidmsXdGOTtSiSf2+itPTW4yw7b2Y2aIcZJ0ssoDegzrADfd3AUc/NEG+yTggaSHAEBdyMUQ2mJyfUJd0DnSROjG16BK+A+IYL6MxXCpCFhPAg7mKteR5btOHhH0vBZFywG44tlt2xgk5DhsXnHF7rOw2C9sB/cr9YsoYTYyOoM3Pcl/oqttqX6J/hCl6BsgcV5eWUlXmR5mfv3w0JYHM=';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+
+      const entity = bp.findEntity(new Victor(1,0));
+      assert.equal(entity.name, 'logistic_chest_storage');
+      assert.equal(entity.requestFilters['0'].name, 'iron_ore');
+      assert.equal(entity.requestFilters['0'].count, 0);
+    });
   });
+  it('knows about buffer chests', function () {
+      const input = '0eNqFkNsKgzAMht8l1xU8jE36KkNEXdwCtXU2HYr47ksdO9ztMuX7v+TvCq0JOE5kGfQK1DnrQZ9X8HS1jYlvvIwIGohxAAW2GeJk3JU8U5d0N/SctKHvcYJNAdkLzqCzrVKAlokJX8J9WGobhlZInf1RKRidl7Sz8YZ5DyygU1kx4T0IWfdkGKeX/b32Y/WMaJLRNIzi6lyIBbNU8l84/9Btw6JavmQuZBU77LX1zy8peMjS/a5jecqzsjimxWHbnvgJbh8=';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject());
+
+      const entity = bp.findEntity(new Victor(1,0));
+
+      assert.equal(entity.name, 'logistic_chest_buffer');
+      assert.equal(entity.requestFilters['0'].name, 'steel_plate');
+      assert.equal(entity.requestFilters['0'].count, 100);
+      assert.equal(entity.requestFilters['11'].name, 'battery');
+      assert.equal(entity.requestFilters['11'].count, 200);
+    });
 
   describe('bars', function () {
-//    it('has a box with no bar', function () {
-//    });
-//    it('has a box with some bar', function () {
-//    });
-//    it('fails when trying to add a bigger bar than the box has inventory', function () {
-//    });
+    it('has a box with no bar', function () {
+      const input = '0eNptjsEKgzAQRP9lzhG0Fiv5lVKK2qVdiKuYVSoh/97EXnrocZY3bzagdyvNC4vCBvAwiYe9Bnh+SufyTfeZYMFKIwykG3PySuSK4UVeEQ1YHvSGreLNgERZmb6aI+x3WceelgT8FRjMk0+dSfJe8hSJ22HLmH3HsP3502CjxR90015OVVs3ZX2O8QPQS0Ob';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+
+      const entity = bp.findEntity(new Victor(-1,0));
+
+      assert.equal(entity.name, 'steel_chest');
+      assert.equal(entity.bar, -1);
+    });
+    it('has a box with some bar', function () {
+      const input = '0eNptjt0KwjAMhd/lXFfYH3P0VURkm0EDXTbWTByj725bb7zwJnBCvi/nwOA2WlYWhT3A4ywe9nLA80N6l3a6LwQLVppgIP2Uklcidxqf5BXBgOVOb9gyXA1IlJXpq8lhv8k2DbTGg78Cg2X2kZkl/YuewmCPM4qHPlJVk7y5gP3pa/Ci1Weq7c5V2dVtUTchfADkJ0Wy';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+
+      const entity = bp.findEntity(new Victor(0,0));
+
+      assert.equal(entity.name, 'steel_chest');
+      assert.equal(entity.bar, 24);
+    });
+  });
+
+  describe('arithmetic combinators', function () {
+    it('describes multiplication', function () {
+      const input = '0eNqVktFqwzAMRf9Fj8MZbbJ1Ja/9jDGCk2itILaDLZeV4H+fnEBX1nXdXgyypavjK03QDhFHT5ahnoA6ZwPUrxME2ls95Ds+jQg1EKMBBVabHGlPfDDI1BWdMy1Zzc5DUkC2xw+o1+lNAVomJlwE5+DU2Gha9JJwljLYUzQFDtixF73RDSiNRhek2NmMIILFRsEp6yoQRiu5NKNOsM6Hx/6yC0lUSSb5LhLPoRCllNQVSPlPkOdfOfYe0d4hKW+QVHfcvfZk9bjQlELTk19g5i8JG3s3NC0e9JGkWCq+VBt57ulM/k4+cHNn4i3tv1kjTQNmpSwXWOcVkrG6Eb1eQOBB6l3kMf4gfyTPUW7OHZaMYgfZnb9OOY9VQXnT+8VsWcb5N/XFuis4og8z52b7Uq631WZVPaX0CRchDRw=';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+
+      const entity = bp.findEntity(new Victor(-0.5,2));
+
+//      console.log("bp entity: ", entity);
+      assert.equal(entity.name, 'arithmetic_combinator');
+      assert.equal(entity.condition.left, 'big_electric_pole');
+      assert.equal(entity.condition.out, 'signal_C');
+      assert.equal(entity.condition.operator, '*');
+    });
+    it('describes modulo', function () {
+      const input = '0eNqVklFqwzAMhu8i2Jsz2mTrSu7QE4wRnERrBbEdbLmsBN99cgJdWdd1ezHIln59/qUJ2iHi6Mky1BNQ52yA+nWCQHurh3zHpxGhBmI0oMBqkyPtiQ8Gmbqic6Ylq9l5SArI9vgB9Tq9KUDLxISL4BycGhtNi14SzlIGe4qmwAE79qI3ugGl0eiCFDubEUSw2Cg4ZV0Fwmgll2bUCdb58NhfdiGJKskk30XiORSilJK6Ain/CfL8K8feI9o7JOUNkuqOu9eerB4XmlJoevILzPwlYWPvhqbFgz6SFEvFl2ojzz2dyd/JB27uTLyl/TdrpGnArJTlAuu8QjJWN6LXCwg8SL2LPMYf5I/kOcrNucOSUewgu/PXKeexKihver+YLcs4/6a+WHcFR/Rh5txsX8r1ttqsqqeUPgEYnQ0h';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+
+      const entity = bp.findEntity(new Victor(-0.5,2));
+
+//      console.log("bp entity: ", entity);
+      assert.equal(entity.name, 'arithmetic_combinator');
+      assert.equal(entity.condition.left, 'big_electric_pole');
+      assert.equal(entity.condition.out, 'signal_M');
+      assert.equal(entity.condition.operator, '%');
+    });
+  });
+
+  describe('arithmetic combinators', function () {
+    it('uses "each"', function () {
+      const input = '0eNqVkttqwzAMht9F185ok7bbcrEXGSM4idoK4gOKUxaC331yMkJpt7LdGHT8P0uaoO4G9Ew2QDkBNc72UL5P0NPJ6i75wugRSqCABhRYbZLVYkMtctY4U5PVwTFEBWRb/IRyGz8UoA0UCJduszFWdjA1siSsfQy2NJgMO2wCU5N516GoeNdLsbNJXxpmBwVj6qtAAK3k0sw5wTY9jO21ComVSyZxM1CYTSGKMao7kPzRh+4xNk/7FaQlXjgWMWcDu66q8awvJMVS8d2yklhLK/GRuA/V3XgvxGEQzwq0ZGSomzMs/+6DTlvavSbLeM0zZQlvkBx+FKHBhurIzlRk/SC5R931GP8+tjQnBXmKnhjR3saLX+ZY/HOh+4f7/FH6ZqP5TCJ3Nt9leXXGCi7I/ax1eHnOty/FYVPsYvwCygX/SA==';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+
+      const entity = bp.findEntity(new Victor(-0.5,1));
+
+//      console.log("bp entity: ", entity);
+      assert.equal(entity.name, 'decider_combinator');
+      assert.equal(entity.condition.left, 'signal_each');
+      assert.equal(entity.condition.right, 49);
+      assert.equal(entity.condition.operator, '>');
+    });
+  });
+
+  describe('constant combinators', function () {
+    it('basic setup', function () {
+      const input = '0eNqNkdFqwzAMRf9Fzw7UyehCfmWU4jjaJrDl4DihIfjfJ7tQCoXRFxuZq3t15ANGt+IciRMMB5ANvMDwdcBCP2xceUv7jDAAJfSggI0vVdElw6mxwY/EJoUIWQHxhDcYdL4oQE6UCO92tdivvPoRowj+NVIwh0V6A5d88Ws6BbtcWiKkIcXgriP+mo1ELZJvcgnjW4ObaTNscWosRbtSgmq5Fvz+9ADo8+UexWjLHEvx0+WIOD0DkVStiHNWL5DtI9TjRKtv0IlbJNvMweErZVsh9fvBugbLqivi8PSVCjbZR7U+95+t7rvzqfvI+Q/5g6g5';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+
+      const entity = bp.findEntity(new Victor(-3,-1));
+
+//      console.log("bp entity: ", entity);
+      assert.equal(entity.name, 'constant_combinator');
+      assert.equal(entity.constants['7'].name, 'advanced_circuit');
+      assert.equal(entity.constants['7'].count, 80);
+      // XXX should assert on {entity}.control_behaviour.is_on == true / undefined.
+    });
+    it('with "output off" set', function () {
+      const input = '0eNqNkeGKwyAQhN9lfxuoydELeZWjFGO2dwu6BjXhQvDdz02hFApH/ygr48x8usPoFpwjcYZhB7KBEwxfOyT6ZuPkLG8zwgCU0YMCNl4m0WXDubHBj8QmhwhFAfGEvzDoclGAnCkT3u2OYbvy4keMVfCvkYI5pHo3sORXv6ZVsNVN14h6IcfgriP+mJWqukpu5DLGt4qbaTVscWosRbtQhsNyEfz+9ADoBYDSVRrcjEt4D2a00iqJu5Yl4vSMR3Vqy6WUol6Q20cFjxMtvkFX3SLZZg4OX5m7A1m/H6yPYOktwMPTxypY6+sc1uf+s9V9dz51H6X8AWGKrQY=';
+      const bp = new Blueprint().load(input);
+//      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+
+      const entity = bp.findEntity(new Victor(-2,-1));
+
+//      console.log("bp entity: ", entity);
+      assert.equal(entity.name, 'constant_combinator');
+      assert.equal(entity.constants['7'].name, 'advanced_circuit');
+      assert.equal(entity.constants['7'].count, 80);
+      // XXX should assert on {entity}.control_behaviour.is_on == false.
+    });
+  });
+
+  describe('power switches', function () {
+    it('simple example', function () {
+      const input = '0eNqVUkFugzAQ/MueTWUgoRGHXvKMKEJgts1KYCPbhCLE37uGKEobpLYX5LFnZzxjJqiaHjtL2kM+ASmjHeSnCRx96LIJe37sEHIgjy0I0GUbUGcGtJEbyKsLzAJI1/gJeTyfBaD25AlXnQWMhe7bCi0TthUEQ8dDRgdHForky17AuC5Yn+/lrWmKCi/llYwNNEVW9eQLPqvvs+9knS9+uT02qFhOk4puIrB6OF+GInYyoLYrbemDF7zBvBI0D9LS0QRx+FisH3MSo2Q+M/nYy6cDAQNZXNYyNHXs45+c9DuHbZ86TO45Wqypb6M1DofpTIMbXWZLk/LvCeJgvOGc/tN5fzMOWZcXyB9+NwFXtG4hZ4fXJD6kmUx38/wFX4PeRw==';
+      const bp = new Blueprint().load(input);
+      console.log("bp ojbect: ", bp.toObject().blueprint.entities);
+      console.log("bp grid: ", bp.entityPositionGrid);
+
+      const entity = bp.findEntity(new Victor(0,0));
+
+      console.log("bp entity: ", entity);
+      assert.equal(entity.name, 'power_switch');
+      assert.equal(entity.condition.left, 'electronic_circuit');
+      assert.equal(entity.condition.right, 40);
+      assert.equal(entity.condition.operator, '>');
+      // XXX should assert on {entity}.connections.Cu0/Cu1
+    });
   });
 
   describe('circuit conditions', function () {
@@ -150,11 +290,11 @@ describe('Blueprint Parsing', function () {
       const bp = new Blueprint().load(input);
       const train_stop = bp.findEntity(new Victor(-12, -2));
       const decoded = util.decode[0](input);
-      console.log("Entity: ", decoded.blueprint.entities[0]);
-      console.log("Circuit Condition: ", decoded.blueprint.entities[0].control_behavior.circuit_condition);
-      console.log("Circuit Enable/Disable: ", decoded.blueprint.entities[0].control_behavior.circuit_enable_disable);
-      console.log("Train Stopped Signal: ", decoded.blueprint.entities[0].control_behavior.train_stopped_signal);
-      console.log("Parsed Blueprint Condition: ", train_stop.condition);
+//      console.log("Entity: ", decoded.blueprint.entities[0]);
+//      console.log("Circuit Condition: ", decoded.blueprint.entities[0].control_behavior.circuit_condition);
+//      console.log("Circuit Enable/Disable: ", decoded.blueprint.entities[0].control_behavior.circuit_enable_disable);
+//      console.log("Train Stopped Signal: ", decoded.blueprint.entities[0].control_behavior.train_stopped_signal);
+//      console.log("Parsed Blueprint Condition: ", train_stop.condition);
 
       assert.equal(train_stop.name, "train_stop");
       assert.equal(train_stop.position.x, -12.5);
