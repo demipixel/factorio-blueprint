@@ -1,6 +1,6 @@
 {
   "name": "factorio-blueprint",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "Factorio Blueprints API",
   "keywords": [
     "factorio",
@@ -16,7 +16,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha",
-    "prepublish": "webpack -p"
+    "prepublish": "npm test && webpack -p"
   },
   "directories": {
     "test": "test"
