@@ -446,6 +446,12 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     height: 1,
     inventorySize: 48
   },
+  logistic_chest_buffer: {
+    type: item,
+    width: 1,
+    height: 1,
+    inventorySize: 48
+  },
   storage_tank: {
     type: item,
     width: 3,

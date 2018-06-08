@@ -44,7 +44,7 @@ module.exports = function(entityData) {
 
       this.setDirection(data.direction || 0);
 
-      this.parseFilters(this.name == 'constant_combinator' && data.control_behavior ? data.control_behavior.filters : data.filters);
+      this.parseFilters(data.filters);
       this.parseRequestFilters(data.request_filters);
 
       if (center) {
@@ -113,15 +113,10 @@ module.exports = function(entityData) {
     parseFilters(filters) { // Parse filters from json (for constructor)
       if (!filters) return [];
       for (let i = 0; i < filters.length; i++) {
-        if (!filters[i] || !filters[i].signal) continue;
-        const name = this.bp.checkName(filters[i].signal.name);
-
-        filters[i].name = name;
-
-        if (filters[i].signal && !entityData[filters[i].signal.name]) entityData[filters[i].signal.name] = { type: filters[i].signal.type };
+        const name = this.bp.checkName(filters[i].name);
 
         const final_position = filters[i].index - 1;
-        const final_name = filters[i].name;
+        const final_name = name;
 
         this.setFilter(final_position, final_name);
       }
