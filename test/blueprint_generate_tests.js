@@ -1,5 +1,5 @@
 const assert = require('assert');
-const Blueprint = require('../src/index');
+const Blueprint = require('../dist/factorio-blueprint.min.js');
 const Victor = require('victor');
 
 /*

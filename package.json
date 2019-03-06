@@ -1,6 +1,6 @@
 {
   "name": "factorio-blueprint",
-  "version": "2.1.10",
+  "version": "2.2.0",
   "description": "Factorio Blueprints API",
   "keywords": [
     "factorio",
@@ -13,10 +13,10 @@
     "encode",
     "decode"
   ],
-  "main": "src/index.js",
+  "main": "dist/factorio-blueprint.min.js",
   "scripts": {
     "test": "mocha",
-    "prepublish": "npm test && webpack -p"
+    "prepublish": "webpack -p && npm test"
   },
   "directories": {
     "test": "test"
@@ -29,18 +29,21 @@
     }
   ],
   "license": "ISC",
-  "dependencies": {
-    "prettyjson": "^1.2.1",
-    "victor": "^1.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "mocha": "^5.1.1",
-    "chai": "^4.1.2",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
-    "webpack": "^3.12.0"
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.3.3333",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
+    "zlib": "^1.0.5",
+    "prettyjson": "^1.2.1",
+    "victor": "^1.1.0"
   },
   "repository": {
     "type": "git",

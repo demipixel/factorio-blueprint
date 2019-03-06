@@ -3,10 +3,10 @@
  */
 
 
-const Blueprint = require('./index');
-const util = require('./util');
+import Blueprint from './index';
+import util from './util';
 
-module.exports = (str, opt = {}) => {
+export default (str : string, opt = {}) => {
   const version = str.slice(0, 1);
   let obj = util.decode[version](str);
 

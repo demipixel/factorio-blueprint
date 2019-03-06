@@ -1,10 +1,15 @@
 
 module.exports = {
-    entry: './src/index.js',
+    entry: './src/index.ts',
     output: {
-        filename: './dist/factorio-blueprint.min.js',
+        filename: './factorio-blueprint.min.js',
         library: 'Blueprint',
-        libraryTarget: 'umd'
+        libraryTarget: 'umd',
+        globalObject: 'this',
+        libraryExport: 'default'
+    },
+    resolve: {
+        extensions: [ '.tsx', '.ts', '.js' ]
     },
     module: {
         rules: [
@@ -17,6 +22,11 @@ module.exports = {
                         presets: ['babel-preset-env']
                     }
                 }
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/
             }
         ]
     }

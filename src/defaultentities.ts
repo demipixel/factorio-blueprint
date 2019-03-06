@@ -4,12 +4,36 @@ const virtual = 'virtual';
 const tile = 'tile'
 const recipe = 'recipe';
 
+enum Type {
+  Fluid = 'fluid',
+  Item = 'item',
+  Virtual = 'virtual',
+  Tile = 'tile',
+  Recipe = 'recipe'
+}
 
-module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)!
+interface EntityDescription {
+  type?: string;
+  width?: number;
+  height?: number;
+
+  parameters?: boolean;
+  alertParameters?: boolean;
+
+  inventorySize?: number;
+  directionType?: boolean;
+  filterAmount?: boolean;
+  combinator?: boolean;
+  modules?: number;
+  recipe?: boolean;
+}
+
+
+const DEFAULT_ENTITIES: { [entity_name: string]: EntityDescription; } = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)!
   // Somebody will probably automate the gathering of this data soon...
 
   programmable_speaker: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
 
@@ -19,375 +43,375 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
   },
 
   heat_exchanger: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 2
   },
 
   heat_pipe: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
 
   nuclear_reactor: {
-    type: item,
+    type: Type.Item,
     width: 5,
     height: 5
   },
 
   centrifuge: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3
   },
 
   steam_turbine: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 5
   },
 
   tank: {
-    type: item
+    type: Type.Item
   },
   car: {
-    type: item
+    type: Type.Item
   },
   cargo_wagon: {
-    type: item,
+    type: Type.Item,
     inventorySize: 40
   },
   fluid_wagon: {
-    type: item,
+    type: Type.Item,
   },
   locomotive: {
-    type: item
+    type: Type.Item
   },
 
   light_armor: {
-    type: item
+    type: Type.Item
   },
   heavy_armor: {
-    type: item
+    type: Type.Item
   },
   modular_armor: {
-    type: item
+    type: Type.Item
   },
   grenade: {
-    type: item
+    type: Type.Item
   },
   cluster_grenade: {
-    type: item
+    type: Type.Item
   },
   flamethrower: {
-    type: item
+    type: Type.Item
   },
   flamethrower_ammo: {
-    type: item
+    type: Type.Item
   },
   rocket_launcher: {
-    type: item
+    type: Type.Item
   },
   rocket: {
-    type: item
+    type: Type.Item
   },
   explosive_rocket: {
-    type: item
+    type: Type.Item
   },
   atomic_bomb: {
-    type: item
+    type: Type.Item
   },
   combat_shotgun: {
-    type: item
+    type: Type.Item
   },
   shotgun: {
-    type: item
+    type: Type.Item
   },
   shotgun_shell: {
-    type: item
+    type: Type.Item
   },
   piercing_shotgun_shell: {
-    type: item
+    type: Type.Item
   },
   submachine_gun: {
-    type: item
+    type: Type.Item
   },
   pistol: {
-    type: item
+    type: Type.Item
   },
   firearm_magazine: {
-    type: item
+    type: Type.Item
   },
   piercing_rounds_magazine: {
-    type: item
+    type: Type.Item
   },
   uranium_rounds_magazine: {
-    type: item
+    type: Type.Item
   },
   cannon_shell: {
-    type: item
+    type: Type.Item
   },
   explosive_cannon_shell: {
-    type: item
+    type: Type.Item
   },
   uranium_cannon_shell: {
-    type: item
+    type: Type.Item
   },
   explosive_uranium_cannon_shell: {
-    type: item
+    type: Type.Item
   },
 
   power_armor: {
-    type: item
+    type: Type.Item
   },
   power_armor_mk2: {
-    type: item
+    type: Type.Item
   },
   energy_shield_equipment: {
-    type: item
+    type: Type.Item
   },
   energy_shield_mk2_equipment: {
-    type: item
+    type: Type.Item
   },
   solar_panel_equipment: {
-    type: item
+    type: Type.Item
   },
   fusion_reactor_equipment: {
-    type: item
+    type: Type.Item
   },
   battery_equipment: {
-    type: item
+    type: Type.Item
   },
   battery_mk2_equipment: {
-    type: item
+    type: Type.Item
   },
   personal_laser_defense_equipment: {
-    type: item
+    type: Type.Item
   },
   discharge_defense_equipment: {
-    type: item
+    type: Type.Item
   },
   exoskeleton_equipment: {
-    type: item
+    type: Type.Item
   },
   personal_roboport_equipment: {
-    type: item
+    type: Type.Item
   },
   personal_roboport_mk2_equipment: {
-    type: item
+    type: Type.Item
   },
   night_vision_equipment: {
-    type: item
+    type: Type.Item
   },
 
   discharge_defense_remote: {
-    type: item
+    type: Type.Item
   },
   destroyer_capsule: {
-    type: item
+    type: Type.Item
   },
   distractor_capsule: {
-    type: item
+    type: Type.Item
   },
   defender_capsule: {
-    type: item
+    type: Type.Item
   },
   slowdown_capsule: {
-    type: item
+    type: Type.Item
   },
   poison_capsule: {
-    type: item
+    type: Type.Item
   },
 
 
 
   stone: {
-    type: item
+    type: Type.Item
   },
 
   solid_fuel: {
-    type: item
+    type: Type.Item
   },
 
   stone_brick: {
-    type: item
+    type: Type.Item
   },
 
   stone_path: {
-    type: tile
+    type: Type.Tile
   },
   landfill: {
-    type: item
+    type: Type.Item
   },
   concrete: {
-    type: tile
+    type: Type.Tile
   },
   hazard_concrete: {
-    type: item
+    type: Type.Item
   },
   hazard_concrete_left: {
-    type: tile
+    type: Type.Tile
   },
   hazard_concrete_right: {
-    type: tile
+    type: Type.Tile
   },
   refined_concrete: {
-    type: tile
+    type: Type.Tile
   },
   refined_hazard_concrete: {
-    type: item
+    type: Type.Item
   },
   refined_hazard_concrete_left: {
-    type: tile
+    type: Type.Tile
   },
   refined_hazard_concrete_right: {
-    type: tile
+    type: Type.Tile
   },
 
   iron_axe: {
-    type: item
+    type: Type.Item
   },
   steel_axe: {
-    type: item
+    type: Type.Item
   },
   repair_pack: {
-    type: item
+    type: Type.Item
   },
   blueprint: {
-    type: item
+    type: Type.Item
   },
   deconstruction_planner: {
-    type: item
+    type: Type.Item
   },
   blueprint_book: {
-    type: item
+    type: Type.Item
   },
 
   copper_cable: {
-    type: item
+    type: Type.Item
   },
   red_wire: {
-    type: item
+    type: Type.Item
   },
   green_wire: {
-    type: item
+    type: Type.Item
   },
 
   beacon: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3,
 
     modules: 2
   },
   small_electric_pole: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   medium_electric_pole: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   substation: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
   big_electric_pole: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
   offshore_pump: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
   small_lamp: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   solar_panel: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3
   },
   arithmetic_combinator: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 2
   },
   decider_combinator: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 2
   },
   constant_combinator: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
 
   splitter: { // Default position is facing north, 2 wide and 1 high for all splitters.
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 1
   },
   fast_splitter: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 1
   },
   express_splitter: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 1
   },
   transport_belt: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   fast_transport_belt: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   express_transport_belt: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   underground_belt: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     directionType: true
   },
   fast_underground_belt: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     directionType: true
   },
   express_underground_belt: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     directionType: true
   },
   assembling_machine_1: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3,
     recipe: true
   },
   assembling_machine_2: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3,
 
@@ -395,7 +419,7 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     modules: 2
   },
   assembling_machine_3: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3,
 
@@ -403,627 +427,629 @@ module.exports = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just f
     modules: 4
   },
   wooden_chest: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
 
     inventorySize: 16
   },
   iron_chest: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
 
     inventorySize: 32
   },
   steel_chest: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     inventorySize: 48
   },
   logistic_chest_passive_provider: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     inventorySize: 48
   },
   logistic_chest_active_provider: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     inventorySize: 48
   },
   logistic_chest_storage: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     inventorySize: 48
   },
   logistic_chest_requester: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     inventorySize: 48
   },
   logistic_chest_buffer: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     inventorySize: 48
   },
   storage_tank: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3
   },
   burner_inserter: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   inserter: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   long_handed_inserter: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   fast_inserter: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   filter_inserter: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     filterAmount: false
   },
   stack_inserter: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
   },
   stack_filter_inserter: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1,
     filterAmount: false
   },
   gate: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   stone_wall: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   radar: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3
   },
   rail: {
-    type: item
+    type: Type.Item
   },
   straight_rail: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
   curved_rail: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   // Lets figure out curved rails later. (1 curved rail deconstructs to 4 straight rails)
   land_mine: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   train_stop: { // pretty sure this is a 1.2x1.2 centered in a 2x2 square.
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
   rail_signal: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   rail_chain_signal: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   lab: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3,
 
     modules: 2
   },
   rocket_silo: {
-    type: item,
+    type: Type.Item,
     width: 9,
     height: 10, //unsure about these values, got them from code only (never counted it in game, but 10 sounds right.)
 
     modules: 4
   },
   chemical_plant: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3,
 
     modules: 3
   },
   oil_refinery: {
-    type: item,
+    type: Type.Item,
     width: 5,
     height: 5,
 
     modules: 3
   },
   stone_furnace: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
   steel_furnace: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
   electric_furnace: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3,
 
     modules: 2
   },
   pumpjack: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3
   },
   burner_mining_drill: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
 
   electric_mining_drill: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3,
 
     modules: 3
   },
   pump: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 2
   },
   pipe: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   pipe_to_ground: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
 
   electronic_circuit: {
-    type: item
+    type: Type.Item
   },
   advanced_circuit: {
-    type: item
+    type: Type.Item
   },
 
 
   boiler: {
-    type: item,
+    type: Type.Item,
     width: 1,
     height: 1
   },
   steam_engine: {
-    type: item,
+    type: Type.Item,
     width: 5,
     height: 3
   },
   accumulator: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
 
   roboport: {
-    type: item,
+    type: Type.Item,
     width: 4,
     height: 4
   },
   construction_robot: {
-    type: item
+    type: Type.Item
   },
   logistic_robot: {
-    type: item
+    type: Type.Item
   },
   power_switch: {
-    type: item,
+    type: Type.Item,
     width: 3,
     height: 3
   },
 
   gun_turret: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
   laser_turret: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 2
   },
   flamethrower_turret: {
-    type: item,
+    type: Type.Item,
     width: 2,
     height: 3
   },
 
 
   productivity_module: {
-    type: item
+    type: Type.Item
   },
   productivity_module_2: {
-    type: item
+    type: Type.Item
   },
   productivity_module_3: {
-    type: item
+    type: Type.Item
   },
   effectivity_module: {
-    type: item
+    type: Type.Item
   },
   effectivity_module_2: {
-    type: item
+    type: Type.Item
   },
   effectivity_module_3: {
-    type: item
+    type: Type.Item
   },
   speed_module: {
-    type: item
+    type: Type.Item
   },
   speed_module_2: {
-    type: item
+    type: Type.Item
   },
   speed_module_3: {
-    type: item
+    type: Type.Item
   },
 
 
 
   water: {
-    type: fluid
+    type: Type.Fluid
   },
   crude_oil: {
-    type: fluid
+    type: Type.Fluid
   },
   petroleum_gas: {
-    type: fluid
+    type: Type.Fluid
   },
   heavy_oil: {
-    type: fluid
+    type: Type.Fluid
   },
   light_oil: {
-    type: fluid
+    type: Type.Fluid
   },
   sulfuric_acid: {
-    type: fluid
+    type: Type.Fluid
   },
   lubricant: {
-    type: fluid
+    type: Type.Fluid
   },
   steam: {
-    type: fluid
+    type: Type.Fluid
   },
 
   advanced_oil_processing: {
-    type: recipe
+    type: Type.Recipe
   },
 
   raw_fish: {
-    type: item
+    type: Type.Item
   },
   wood: {
-    type: item
+    type: Type.Item
   },
   raw_wood: {
-    type: item
+    type: Type.Item
   },
   iron_ore: {
-    type: item
+    type: Type.Item
   },
   iron_plate: {
-    type: item
+    type: Type.Item
   },
   copper_ore: {
-    type: item
+    type: Type.Item
   },
   copper_plate: {
-    type: item
+    type: Type.Item
   },
   steel_plate: {
-    type: item
+    type: Type.Item
   },
   coal: {
-    type: item
+    type: Type.Item
   },
   uranium_ore: {
-    type: item
+    type: Type.Item
   },
   plastic_bar: {
-    type: item
+    type: Type.Item
   },
   sulfur: {
-    type: item
+    type: Type.Item
   },
 
   crude_oil_barrel: {
-    type: item
+    type: Type.Item
   },
   heavy_oil_barrel: {
-    type: item
+    type: Type.Item
   },
   light_oil_barrel: {
-    type: item
+    type: Type.Item
   },
   lubricant_barrel: {
-    type: item
+    type: Type.Item
   },
   petroleum_gas_barrel: {
-    type: item
+    type: Type.Item
   },
   sulfuric_acid_barrel: {
-    type: item
+    type: Type.Item
   },
   water_barrel: {
-    type: item
+    type: Type.Item
   },
   empty_barrel: {
-    type: item
+    type: Type.Item
   },
 
   processing_unit: {
-    type: item
+    type: Type.Item
   },
 
   engine_unit: {
-    type: item
+    type: Type.Item
   },
 
   electric_engine_unit: {
-    type: item
+    type: Type.Item
   },
 
   battery: {
-    type: item
+    type: Type.Item
   },
 
   explosives: {
-    type: item
+    type: Type.Item
   },
   flying_robot_frame: {
-    type: item
+    type: Type.Item
   },
   low_density_structure: {
-    type: item
+    type: Type.Item
   },
   rocket_fuel: {
-    type: item
+    type: Type.Item
   },
   rocket_control_unit: {
-    type: item
+    type: Type.Item
   },
   satellite: {
-    type: item
+    type: Type.Item
   },
   uranium_235: {
-    type: item
+    type: Type.Item
   },
   uranium_238: {
-    type: item
+    type: Type.Item
   },
 
   uranium_fuel_cell: {
-    type: item
+    type: Type.Item
   },
   used_up_uranium_fuel_cell: {
-    type: item
+    type: Type.Item
   },
   science_pack_1: {
-    type: item
+    type: Type.Item
   },
   science_pack_2: {
-    type: item
+    type: Type.Item
   },
   science_pack_3: {
-    type: item
+    type: Type.Item
   },
   military_science_pack: {
-    type: item
+    type: Type.Item
   },
   production_science_pack: {
-    type: item
+    type: Type.Item
   },
   high_tech_science_pack: {
-    type: item
+    type: Type.Item
   },
   space_science_pack: {
-    type: item
+    type: Type.Item
   },
 
   iron_stick: {
-    type: item
+    type: Type.Item
   },
   iron_gear_wheel: {
-    type: item
+    type: Type.Item
   },
 
 
   signal_anything: {
-    type: virtual,
+    type: Type.Virtual,
     combinator: true
   },
   signal_each: {
-    type: virtual,
+    type: Type.Virtual,
     combinator: true
   },
   signal_everything: {
-    type: virtual,
+    type: Type.Virtual,
     combinator: true
   },
   signal_0: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_1: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_2: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_3: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_4: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_5: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_6: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_7: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_8: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_9: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_A: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_B: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_C: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_D: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_E: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_F: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_G: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_H: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_I: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_J: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_K: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_L: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_M: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_N: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_O: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_P: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_Q: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_R: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_S: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_T: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_U: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_V: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_W: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_X: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_Y: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_Z: {
-    type: virtual
+    type: Type.Virtual
   },
 
   signal_blue: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_red: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_green: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_yellow: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_cyan: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_pink: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_white: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_grey: {
-    type: virtual
+    type: Type.Virtual
   },
   signal_black: {
-    type: virtual
+    type: Type.Virtual
   }
 };
+
+export default DEFAULT_ENTITIES;

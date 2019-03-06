@@ -1,16 +1,37 @@
 'use strict';
 
-const prettyJSON = require('prettyjson');
-const Victor = require('victor');
+import Entity from './entity';
+import Tile from './tile';
+import Victor from 'victor';
+import prettyJSON from 'prettyjson';
+import entityData from './defaultentities';
+import util from './util';
 
-const entityData = require('./defaultentities');
-const Entity = require('./entity')(entityData);
-const Tile = require('./tile')(entityData);
-const util = require('./util');
+interface Position {
+  x: number;
+  y: number;
+}
 
-class Blueprint {
+interface BlueprintLoadOptions {
+  fixEntityData?: boolean;
+  allowOverlap?: boolean;
+}
 
-  constructor(data, opt = {}) {
+interface BlueprintOptions extends BlueprintLoadOptions {
+  checkWithEntityData?: boolean; // Should we validate enitity names with entityData? Default true
+}
+
+export default class Blueprint {
+  name: string;
+  icons: string[];
+  entities: Entity[];
+  tiles: Tile[];
+  entityPositionGrid: { [location: string]: Entity; };
+  tilePositionGrid: { [location: string]: Tile; };
+  version: string;
+  checkWithEntityData: boolean;
+
+  constructor(data : any, opt: BlueprintOptions = {}) {
     this.name = 'Blueprint';
     this.icons = []; // Icons for Blueprint (up to 4)
     this.entities = []; // List of all entities in Blueprint
@@ -32,7 +53,7 @@ class Blueprint {
   }
 
   // Load blueprint from an existing one
-  load(data, opt = {}) {
+  load(data: any, opt: BlueprintOptions = { fixEntityData: false }) {
     if (typeof data === 'string') {
       const version = data.slice(0, 1);
       data = util.decode[version](data);
@@ -40,7 +61,7 @@ class Blueprint {
     return this.fillFromObject(data, opt);
   }
 
-  fillFromObject(data, opt) {
+  fillFromObject(data: any, opt: BlueprintLoadOptions) {
     if (data.hasOwnProperty('blueprint'))
       data = data.blueprint;
 
@@ -77,7 +98,7 @@ class Blueprint {
     return this;
   }
 
-  placeBlueprint(bp, position, rotations, allowOverlap) { // rotations is 0, 1, 2, 3 or any of the Blueprint.ROTATION_* constants.
+  placeBlueprint(bp : Blueprint, position: Position, rotations: number, allowOverlap: boolean) { // rotations is 0, 1, 2, 3 or any of the Blueprint.ROTATION_* constants.
     const entitiesCreated = []
     bp.entities.forEach(ent => {
       const data = ent.getData();
@@ -117,7 +138,7 @@ class Blueprint {
   }
 
   // Create an entity!
-  createEntity(name, position, direction, allowOverlap, noPlace, center) {
+  createEntity(name: string, position: Position, direction: number, allowOverlap: boolean, noPlace: boolean, center: boolean) {
     return this.createEntityWithData({
       name: name,
       position: position,
@@ -127,7 +148,7 @@ class Blueprint {
   }
 
   // Creates an entity with a data object instead of paramaters
-  createEntityWithData(data, allowOverlap, noPlace, center) {
+  createEntityWithData(data: any, allowOverlap: boolean, noPlace: boolean, center: boolean) {
     const ent = new Entity(data, this.entityPositionGrid, this, center);
     if (allowOverlap || ent.checkNoOverlap(this.entityPositionGrid)) {
       if (!noPlace) ent.place(this.entityPositionGrid, this.entities);
@@ -139,11 +160,11 @@ class Blueprint {
     }
   }
 
-  createTile(name, position) {
+  createTile(name: string, position: Position) {
     return this.createTileWithData({ name: name, position: position });
   }
 
-  createTileWithData(data) {
+  createTileWithData(data: any) {
     const tile = new Tile(data, this);
     if (this.tilePositionGrid[data.position.x + ',' + data.position.y]) this.removeTile(this.tilePositionGrid[data.position.x + ',' + data.position
       .y]);
@@ -154,16 +175,16 @@ class Blueprint {
   }
 
   // Returns entity at a position (or null)
-  findEntity(pos) {
+  findEntity(pos: Position) {
     return this.entityPositionGrid[Math.floor(pos.x) + ',' + (pos.y)] || null;
   }
 
-  findTile(pos) {
+  findTile(pos: Position) {
     return this.tilePositionGrid[Math.floor(pos.x) + ',' + (pos.y)] || null;
   }
 
   // Removes a specific entity
-  removeEntity(ent) {
+  removeEntity(ent: Entity) {
     if (!ent) return false;
     else {
       ent.removeCleanup(this.entityPositionGrid);
@@ -174,7 +195,7 @@ class Blueprint {
     }
   }
 
-  removeTile(tile) {
+  removeTile(tile: Tile) {
     if (!tile) return false;
     else {
       const index = this.tiles.indexOf(tile)
@@ -185,12 +206,12 @@ class Blueprint {
   }
 
   // Removes an entity at a position (returns false if no entity is there)
-  removeEntityAtPosition(position) {
+  removeEntityAtPosition(position: Position) {
     if (!this.entityPositionGrid[position.x + ',' + position.y]) return false;
     return this.removeEntity(this.entityPositionGrid[position.x + ',' + position.y]);
   }
 
-  removeTileAtPosition(position) {
+  removeTileAtPosition(position: Position) {
     if (!this.tilePositionGrid[position.x + ',' + position.y]) return false;
     return this.removeTile(this.tilePositionGrid[position.x + ',' + position.y]);
   }
@@ -207,7 +228,7 @@ class Blueprint {
   }
 
   // Get corner/center positions
-  getPosition(f, xcomp, ycomp) {
+  getPosition(f: string, xcomp: Function, ycomp: Function) {
     if (!this.entities.length) return new Victor(0, 0);
     return new Victor(this.entities.reduce((best, ent) => xcomp(best, ent[f]().x), this.entities[0][f]().x), this.entities.reduce((best, ent) =>
       ycomp(best, ent[f]().y), this.entities[0][f]().y));
@@ -240,7 +261,7 @@ class Blueprint {
   }
 
   // Quickly generate 2 (or num) icons
-  generateIcons(num) {
+  generateIcons(num?: number) {
     if (!num) num = 2;
     num = Math.min(this.entities.length, Math.min(Math.max(num, 1), 4));
     for (let i = 0; i < num; i++) {
@@ -357,17 +378,19 @@ class Blueprint {
   fixName(name) {
     return name.replace(/_/g, '-');
   }
+
+  static getBook(str: string, opt: any) { getBook(str, opt); }
+  static toBook(blueprints: Blueprint[], activeIndex = 0, version = 'latest') { toBook(blueprints, activeIndex, version); }
+  static isBook(str: string) { isBook(str); }
 }
 
-module.exports = Blueprint;
+import book from './book';
 
-//Blueprint is imported in ./book, so it must be exported before we import ./book here
-const book = require('./book');
-Blueprint.getBook = function(str, opt) {
+function getBook(str: string, opt: any) {
   return book(str, opt);
 };
 
-Blueprint.toBook = (blueprints, activeIndex = 0, version = 'latest') => {
+function toBook(blueprints: Blueprint[], activeIndex = 0, version = 'latest') {
   let obj = {
     blueprint_book: {
       blueprints: blueprints.map(bp => bp.toObject()),
@@ -380,7 +403,7 @@ Blueprint.toBook = (blueprints, activeIndex = 0, version = 'latest') => {
   return util.encode[version](obj);
 }
 
-Blueprint.isBook = (str) => {
+function isBook(str: string) {
   const version = str.slice(0, 1);
   let obj = util.decode[version](str);
 

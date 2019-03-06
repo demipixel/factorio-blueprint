@@ -1,8 +1,9 @@
 /**
  * Created by anth on 21.05.2017.
  */
-const zlib = require("zlib");
-const Buffer = require('buffer').Buffer;
+
+const {Buffer} = require('buffer');
+const zlib = require('zlib');
 
 
 const toExport = {
@@ -21,7 +22,8 @@ const toExport = {
       }
 
       return data;
-    }
+    },
+    latest: null
   },
 
   /**
@@ -32,7 +34,8 @@ const toExport = {
   encode: {
     0: (obj) => { // Version 0
       return '0' + zlib.deflateSync(JSON.stringify(obj)).toString('base64');
-    }
+    },
+    latest: null
   }
 };
 
