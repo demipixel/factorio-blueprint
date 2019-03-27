@@ -692,6 +692,11 @@ const DEFAULT_ENTITIES: { [entity_name: string]: EntityDescription; } = { // ADD
     width: 2,
     height: 2
   },
+  artillery_turret: {
+    type: Type.Item,
+    width: 3,
+    height: 3
+  },
   laser_turret: {
     type: Type.Item,
     width: 2,
