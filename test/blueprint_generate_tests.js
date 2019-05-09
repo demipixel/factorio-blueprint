@@ -205,4 +205,22 @@ describe('Blueprint Generation', function () {
   });
 });
 
+describe('Blueprint Books', function() {
+  const bp = new Blueprint();
+  const bookString = Blueprint.toBook([bp]);
+
+  it('is a string', function() {
+    assert.equal(typeof bookString, 'string');
+  });
+
+  it('checks bp string type', function() {
+    assert.equal(Blueprint.isBook(bookString), true);
+    assert.equal(Blueprint.isBook(bp.encode()), false);
+  });
+
+  it('parses book', function() {
+    assert.equal(Blueprint.getBook(bookString).length, 1);
+  });
+});
+
 // vi: sts=2 ts=2 sw=2 et

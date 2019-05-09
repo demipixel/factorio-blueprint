@@ -379,9 +379,9 @@ export default class Blueprint {
     return name.replace(/_/g, '-');
   }
 
-  static getBook(str: string, opt: any) { getBook(str, opt); }
-  static toBook(blueprints: Blueprint[], activeIndex = 0, version = 'latest') { toBook(blueprints, activeIndex, version); }
-  static isBook(str: string) { isBook(str); }
+  static getBook(str: string, opt: any) { return getBook(str, opt); }
+  static toBook(blueprints: Blueprint[], activeIndex = 0, version = 'latest') { return toBook(blueprints, activeIndex, version); }
+  static isBook(str: string) { return isBook(str); }
 }
 
 import book from './book';
