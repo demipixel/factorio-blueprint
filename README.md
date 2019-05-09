@@ -1,6 +1,7 @@
 # factorio-blueprint
 
 [![npm version](https://badge.fury.io/js/factorio-blueprint.svg)](https://badge.fury.io/js/factorio-blueprint)
+[![Build Status](https://travis-ci.org/demipixel/factorio-blueprint.svg?branch=master)](https://travis-ci.org/demipixel/factorio-blueprint)
 
 A node.js library created to help you create, modify, and export Factorio blueprints and blueprint strings!
 
