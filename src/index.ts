@@ -107,9 +107,9 @@ export default class Blueprint {
       // data.direction += 8;
       data.direction %= 8;
 
-      if (rotations == 3) data.position = { x: data.position.y, y: -data.position.x };
-      else if (rotations == 2) data.position = { x: -data.position.x, y: -data.position.y };
-      else if (rotations == 1) data.position = { x: -data.position.y, y: data.position.x };
+      if (rotations == 3) data.position = new Victor(data.position.y, -data.position.x);
+      else if (rotations == 2) data.position = new Victor(-data.position.x, -data.position.y);
+      else if (rotations == 1) data.position = new Victor(-data.position.y, data.position.x);
 
       data.position.x += position.x;
       data.position.y += position.y;
@@ -124,9 +124,9 @@ export default class Blueprint {
     bp.tiles.forEach(tile => {
       const data = tile.getData();
 
-      if (rotations == 3) data.position = { x: data.position.y, y: -data.position.x };
-      else if (rotations == 2) data.position = { x: -data.position.x, y: -data.position.y };
-      else if (rotations == 1) data.position = { x: -data.position.y, y: data.position.x };
+      if (rotations == 3) data.position = new Victor(data.position.y, -data.position.x);
+      else if (rotations == 2) data.position = new Victor(-data.position.x, -data.position.y);
+      else if (rotations == 1) data.position = new Victor(-data.position.y, data.position.x);
 
       data.position.x += position.x;
       data.position.y += position.y;
