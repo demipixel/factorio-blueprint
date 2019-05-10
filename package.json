@@ -34,7 +34,10 @@
     }
   ],
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "prettyjson": "^1.2.1",
+    "victor": "^1.1.0"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
@@ -46,9 +49,7 @@
     "typescript": "^3.3.3333",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
-    "zlib": "^1.0.5",
-    "prettyjson": "^1.2.1",
-    "victor": "^1.1.0"
+    "zlib": "^1.0.5"
   },
   "repository": {
     "type": "git",
