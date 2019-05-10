@@ -13,10 +13,15 @@
     "encode",
     "decode"
   ],
-  "main": "dist/factorio-blueprint.min.js",
+  "main": "dist/commonjs/index.js",
+  "module": "dist/es6/index.js",
+  "browser": "dist/factorio-blueprint.min.js",
   "scripts": {
     "test": "mocha",
-    "prepublish": "webpack -p && npm test"
+    "build": "npm run build-commonjs && npm run build-esm",
+    "build-commonjs": "npx tsc --module commonjs --outDir dist/commonjs/",
+    "build-esm": "npx tsc --module es6 --outDir dist/es6/",
+    "prepublish": "webpack -p && npm test && npm run build"
   },
   "directories": {
     "test": "test"

@@ -28,8 +28,9 @@ interface EntityDescription {
   recipe?: boolean;
 }
 
-
-const DEFAULT_ENTITIES: { [entity_name: string]: EntityDescription; } = { // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)!
+export type EntityMap = { [entityName: string]: EntityDescription };
+const DEFAULT_ENTITIES: EntityMap = {
+  // ADD MORE (vanilla) AS YOU PLEASE (or modded if it's just for you)!
   // Somebody will probably automate the gathering of this data soon...
 
   programmable_speaker: {
