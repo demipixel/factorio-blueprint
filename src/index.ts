@@ -7,6 +7,7 @@ import prettyJSON from 'prettyjson';
 import entityData from './defaultentities';
 import util from './util';
 
+type Version = '0' | 'latest';
 interface Position {
   x: number;
   y: number;
@@ -26,20 +27,21 @@ export default class Blueprint {
   icons: string[];
   entities: Entity[];
   tiles: Tile[];
-  entityPositionGrid: { [location: string]: Entity; };
-  tilePositionGrid: { [location: string]: Tile; };
+  entityPositionGrid: { [location: string]: Entity };
+  tilePositionGrid: { [location: string]: Tile };
   version: string;
   checkWithEntityData: boolean;
 
-  constructor(data : any, opt: BlueprintOptions = {}) {
+  constructor(data: any, opt: BlueprintOptions = {}) {
     this.name = 'Blueprint';
     this.icons = []; // Icons for Blueprint (up to 4)
     this.entities = []; // List of all entities in Blueprint
     this.tiles = []; // List of all tiles in Blueprint (such as stone path or concrete)
     this.entityPositionGrid = {}; // Object with tile keys in format "x,y" => entity
     this.tilePositionGrid = {};
-    this.version = null;
-    this.checkWithEntityData = opt.checkWithEntityData != undefined ? opt.checkWithEntityData : true; // make sure checkName() validates with entityData
+    this.version = '0';
+    this.checkWithEntityData =
+      opt.checkWithEntityData != undefined ? opt.checkWithEntityData : true; // make sure checkName() validates with entityData
     if (data) this.load(data, opt);
   }
 
@@ -48,7 +50,7 @@ export default class Blueprint {
     this.setIds();
     return prettyJSON.render(this.toObject().blueprint, {
       noAlign: true,
-      numberColor: 'magenta'
+      numberColor: 'magenta',
     });
   }
 
@@ -56,14 +58,16 @@ export default class Blueprint {
   load(data: any, opt: BlueprintOptions = { fixEntityData: false }) {
     if (typeof data === 'string') {
       const version = data.slice(0, 1);
+      if (version !== '0') {
+        throw new Error('Cannot find decoder for blueprint version ' + version);
+      }
       data = util.decode[version](data);
     }
     return this.fillFromObject(data, opt);
   }
 
   fillFromObject(data: any, opt: BlueprintLoadOptions) {
-    if (data.hasOwnProperty('blueprint'))
-      data = data.blueprint;
+    if (data.hasOwnProperty('blueprint')) data = data.blueprint;
 
     if (!data.tiles) data.tiles = [];
     if (!data.entities) data.entities = [];
@@ -72,24 +76,24 @@ export default class Blueprint {
     this.name = data.label;
     this.version = data.version;
 
-    data.entities.forEach(entity => {
+    data.entities.forEach((entity: any) => {
       if (opt.fixEntityData) {
-        const data = {};
+        const data: any = {};
         data[this.jsName(entity.name)] = { type: 'item', width: 1, height: 1 };
         Blueprint.setEntityData(data);
       }
-      this.createEntityWithData(entity, opt.allowOverlap, true, true); // no overlap (unless option allows it), place altogether later, positions are their center
+      this.createEntityWithData(entity, opt.allowOverlap || false, true, true); // no overlap (unless option allows it), place altogether later, positions are their center
     });
     this.entities.forEach(entity => {
       entity.place(this.entityPositionGrid, this.entities);
     });
 
-    data.tiles.forEach(tile => {
+    data.tiles.forEach((tile: any) => {
       this.createTile(tile.name, tile.position);
     });
 
     this.icons = [];
-    data.icons.forEach(icon => {
+    data.icons.forEach((icon: any) => {
       this.icons[icon.index - 1] = this.checkName(icon.signal.name);
     });
 
@@ -98,8 +102,14 @@ export default class Blueprint {
     return this;
   }
 
-  placeBlueprint(bp : Blueprint, position: Position, rotations: number, allowOverlap: boolean) { // rotations is 0, 1, 2, 3 or any of the Blueprint.ROTATION_* constants.
-    const entitiesCreated = []
+  placeBlueprint(
+    bp: Blueprint,
+    position: Position,
+    rotations: number,
+    allowOverlap: boolean,
+  ) {
+    // rotations is 0, 1, 2, 3 or any of the Blueprint.ROTATION_* constants.
+    const entitiesCreated: Entity[] = [];
     bp.entities.forEach(ent => {
       const data = ent.getData();
 
@@ -107,14 +117,19 @@ export default class Blueprint {
       // data.direction += 8;
       data.direction %= 8;
 
-      if (rotations == 3) data.position = { x: data.position.y, y: -data.position.x };
-      else if (rotations == 2) data.position = { x: -data.position.x, y: -data.position.y };
-      else if (rotations == 1) data.position = { x: -data.position.y, y: data.position.x };
+      if (rotations == 3)
+        data.position = { x: data.position.y, y: -data.position.x };
+      else if (rotations == 2)
+        data.position = { x: -data.position.x, y: -data.position.y };
+      else if (rotations == 1)
+        data.position = { x: -data.position.y, y: data.position.x };
 
       data.position.x += position.x;
       data.position.y += position.y;
 
-      entitiesCreated.push(this.createEntityWithData(data, allowOverlap, true, true));
+      entitiesCreated.push(
+        this.createEntityWithData(data, allowOverlap, true, true),
+      );
     });
 
     entitiesCreated.forEach(e => {
@@ -124,9 +139,12 @@ export default class Blueprint {
     bp.tiles.forEach(tile => {
       const data = tile.getData();
 
-      if (rotations == 3) data.position = { x: data.position.y, y: -data.position.x };
-      else if (rotations == 2) data.position = { x: -data.position.x, y: -data.position.y };
-      else if (rotations == 1) data.position = { x: -data.position.y, y: data.position.x };
+      if (rotations == 3)
+        data.position = { x: data.position.y, y: -data.position.x };
+      else if (rotations == 2)
+        data.position = { x: -data.position.x, y: -data.position.y };
+      else if (rotations == 1)
+        data.position = { x: -data.position.y, y: data.position.x };
 
       data.position.x += position.x;
       data.position.y += position.y;
@@ -138,25 +156,53 @@ export default class Blueprint {
   }
 
   // Create an entity!
-  createEntity(name: string, position: Position, direction: number, allowOverlap: boolean, noPlace: boolean, center: boolean) {
-    return this.createEntityWithData({
-      name: name,
-      position: position,
-      direction: direction || 0
-    }, allowOverlap, noPlace, center);
+  createEntity(
+    name: string,
+    position: Position,
+    direction: number,
+    allowOverlap: boolean,
+    noPlace: boolean,
+    center: boolean,
+  ) {
+    return this.createEntityWithData(
+      {
+        name: name,
+        position: position,
+        direction: direction || 0,
+      },
+      allowOverlap,
+      noPlace,
+      center,
+    );
     // Need to add to defaultentities.js whether something is rotatable. If not, set direction to null.
   }
 
   // Creates an entity with a data object instead of paramaters
-  createEntityWithData(data: any, allowOverlap: boolean, noPlace: boolean, center: boolean) {
-    const ent = new Entity(data, this.entityPositionGrid, this, center);
+  createEntityWithData(
+    data: any,
+    allowOverlap: boolean,
+    noPlace: boolean,
+    center: boolean,
+  ) {
+    const ent = new Entity(data, this, center);
     if (allowOverlap || ent.checkNoOverlap(this.entityPositionGrid)) {
       if (!noPlace) ent.place(this.entityPositionGrid, this.entities);
       this.entities.push(ent);
       return ent;
     } else {
       const otherEnt = ent.getOverlap(this.entityPositionGrid);
-      throw new Error('Entity ' + data.name + ' overlaps ' + otherEnt.name + ' entity (' + data.position.x + ', ' + data.position.y + ')');
+      throw new Error(
+        'Entity ' +
+          data.name +
+          ' overlaps ' +
+          // @ts-ignore
+          otherEnt.name +
+          ' entity (' +
+          data.position.x +
+          ', ' +
+          data.position.y +
+          ')',
+      );
     }
   }
 
@@ -166,8 +212,10 @@ export default class Blueprint {
 
   createTileWithData(data: any) {
     const tile = new Tile(data, this);
-    if (this.tilePositionGrid[data.position.x + ',' + data.position.y]) this.removeTile(this.tilePositionGrid[data.position.x + ',' + data.position
-      .y]);
+    if (this.tilePositionGrid[data.position.x + ',' + data.position.y])
+      this.removeTile(
+        this.tilePositionGrid[data.position.x + ',' + data.position.y],
+      );
 
     this.tilePositionGrid[data.position.x + ',' + data.position.y] = tile;
     this.tiles.push(tile);
@@ -176,11 +224,11 @@ export default class Blueprint {
 
   // Returns entity at a position (or null)
   findEntity(pos: Position) {
-    return this.entityPositionGrid[Math.floor(pos.x) + ',' + (pos.y)] || null;
+    return this.entityPositionGrid[Math.floor(pos.x) + ',' + pos.y] || null;
   }
 
   findTile(pos: Position) {
-    return this.tilePositionGrid[Math.floor(pos.x) + ',' + (pos.y)] || null;
+    return this.tilePositionGrid[Math.floor(pos.x) + ',' + pos.y] || null;
   }
 
   // Removes a specific entity
@@ -188,7 +236,7 @@ export default class Blueprint {
     if (!ent) return false;
     else {
       ent.removeCleanup(this.entityPositionGrid);
-      const index = this.entities.indexOf(ent)
+      const index = this.entities.indexOf(ent);
       if (index == -1) return ent;
       this.entities.splice(index, 1);
       return ent;
@@ -198,7 +246,7 @@ export default class Blueprint {
   removeTile(tile: Tile) {
     if (!tile) return false;
     else {
-      const index = this.tiles.indexOf(tile)
+      const index = this.tiles.indexOf(tile);
       if (index == -1) return tile;
       this.tiles.splice(index, 1);
       return tile;
@@ -208,19 +256,23 @@ export default class Blueprint {
   // Removes an entity at a position (returns false if no entity is there)
   removeEntityAtPosition(position: Position) {
     if (!this.entityPositionGrid[position.x + ',' + position.y]) return false;
-    return this.removeEntity(this.entityPositionGrid[position.x + ',' + position.y]);
+    return this.removeEntity(
+      this.entityPositionGrid[position.x + ',' + position.y],
+    );
   }
 
   removeTileAtPosition(position: Position) {
     if (!this.tilePositionGrid[position.x + ',' + position.y]) return false;
-    return this.removeTile(this.tilePositionGrid[position.x + ',' + position.y]);
+    return this.removeTile(
+      this.tilePositionGrid[position.x + ',' + position.y],
+    );
   }
 
   // Set ids for entities, called in toJSON()
   setIds() {
     this.entities.forEach((entity, i) => {
       entity.id = i + 1;
-    })
+    });
     this.tiles.forEach((tile, i) => {
       tile.id = i + 1;
     });
@@ -228,31 +280,65 @@ export default class Blueprint {
   }
 
   // Get corner/center positions
-  getPosition(f: string, xcomp: Function, ycomp: Function) {
+  getPosition(
+    f: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight',
+    xcomp: Math['min'] | Math['max'],
+    ycomp: Math['min'] | Math['max'],
+  ) {
     if (!this.entities.length) return new Victor(0, 0);
-    return new Victor(this.entities.reduce((best, ent) => xcomp(best, ent[f]().x), this.entities[0][f]().x), this.entities.reduce((best, ent) =>
-      ycomp(best, ent[f]().y), this.entities[0][f]().y));
+    return new Victor(
+      this.entities.reduce(
+        (best, ent) => xcomp(best, ent[f]().x),
+        this.entities[0][f]().x,
+      ),
+      this.entities.reduce(
+        (best, ent) => ycomp(best, ent[f]().y),
+        this.entities[0][f]().y,
+      ),
+    );
   }
 
-  center() { return new Victor((this.topLeft().x + this.topRight().x) / 2, (this.topLeft().y + this.bottomLeft().y) / 2) }
-  topLeft() { return this.getPosition('topLeft', Math.min, Math.min); }
-  topRight() { return this.getPosition('topRight', Math.max, Math.min); }
-  bottomLeft() { return this.getPosition('bottomLeft', Math.min, Math.max); }
-  bottomRight() { return this.getPosition('bottomRight', Math.max, Math.max); }
+  center() {
+    return new Victor(
+      (this.topLeft().x + this.topRight().x) / 2,
+      (this.topLeft().y + this.bottomLeft().y) / 2,
+    );
+  }
+  topLeft() {
+    return this.getPosition('topLeft', Math.min, Math.min);
+  }
+  topRight() {
+    return this.getPosition('topRight', Math.max, Math.min);
+  }
+  bottomLeft() {
+    return this.getPosition('bottomLeft', Math.min, Math.max);
+  }
+  bottomRight() {
+    return this.getPosition('bottomRight', Math.max, Math.max);
+  }
 
   // Center all entities
-  fixCenter(aroundPoint) {
+  fixCenter(aroundPoint?: Position) {
     if (!this.entities.length) return this;
 
-    let offsetX = aroundPoint ? -aroundPoint.x : -Math.floor(this.center().x / 2) * 2;
-    let offsetY = aroundPoint ? -aroundPoint.y : -Math.floor(this.center().y / 2) * 2;
+    let offsetX = aroundPoint
+      ? -aroundPoint.x
+      : -Math.floor(this.center().x / 2) * 2;
+    let offsetY = aroundPoint
+      ? -aroundPoint.y
+      : -Math.floor(this.center().y / 2) * 2;
     const offset = new Victor(offsetX, offsetY);
-    this.entities.forEach(entity => entity.removeTileData(this.entityPositionGrid));
+    this.entities.forEach(entity =>
+      entity.removeTileData(this.entityPositionGrid),
+    );
     this.entities.forEach(entity => {
       entity.position.add(offset);
       entity.setTileData(this.entityPositionGrid);
     });
-    this.tiles.forEach(tile => delete this.tilePositionGrid[tile.position.x + ',' + tile.position.y]);
+    this.tiles.forEach(
+      tile =>
+        delete this.tilePositionGrid[tile.position.x + ',' + tile.position.y],
+    );
     this.tiles.forEach(tile => {
       tile.position.add(offset);
       this.tilePositionGrid[tile.position.x + ',' + tile.position.y] = tile;
@@ -283,7 +369,10 @@ export default class Blueprint {
     });
     const tileInfo = this.tiles.map((tile, i) => tile.getData());
     const iconData = this.icons.map((icon, i) => {
-      return { signal: { type: entityData[icon].type, name: this.fixName(icon) }, index: i + 1 };
+      return {
+        signal: { type: entityData[icon].type, name: this.fixName(icon) },
+        index: i + 1,
+      };
     });
 
     return {
@@ -293,8 +382,8 @@ export default class Blueprint {
         tiles: this.tiles.length ? tileInfo : undefined,
         item: 'blueprint',
         version: this.version || 0,
-        label: this.name
-      }
+        label: this.name,
+      },
     };
   }
 
@@ -303,12 +392,12 @@ export default class Blueprint {
   }
 
   // Blueprint string! Yay!
-  encode(version = 'latest') {
+  encode(version: Version = 'latest') {
     return util.encode[version](this.toObject());
   }
 
   // Set entityData
-  static setEntityData(obj) {
+  static setEntityData(obj: any) {
     let keys = Object.keys(obj);
     for (let i = 0; i < keys.length; i++) {
       entityData[keys[i]] = obj[keys[i]];
@@ -321,7 +410,7 @@ export default class Blueprint {
   }
 
   static get UP() {
-    return 0
+    return 0;
   }
 
   static get RIGHT() {
@@ -364,47 +453,66 @@ export default class Blueprint {
     return this.ROTATION_270_CW;
   }
 
-  checkName(name) {
-    if (typeof name != 'string') throw new Error('Expected name of entity or tile, instead got ' + name);
+  checkName(name: string) {
     name = this.jsName(name);
-    if (!entityData[name] && this.checkWithEntityData) throw new Error(name + ' does not exist! You can add it by putting it into entityData.');
+    if (!entityData[name] && this.checkWithEntityData)
+      throw new Error(
+        name + ' does not exist! You can add it by putting it into entityData.',
+      );
     return name;
   }
 
-  jsName(name) {
+  jsName(name: string) {
     return typeof name == 'string' ? name.replace(/-/g, '_') : name;
   }
 
-  fixName(name) {
+  fixName(name: string) {
     return name.replace(/_/g, '-');
   }
 
-  static getBook(str: string, opt: any) { return getBook(str, opt); }
-  static toBook(blueprints: Blueprint[], activeIndex = 0, version = 'latest') { return toBook(blueprints, activeIndex, version); }
-  static isBook(str: string) { return isBook(str); }
+  static getBook(str: string, opt: any) {
+    return getBook(str, opt);
+  }
+  static toBook(
+    blueprints: Blueprint[],
+    activeIndex = 0,
+    version: Version = 'latest',
+  ) {
+    return toBook(blueprints, activeIndex, version);
+  }
+  static isBook(str: string) {
+    return isBook(str);
+  }
 }
 
 import book from './book';
 
 function getBook(str: string, opt: any) {
   return book(str, opt);
-};
+}
 
-function toBook(blueprints: Blueprint[], activeIndex = 0, version = 'latest') {
+function toBook(
+  blueprints: Blueprint[],
+  activeIndex = 0,
+  version: Version = 'latest',
+): string {
   let obj = {
     blueprint_book: {
       blueprints: blueprints.map(bp => bp.toObject()),
       item: 'blueprint-book',
       active_index: activeIndex,
-      version: 0
-    }
+      version: 0,
+    },
   };
 
   return util.encode[version](obj);
 }
 
-function isBook(str: string) {
+function isBook(str: string): boolean {
   const version = str.slice(0, 1);
+  if (version !== '0') {
+    throw new Error('No decoder found for blueprint book version ' + version);
+  }
   let obj = util.decode[version](str);
 
   return typeof obj.blueprint_book === 'object';
