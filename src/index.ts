@@ -66,6 +66,11 @@ export default class Blueprint {
     return this.fillFromObject(data, opt);
   }
 
+  static test(str) {
+    const version = str.slice(0, 1);
+    return util.decode[version](str);
+  }
+
   fillFromObject(data: any, opt: BlueprintLoadOptions) {
     if (data.hasOwnProperty('blueprint')) data = data.blueprint;
 
@@ -370,7 +375,7 @@ export default class Blueprint {
     const tileInfo = this.tiles.map((tile, i) => tile.getData());
     const iconData = this.icons.map((icon, i) => {
       return {
-        signal: { type: entityData[icon].type, name: this.fixName(icon) },
+        signal: { type: entityData[icon].type || 'item', name: this.fixName(icon) },
         index: i + 1,
       };
     });
