@@ -307,6 +307,12 @@ export default class Entity {
     } = {};
 
     data.control_behavior.filters.forEach((filter: any) => {
+      if (!entityData[this.bp.checkName(filter.signal.name)]) {
+        entityData[this.bp.checkName(filter.signal.name)] = {
+          type: filter.signal.type
+        };
+      }
+
       constants[parseInt(filter.index) - 1] = {
         name: this.bp.checkName(filter.signal.name),
         count: filter.count || 0,
