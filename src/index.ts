@@ -1,10 +1,12 @@
 'use strict';
 
+import prettyJSON from 'prettyjson';
+import Victor from 'victor';
+
+import book from './book';
+import entityData from './defaultentities';
 import Entity from './entity';
 import Tile from './tile';
-import Victor from 'victor';
-import prettyJSON from 'prettyjson';
-import entityData from './defaultentities';
 import util from './util';
 
 type Version = '0' | 'latest';
@@ -29,7 +31,7 @@ export default class Blueprint {
   tiles: Tile[];
   entityPositionGrid: { [location: string]: Entity };
   tilePositionGrid: { [location: string]: Tile };
-  version: string;
+  version: number;
   checkWithEntityData: boolean;
 
   constructor(data: any, opt: BlueprintOptions = {}) {
@@ -39,7 +41,7 @@ export default class Blueprint {
     this.tiles = []; // List of all tiles in Blueprint (such as stone path or concrete)
     this.entityPositionGrid = {}; // Object with tile keys in format "x,y" => entity
     this.tilePositionGrid = {};
-    this.version = '0';
+    this.version = 281479273971713; // Factorio version 1.1.35
     this.checkWithEntityData =
       opt.checkWithEntityData != undefined ? opt.checkWithEntityData : true; // make sure checkName() validates with entityData
     if (data) this.load(data, opt);
@@ -357,6 +359,9 @@ export default class Blueprint {
     num = Math.min(this.entities.length, Math.min(Math.max(num, 1), 4));
     for (let i = 0; i < num; i++) {
       this.icons[i] = this.entities[i].name;
+      if (this.icons[i] === 'straight_rail' || this.icons[i] === 'curved_rail') {
+        this.icons[i] = 'rail';
+      }
     }
     return this;
   }
@@ -489,8 +494,6 @@ export default class Blueprint {
     return isBook(str);
   }
 }
-
-import book from './book';
 
 function getBook(str: string, opt: any) {
   return book(str, opt);
