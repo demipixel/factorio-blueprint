@@ -1,6 +1,7 @@
 import Victor from 'victor';
-import Blueprint from './index';
+
 import entityData from './defaultentities';
+import Blueprint from './index';
 
 type PositionGrid = { [location: string]: Entity };
 type Side = 1 | 2 | 'in' | 'out';
@@ -48,6 +49,8 @@ export default class Entity {
 
   rawConnections: any;
   connections: Connection[];
+  rawNeighbours?: number[];
+  neighbours: Entity[];
   circuitParameters: any;
   condition: CombinatorData;
   constants?: { [position: number]: Constant };
@@ -87,6 +90,8 @@ export default class Entity {
 
     this.rawConnections = data.connections; // Used in parsing connections from existing entity
     this.connections = []; // Wire connections
+    this.rawNeighbours = data.neighbors;
+    this.neighbours = [];
     this.circuitParameters = data.circuit_parameters || null;
     this.condition = this.parseCondition(data); // Condition in combinator
     this.constants = this.parseConstants(data);
@@ -189,21 +194,26 @@ export default class Entity {
   // Parse connections into standard Entity format
   parseConnections(entityList: any) {
     const conns = this.rawConnections;
-    if (!conns) return [];
-    for (let side in conns) {
-      if (side != '1' && side != '2') return; // Not a number!
-      for (let color in conns[side]) {
-        for (let i = 0; i < conns[side][color].length; i++) {
-          const id = conns[side][color][i]['entity_id'];
-          const connection: Connection = {
-            entity: entityList[id - 1],
-            color: color == 'red' ? 'red' : 'green', // Garbage to make typescript shut up
-            side: parseInt(side) == 1 ? 1 : 2,
-            id: conns[side][color][i]['circuit_id'],
-          };
-          this.connections.push(connection);
+    if (conns) {
+      for (let side in conns) {
+        if (side != '1' && side != '2') return; // Not a number!
+        for (let color in conns[side]) {
+          for (let i = 0; i < conns[side][color].length; i++) {
+            const id = conns[side][color][i]['entity_id'];
+            const connection: Connection = {
+              entity: entityList[id - 1],
+              color: color == 'red' ? 'red' : 'green', // Garbage to make typescript shut up
+              side: parseInt(side) == 1 ? 1 : 2,
+              id: conns[side][color][i]['circuit_id'],
+            };
+            this.connections.push(connection);
+          }
         }
       }
+    }
+
+    if (this.rawNeighbours) {
+      this.neighbours = this.rawNeighbours.map(id => entityList[id - 1]);
     }
   }
 
@@ -876,6 +886,7 @@ export default class Entity {
             )
           : undefined,
 
+      neighbours: this.neighbours.map(ent => ent.id),
       parameters: this.parameters
         ? {
             playback_volume: useValueOrDefault(this.parameters.volume, 1.0),

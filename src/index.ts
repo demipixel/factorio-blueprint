@@ -5,24 +5,10 @@ import Victor from 'victor';
 
 import book from './book';
 import entityData from './defaultentities';
+import { generateElectricalConnections } from './electrical-connections';
 import Entity from './entity';
 import Tile from './tile';
 import util from './util';
-
-type Version = '0' | 'latest';
-interface Position {
-  x: number;
-  y: number;
-}
-
-interface BlueprintLoadOptions {
-  fixEntityData?: boolean;
-  allowOverlap?: boolean;
-}
-
-interface BlueprintOptions extends BlueprintLoadOptions {
-  checkWithEntityData?: boolean; // Should we validate enitity names with entityData? Default true
-}
 
 export default class Blueprint {
   name: string;
@@ -48,9 +34,9 @@ export default class Blueprint {
   }
 
   // All entities in beautiful string format
-  toString() {
+  toString(opt: ToObjectOpt) {
     this.setIds();
-    return prettyJSON.render(this.toObject().blueprint, {
+    return prettyJSON.render(this.toObject(opt).blueprint, {
       noAlign: true,
       numberColor: 'magenta',
     });
@@ -367,9 +353,11 @@ export default class Blueprint {
   }
 
   // Give luaString that gets converted by encode()
-  toObject() {
+  toObject({ autoConnectPoles = true }: ToObjectOpt = {}) {
     this.setIds();
     if (!this.icons.length) this.generateIcons();
+    if (autoConnectPoles) generateElectricalConnections(this);
+
     const entityInfo = this.entities.map((ent, i) => {
       const entData = ent.getData();
 
@@ -402,8 +390,8 @@ export default class Blueprint {
   }
 
   // Blueprint string! Yay!
-  encode(version: Version = 'latest') {
-    return util.encode[version](this.toObject());
+  encode(opt?: EncodeOpt) {
+    return util.encode[opt?.version || 'latest'](this.toObject(opt || {}));
   }
 
   // Set entityData
@@ -480,40 +468,40 @@ export default class Blueprint {
     return name.replace(/_/g, '-');
   }
 
-  static getBook(str: string, opt: any) {
+  static getBook(str: string, opt?: BlueprintOptions) {
     return getBook(str, opt);
   }
   static toBook(
     blueprints: Blueprint[],
     activeIndex = 0,
-    version: Version = 'latest',
+    opt?: EncodeOpt,
   ) {
-    return toBook(blueprints, activeIndex, version);
+    return toBook(blueprints, activeIndex, opt);
   }
   static isBook(str: string) {
     return isBook(str);
   }
 }
 
-function getBook(str: string, opt: any) {
+function getBook(str: string, opt?: BlueprintOptions) {
   return book(str, opt);
 }
 
 function toBook(
   blueprints: Blueprint[],
   activeIndex = 0,
-  version: Version = 'latest',
+  opt?: EncodeOpt,
 ): string {
   let obj = {
     blueprint_book: {
-      blueprints: blueprints.map(bp => bp.toObject()),
+      blueprints: blueprints.map(bp => bp.toObject(opt)),
       item: 'blueprint-book',
       active_index: activeIndex,
       version: 0,
     },
   };
 
-  return util.encode[version](obj);
+  return util.encode[opt?.version || 'latest'](obj);
 }
 
 function isBook(str: string): boolean {
@@ -524,4 +512,27 @@ function isBook(str: string): boolean {
   let obj = util.decode[version](str);
 
   return typeof obj.blueprint_book === 'object';
+}
+
+type Version = '0' | 'latest';
+interface Position {
+  x: number;
+  y: number;
+}
+
+interface BlueprintLoadOptions {
+  fixEntityData?: boolean;
+  allowOverlap?: boolean;
+}
+
+export interface BlueprintOptions extends BlueprintLoadOptions {
+  checkWithEntityData?: boolean; // Should we validate enitity names with entityData? Default true
+}
+
+interface EncodeOpt extends ToObjectOpt {
+  version?: Version;
+}
+
+interface ToObjectOpt {
+  autoConnectPoles?: boolean;
 }

@@ -1,9 +1,3 @@
-const fluid = 'fluid';
-const item = 'item';
-const virtual = 'virtual';
-const tile = 'tile';
-const recipe = 'recipe';
-
 enum Type {
   Fluid = 'fluid',
   Item = 'item',
@@ -26,6 +20,7 @@ interface EntityDescription {
   combinator?: boolean;
   modules?: number;
   recipe?: boolean;
+  maxElectricReach?: number;
 }
 
 const DEFAULT_ENTITIES: { [entity_name: string]: EntityDescription } = {
@@ -306,21 +301,25 @@ const DEFAULT_ENTITIES: { [entity_name: string]: EntityDescription } = {
     type: Type.Item,
     width: 1,
     height: 1,
+    maxElectricReach: 7.5,
   },
   medium_electric_pole: {
     type: Type.Item,
     width: 1,
     height: 1,
+    maxElectricReach: 9,
   },
   substation: {
     type: Type.Item,
     width: 2,
     height: 2,
+    maxElectricReach: 18,
   },
   big_electric_pole: {
     type: Type.Item,
     width: 2,
     height: 2,
+    maxElectricReach: 30,
   },
   offshore_pump: {
     type: Type.Item,
