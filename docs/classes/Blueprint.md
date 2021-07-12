@@ -139,25 +139,27 @@ Get bottom-right-most entity's corner position
 
 Generate icons based off the entities, `num` is the number of icons from 1 to 4. This is called automatically if no icons are provided. Returns self.
 
-### toObject()
+### toObject({ autoConnectPoles = true })
 
-Object containing all the data (just before being converted to JSON). This is the data used by Factorio to load the blueprint (after it has been decoded).
+Object containing all the data (just before being converted to JSON). This is the data used by Factorio to load the blueprint (after it has been decoded). `autoConnectPoles` will destroy all (if any) electrical pole connections and reconnect them all as if they were placed manually in Factorio.
 
 ### toJSON()
 
 Get the JSON data of the blueprint just before it's encoded.
 
-### encode(version="latest")
+### encode({version="latest", autoConnectPoles=true})
 
-Get the encoded blueprint string using optional `version` encoding method (only option is `0` or `latest` at the moment).
+Get the encoded blueprint string wihh options.
+- `version` encoding method (only option is `0` or `latest` at the moment).
+- `autoConnectPoles` described above in `toObject()`
 
 ### static Blueprint.isBook(str)
 
 Returns a boolean on whether or not the string is a blueprint book (otherwise it's just a blueprint).
 
-### static Blueprint.toBook(blueprints, activeIndex=0, version="latest")
+### static Blueprint.toBook(blueprints, activeIndex=0, {version="latest", autoConnectPoles=true})
 
-Get an encoded string using an array of blueprint objects stored in `blueprints`. `activeIndex` is the currently selected blueprint and `version` is which encoding method to use (which only supports `0` or `latest` at the moment).
+Get an encoded string using an array of blueprint objects stored in `blueprints`. `activeIndex` is the currently selected blueprint. Options described above in `encode()`
 
 ### static Blueprint.setEntityData(data)
 

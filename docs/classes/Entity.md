@@ -35,6 +35,10 @@ Number from 0 to 7. For most things it's 0, 2, 4, or 6. You can compare using th
 
 List of wire connections with other entities.
 
+### neighbours
+
+List of entities that this electrical pole is connected to.
+
 ### condition
 
 Condition (if the entity is a combinator).
