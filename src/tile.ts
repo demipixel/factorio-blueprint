@@ -1,4 +1,5 @@
 import Victor from 'victor';
+
 import entityData from './defaultentities';
 import Blueprint from './index';
 

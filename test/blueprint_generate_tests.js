@@ -1,6 +1,7 @@
 const assert = require('assert');
 const Blueprint = require('../dist/factorio-blueprint.min.js');
 const Victor = require('victor');
+const util = require('./util');
 
 /*
  *
@@ -258,8 +259,12 @@ describe('Blueprint Generation', () => {
 });
 
 describe('Blueprint Books', () => {
-  const bp = new Blueprint();
-  const bookString = Blueprint.toBook([bp]);
+  const bp1 = new Blueprint();
+  bp1.name = 'First';
+  const bp2 = new Blueprint();
+  bp2.name = 'Second';
+
+  const bookString = Blueprint.toBook([bp1, bp2]);
 
   it('is a string', () => {
     assert.equal(typeof bookString, 'string');
@@ -267,11 +272,30 @@ describe('Blueprint Books', () => {
 
   it('checks bp string type', () => {
     assert.equal(Blueprint.isBook(bookString), true);
-    assert.equal(Blueprint.isBook(bp.encode()), false);
+    assert.equal(Blueprint.isBook(bp1.encode()), false);
   });
 
   it('parses book', () => {
-    assert.equal(Blueprint.getBook(bookString).length, 1);
+    assert.equal(Blueprint.getBook(bookString).length, 2);
+  });
+
+  it('has index on each blueprint', () => {
+    const decoded = util.decode[0](bookString);
+    assert.equal(decoded.blueprint_book.blueprints[0].blueprint.index, 0);
+    assert.equal(decoded.blueprint_book.blueprints[1].blueprint.index, 1);
+  });
+
+  it('sorts based on index', () => {
+    const decoded = util.decode[0](bookString);
+    const [decodedBp1, decodedBp2] = decoded.blueprint_book.blueprints;
+    decoded.blueprint_book.blueprints = [decodedBp2, decodedBp1];
+
+    const encoded = util.encode[0](decoded);
+    const book = Blueprint.getBook(encoded);
+    // Should have looked at blueprint.index
+    // and reordered the blueprints accordingly
+    assert.equal(book[0].name, 'First');
+    assert.equal(book[1].name, 'Second');
   });
 });
 

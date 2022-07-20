@@ -213,7 +213,7 @@ export default class Entity {
     }
 
     if (this.rawNeighbours) {
-      this.neighbours = this.rawNeighbours.map(id => entityList[id - 1]);
+      this.neighbours = this.rawNeighbours.map((id) => entityList[id - 1]);
     }
   }
 
@@ -291,7 +291,7 @@ export default class Entity {
       condition.first_signal,
       condition.second_signal,
       condition.output_signal,
-    ].forEach(signal => {
+    ].forEach((signal) => {
       if (signal && !entityData[signal.name])
         entityData[signal.name] = { type: signal.type };
     });
@@ -319,7 +319,7 @@ export default class Entity {
     data.control_behavior.filters.forEach((filter: any) => {
       if (!entityData[this.bp.checkName(filter.signal.name)]) {
         entityData[this.bp.checkName(filter.signal.name)] = {
-          type: filter.signal.type
+          type: filter.signal.type,
         };
       }
 
@@ -650,14 +650,14 @@ export default class Entity {
 
   setCircuitParameters(obj: any) {
     if (!this.circuitParameters) this.circuitParameters = {};
-    Object.keys(obj).forEach(key => (this.circuitParameters[key] = obj[key]));
+    Object.keys(obj).forEach((key) => (this.circuitParameters[key] = obj[key]));
 
     return this;
   }
 
   setParameters(obj: any) {
     if (!this.parameters) this.parameters = {};
-    Object.keys(obj).forEach(key => (this.parameters[key] = obj[key]));
+    Object.keys(obj).forEach((key) => (this.parameters[key] = obj[key]));
 
     return this;
   }
@@ -886,7 +886,7 @@ export default class Entity {
             )
           : undefined,
 
-      neighbours: this.neighbours.map(ent => ent.id),
+      neighbours: this.neighbours.map((ent) => ent.id),
       parameters: this.parameters
         ? {
             playback_volume: useValueOrDefault(this.parameters.volume, 1.0),

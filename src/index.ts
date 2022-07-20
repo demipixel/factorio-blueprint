@@ -77,7 +77,7 @@ export default class Blueprint {
       }
       this.createEntityWithData(entity, opt.allowOverlap || false, true, true); // no overlap (unless option allows it), place altogether later, positions are their center
     });
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       entity.place(this.entityPositionGrid, this.entities);
     });
 
@@ -103,7 +103,7 @@ export default class Blueprint {
   ) {
     // rotations is 0, 1, 2, 3 or any of the Blueprint.ROTATION_* constants.
     const entitiesCreated: Entity[] = [];
-    bp.entities.forEach(ent => {
+    bp.entities.forEach((ent) => {
       const data = ent.getData();
 
       data.direction += (rotations || 0) * 2;
@@ -125,11 +125,11 @@ export default class Blueprint {
       );
     });
 
-    entitiesCreated.forEach(e => {
+    entitiesCreated.forEach((e) => {
       e.place(this.entityPositionGrid, entitiesCreated);
     });
 
-    bp.tiles.forEach(tile => {
+    bp.tiles.forEach((tile) => {
       const data = tile.getData();
 
       if (rotations == 3)
@@ -321,18 +321,18 @@ export default class Blueprint {
       ? -aroundPoint.y
       : -Math.floor(this.center().y / 2) * 2;
     const offset = new Victor(offsetX, offsetY);
-    this.entities.forEach(entity =>
+    this.entities.forEach((entity) =>
       entity.removeTileData(this.entityPositionGrid),
     );
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       entity.position.add(offset);
       entity.setTileData(this.entityPositionGrid);
     });
     this.tiles.forEach(
-      tile =>
+      (tile) =>
         delete this.tilePositionGrid[tile.position.x + ',' + tile.position.y],
     );
-    this.tiles.forEach(tile => {
+    this.tiles.forEach((tile) => {
       tile.position.add(offset);
       this.tilePositionGrid[tile.position.x + ',' + tile.position.y] = tile;
     });
@@ -345,7 +345,10 @@ export default class Blueprint {
     num = Math.min(this.entities.length, Math.min(Math.max(num, 1), 4));
     for (let i = 0; i < num; i++) {
       this.icons[i] = this.entities[i].name;
-      if (this.icons[i] === 'straight_rail' || this.icons[i] === 'curved_rail') {
+      if (
+        this.icons[i] === 'straight_rail' ||
+        this.icons[i] === 'curved_rail'
+      ) {
         this.icons[i] = 'rail';
       }
     }
@@ -353,7 +356,7 @@ export default class Blueprint {
   }
 
   // Give luaString that gets converted by encode()
-  toObject({ autoConnectPoles = true }: ToObjectOpt = {}) {
+  toObject({ autoConnectPoles = true, index }: ToObjectOpt = {}) {
     this.setIds();
     if (!this.icons.length) this.generateIcons();
     if (autoConnectPoles) generateElectricalConnections(this);
@@ -368,7 +371,10 @@ export default class Blueprint {
     const tileInfo = this.tiles.map((tile, i) => tile.getData());
     const iconData = this.icons.map((icon, i) => {
       return {
-        signal: { type: entityData[icon].type || 'item', name: this.fixName(icon) },
+        signal: {
+          type: entityData[icon].type || 'item',
+          name: this.fixName(icon),
+        },
         index: i + 1,
       };
     });
@@ -381,6 +387,7 @@ export default class Blueprint {
         item: 'blueprint',
         version: this.version || 0,
         label: this.name,
+        index, // For blueprint books
       },
     };
   }
@@ -471,13 +478,11 @@ export default class Blueprint {
   static getBook(str: string, opt?: BlueprintOptions) {
     return getBook(str, opt);
   }
-  static toBook(
-    blueprints: Blueprint[],
-    activeIndex = 0,
-    opt?: EncodeOpt,
-  ) {
+
+  static toBook(blueprints: Blueprint[], activeIndex = 0, opt?: EncodeOpt) {
     return toBook(blueprints, activeIndex, opt);
   }
+
   static isBook(str: string) {
     return isBook(str);
   }
@@ -490,11 +495,11 @@ function getBook(str: string, opt?: BlueprintOptions) {
 function toBook(
   blueprints: Blueprint[],
   activeIndex = 0,
-  opt?: EncodeOpt,
+  opt: EncodeOpt = {},
 ): string {
-  let obj = {
+  const obj = {
     blueprint_book: {
-      blueprints: blueprints.map(bp => bp.toObject(opt)),
+      blueprints: blueprints.map((bp, index) => bp.toObject({ ...opt, index })),
       item: 'blueprint-book',
       active_index: activeIndex,
       version: 0,
@@ -535,4 +540,5 @@ interface EncodeOpt extends ToObjectOpt {
 
 interface ToObjectOpt {
   autoConnectPoles?: boolean;
+  index?: number;
 }

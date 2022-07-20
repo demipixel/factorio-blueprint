@@ -19,7 +19,12 @@ export default (str: string, opt?: BlueprintOptions) => {
 
   blueprints.forEach((blueprint: any) => {
     blueprint = blueprint.blueprint;
-    blueprintList.push(new Blueprint(blueprint, opt));
+
+    if (blueprint.index === undefined) {
+      blueprintList.push(new Blueprint(blueprint, opt));
+    } else {
+      blueprintList[blueprint.index] = new Blueprint(blueprint, opt);
+    }
   });
 
   return blueprintList;
