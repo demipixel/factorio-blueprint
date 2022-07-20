@@ -17,13 +17,13 @@ export default (str: string, opt?: BlueprintOptions) => {
   const blueprints = obj.blueprint_book.blueprints;
   const blueprintList: Blueprint[] = [];
 
-  blueprints.forEach((blueprint: any) => {
-    blueprint = blueprint.blueprint;
+  blueprints.forEach((data: any) => {
+    const blueprintData = data.blueprint;
 
-    if (blueprint.index === undefined) {
-      blueprintList.push(new Blueprint(blueprint, opt));
+    if (data.index === undefined) {
+      blueprintList.push(new Blueprint(blueprintData, opt));
     } else {
-      blueprintList[blueprint.index] = new Blueprint(blueprint, opt);
+      blueprintList[data.index] = new Blueprint(blueprintData, opt);
     }
   });
 

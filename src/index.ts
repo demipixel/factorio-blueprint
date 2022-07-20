@@ -358,7 +358,7 @@ export default class Blueprint {
   }
 
   // Give luaString that gets converted by encode()
-  toObject({ autoConnectPoles = true, index }: ToObjectOpt = {}) {
+  toObject({ autoConnectPoles = true }: ToObjectOpt = {}) {
     this.setIds();
     if (!this.icons.length) this.generateIcons();
     if (autoConnectPoles) generateElectricalConnections(this);
@@ -389,7 +389,6 @@ export default class Blueprint {
         item: 'blueprint',
         version: this.version || 0,
         label: this.name,
-        index, // For blueprint books
       },
     };
   }
@@ -506,7 +505,7 @@ function toBook(
   const obj = {
     blueprint_book: {
       blueprints: blueprints
-        .map((bp, index) => (bp ? bp.toObject({ ...opt, index }) : null))
+        .map((bp, index) => (bp ? { ...bp.toObject(opt), index } : null))
         .filter(Boolean),
       item: 'blueprint-book',
       active_index: activeIndex,
@@ -548,5 +547,4 @@ interface EncodeOpt extends ToObjectOpt {
 
 interface ToObjectOpt {
   autoConnectPoles?: boolean;
-  index?: number;
 }

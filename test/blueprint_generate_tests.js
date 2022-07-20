@@ -281,8 +281,8 @@ describe('Blueprint Books', () => {
 
   it('has index on each blueprint', () => {
     const decoded = util.decode[0](bookString);
-    assert.equal(decoded.blueprint_book.blueprints[0].blueprint.index, 0);
-    assert.equal(decoded.blueprint_book.blueprints[1].blueprint.index, 1);
+    assert.equal(decoded.blueprint_book.blueprints[0].index, 0);
+    assert.equal(decoded.blueprint_book.blueprints[1].index, 1);
   });
 
   it('sorts based on index', () => {
