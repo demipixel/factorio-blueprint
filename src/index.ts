@@ -87,9 +87,7 @@ export default class Blueprint {
 
     this.icons = [];
     data.icons.forEach((icon: any) => {
-      if (icon) {
-        this.icons[icon.index - 1] = this.checkName(icon.signal.name);
-      }
+      this.icons[icon.index - 1] = this.checkName(icon.signal.name);
     });
 
     this.setIds();
@@ -371,15 +369,19 @@ export default class Blueprint {
       return entData;
     });
     const tileInfo = this.tiles.map((tile, i) => tile.getData());
-    const iconData = this.icons.map((icon, i) => {
-      return {
-        signal: {
-          type: entityData[icon].type || 'item',
-          name: this.fixName(icon),
-        },
-        index: i + 1,
-      };
-    });
+    const iconData = this.icons
+      .map((icon, i) => {
+        return icon
+          ? {
+              signal: {
+                type: entityData[icon].type || 'item',
+                name: this.fixName(icon),
+              },
+              index: i + 1,
+            }
+          : null;
+      })
+      .filter(Boolean);
 
     return {
       blueprint: {

@@ -256,6 +256,25 @@ describe('Blueprint Generation', () => {
       assert.equal(obj.blueprint.entities[0].output_priority, 'right');
     });
   });
+
+  describe('icons', () => {
+    it('should save icons', () => {
+      const bp = new Blueprint();
+      bp.icons = ['electronic_circuit'];
+      const obj = bp.toObject();
+      assert.equal(obj.blueprint.icons[0].signal.name, 'electronic-circuit');
+      assert.equal(obj.blueprint.icons[0].index, 1);
+    });
+
+    it('should save icons correctly when first is not set', () => {
+      const bp = new Blueprint();
+      bp.icons[2] = 'electronic_circuit';
+
+      const obj = bp.toObject();
+      assert.equal(obj.blueprint.icons[0].signal.name, 'electronic-circuit');
+      assert.equal(obj.blueprint.icons[0].index, 3);
+    });
+  });
 });
 
 describe('Blueprint Books', () => {
