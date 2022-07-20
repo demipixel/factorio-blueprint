@@ -87,7 +87,9 @@ export default class Blueprint {
 
     this.icons = [];
     data.icons.forEach((icon: any) => {
-      this.icons[icon.index - 1] = this.checkName(icon.signal.name);
+      if (icon) {
+        this.icons[icon.index - 1] = this.checkName(icon.signal.name);
+      }
     });
 
     this.setIds();
@@ -479,7 +481,11 @@ export default class Blueprint {
     return getBook(str, opt);
   }
 
-  static toBook(blueprints: Blueprint[], activeIndex = 0, opt?: EncodeOpt) {
+  static toBook(
+    blueprints: (Blueprint | undefined | null)[],
+    activeIndex = 0,
+    opt?: EncodeOpt,
+  ) {
     return toBook(blueprints, activeIndex, opt);
   }
 
@@ -493,13 +499,15 @@ function getBook(str: string, opt?: BlueprintOptions) {
 }
 
 function toBook(
-  blueprints: Blueprint[],
+  blueprints: (Blueprint | undefined | null)[],
   activeIndex = 0,
   opt: EncodeOpt = {},
 ): string {
   const obj = {
     blueprint_book: {
-      blueprints: blueprints.map((bp, index) => bp.toObject({ ...opt, index })),
+      blueprints: blueprints
+        .map((bp, index) => (bp ? bp.toObject({ ...opt, index }) : null))
+        .filter(Boolean),
       item: 'blueprint-book',
       active_index: activeIndex,
       version: 0,

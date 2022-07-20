@@ -297,6 +297,15 @@ describe('Blueprint Books', () => {
     assert.equal(book[0].name, 'First');
     assert.equal(book[1].name, 'Second');
   });
+
+  it('encodes with undefined and null values', () => {
+    const bookString2 = Blueprint.toBook([undefined, null, bp1]);
+
+    const decoded = Blueprint.getBook(bookString2);
+    assert.equal(decoded[0], undefined);
+    assert.equal(decoded[1], undefined);
+    assert.equal(decoded[2].name, 'First');
+  });
 });
 
 // vi: sts=2 ts=2 sw=2 et
