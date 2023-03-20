@@ -40,7 +40,6 @@
     "babel-preset-env": "^1.7.0",
     "chai": "^4.3.7",
     "core-js": "^3.29.1",
-    "fork-ts-checker-webpack-plugin": "^8.0.0",
     "mocha": "^10.2.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "prettyjson": "^1.2.5",
