@@ -4,7 +4,7 @@ import prettyJSON from 'prettyjson';
 import Victor from 'victor';
 
 import book from './book';
-import entityData from './defaultentities';
+import * as entityData from './defaultentities';
 import { generateElectricalConnections } from './electrical-connections';
 import Entity from './entity';
 import Tile from './tile';
