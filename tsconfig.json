@@ -11,7 +11,6 @@
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
     "moduleResolution": "node",
-    "skipLibCheck": true,
     "declaration": true
   }
 }
