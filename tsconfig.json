@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
-    "outDir": "./dist/",
+    "outDir": "dist",
+    "declarationDir": "dist",
     "noImplicitAny": false,
     "lib": ["es6", "es2017"],
     "module": "es6",
@@ -9,6 +10,7 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "declaration": true
   }
 }

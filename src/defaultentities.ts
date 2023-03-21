@@ -6,7 +6,7 @@ enum Type {
   Recipe = 'recipe',
 }
 
-interface EntityDescription {
+export interface EntityDescription {
   type?: string;
   width?: number;
   height?: number;

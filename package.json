@@ -14,10 +14,11 @@
     "decode"
   ],
   "main": "dist/factorio-blueprint.min.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "test": "mocha",
-    "build": "webpack -p",
-    "prepublish": "npm run build && npm test"
+    "build": "webpack --mode production",
+    "prepublishOnly": "npm run build && npm run test"
   },
   "directories": {
     "test": "test"
@@ -30,24 +31,24 @@
     }
   ],
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
-    "@types/assert": "^1.4.3",
-    "@types/prettyjson": "0.0.29",
+    "@types/assert": "^1.5.6",
+    "@types/prettyjson": "0.0.30",
     "@types/victor": "^1.1.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
+    "babel-loader": "^9.1.2",
     "babel-preset-env": "^1.7.0",
-    "chai": "^4.2.0",
-    "mocha": "^5.2.0",
-    "prettyjson": "^1.2.1",
-    "ts-loader": "^5.4.5",
-    "typescript": "^3.7.4",
+    "chai": "^4.3.7",
+    "core-js": "^3.29.1",
+    "mocha": "^10.2.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "prettyjson": "^1.2.5",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.2",
     "victor": "^1.1.0",
-    "webpack": "^4.41.4",
-    "webpack-cli": "^3.3.10",
-    "zlib": "^1.0.5"
+    "webpack": "^5.76.2",
+    "webpack-cli": "^5.0.1"
   },
   "repository": {
     "type": "git",
