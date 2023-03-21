@@ -17,7 +17,8 @@
   "types": "dist/src/index.d.ts",
   "scripts": {
     "test": "mocha",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "prepublishOnly": "npm run build && npm run test"
   },
   "directories": {
     "test": "test"
