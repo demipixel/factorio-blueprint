@@ -55,6 +55,7 @@ export default class Entity {
   condition: CombinatorData;
   constants?: { [position: number]: Constant };
   constantEnabled: boolean;
+  trainControlBehavior: Record<string, any>;
 
   parameters: any;
   alertParameters: AlertParameters;
@@ -66,6 +67,9 @@ export default class Entity {
   bar: number;
 
   modules: any;
+
+  stationName?: string;
+  manualTrainsLimit?: number;
 
   splitterFilter?: string;
   inputPriority: Priority | undefined;
@@ -95,6 +99,7 @@ export default class Entity {
     this.circuitParameters = data.circuit_parameters || null;
     this.condition = this.parseCondition(data); // Condition in combinator
     this.constants = this.parseConstants(data);
+    this.trainControlBehavior = this.parseTrainControlBehavior(data);
     this.constantEnabled =
       data.control_behavior && data.control_behavior.is_on !== undefined
         ? data.control_behavior.is_on
@@ -119,6 +124,9 @@ export default class Entity {
           {},
         )
       : {};
+
+    this.stationName = data.station ? data.station : undefined;
+    this.manualTrainsLimit = data.manual_trains_limit || undefined;
 
     this.splitterFilter = data.filter
       ? this.bp.checkName(data.filter)
@@ -330,6 +338,32 @@ export default class Entity {
     });
 
     return constants;
+  }
+
+  parseTrainControlBehavior(data: any) {
+    if (!data.control_behavior) return {};
+
+    const controlBehavior = data.control_behavior;
+    const keys = [
+      'circuit_enable_disable',
+      'read_from_train',
+      'read_stopped_train',
+      'train_stopped_signal',
+      'set_trains_limit',
+      'trains_limit_signal',
+      'read_trains_count',
+      'trains_count_signal',
+    ];
+
+    const out: Record<string, any> = {};
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      if (controlBehavior[key] != undefined) {
+        out[key] = controlBehavior[key];
+      }
+    }
+
+    return out;
   }
 
   ////////////////
@@ -695,6 +729,16 @@ export default class Entity {
     return this;
   }
 
+  setStationName(name: string) {
+    this.stationName = name;
+    return this;
+  }
+
+  setManualTrainsLimit(limit: number) {
+    this.manualTrainsLimit = limit;
+    return this;
+  }
+
   setSplitterFilter(name: string) {
     this.splitterFilter = name;
     return this;
@@ -817,6 +861,9 @@ export default class Entity {
         : undefined,
       bar: /*this.INVENTORY_SIZE &&*/ this.bar != -1 ? this.bar : undefined,
 
+      station: this.stationName,
+      manual_trains_limit: this.manualTrainsLimit,
+
       filter: this.splitterFilter
         ? this.bp.fixName(this.splitterFilter)
         : undefined,
@@ -908,9 +955,12 @@ export default class Entity {
       control_behavior:
         this.constants ||
         this.condition ||
+        this.trainControlBehavior ||
         this.name == 'decider_combinator' ||
         this.name == 'arithmetic_combinator'
           ? getOptionData({
+              ...this.trainControlBehavior,
+
               filters:
                 this.constants && Object.keys(this.constants).length
                   ? Object.keys(this.constants).map((key, i) => {

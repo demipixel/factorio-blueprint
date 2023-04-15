@@ -275,6 +275,66 @@ describe('Blueprint Generation', () => {
       assert.equal(obj.blueprint.icons[0].index, 3);
     });
   });
+
+  describe('train stations', () => {
+    it('should save station name', () => {
+      const bp = new Blueprint();
+      const station = bp.createEntity('train_stop', { x: 0, y: 0 });
+      station.setStationName('Test Station');
+
+      const obj = bp.toObject();
+      assert.equal(obj.blueprint.entities[0].name, 'train-stop');
+      assert.equal(obj.blueprint.entities[0].station, 'Test Station');
+    });
+
+    it('should set manual trains limit', () => {
+      const bp = new Blueprint();
+      const station = bp.createEntity('train_stop', { x: 0, y: 0 });
+      station.setManualTrainsLimit(5);
+
+      const obj = bp.toObject();
+      assert.equal(obj.blueprint.entities[0].name, 'train-stop');
+      assert.equal(obj.blueprint.entities[0].manual_trains_limit, 5);
+    });
+
+    it('should set control behavior', () => {
+      const bp = new Blueprint();
+      const station = bp.createEntity('train_stop', { x: 0, y: 0 });
+      station.setCondition({
+        left: 'signal-red',
+        operator: '>',
+        right: 0,
+      });
+      station.trainControlBehavior = {
+        circuit_enable_disable: true,
+        read_from_train: true,
+        read_stopped_train: true,
+        train_stopped_signal: {
+          type: 'virtual',
+          name: 'signal-T',
+        },
+      };
+
+      const obj = JSON.parse(JSON.stringify(bp.toObject()));
+      console.log(obj.blueprint.entities[0].control_behavior);
+      assert.deepEqual(obj.blueprint.entities[0].control_behavior, {
+        circuit_condition: {
+          first_signal: {
+            type: 'virtual',
+            name: 'signal-red',
+          },
+          comparator: '>',
+          constant: 0,
+        },
+        read_from_train: true,
+        read_stopped_train: true,
+        train_stopped_signal: {
+          type: 'virtual',
+          name: 'signal-T',
+        },
+      });
+    });
+  });
 });
 
 describe('Blueprint Books', () => {

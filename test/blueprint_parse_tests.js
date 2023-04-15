@@ -365,6 +365,33 @@ describe('Blueprint Parsing', () => {
       asserts(bp, 'left', 'right', 'electronic_circuit');
     });
   });
+
+  describe('train station', () => {
+    it('should have station name and control behavior', () => {
+      const input =
+        '0eNqNUs1ugzAMfpXKZ6gKW0fHbZsqbc8wVSiA11mCBDmmWoXy7ktCVbXrDr2A/MXfT2JPUHcjDkxaoJyAGqMtlJ8TWNpr1QVMjgNCCSTYQwJa9aESVqRTK2YAlwDpFn+gzNwuAdRCQjirxOJY6bGvkX3Dmd9jS2OfYoeNMDXpYDr06oOxnmx08PWCxXKdwBHKtFgt197Hp9OeQDHkBFn4MLaXVuSr3O2cc8mNff5f/BvTLDt5ZrOjsOmqGr/VgQyHnoa4GUkq1KrusGrJhj+UwiMmPo9qqy82fRVNruBgOGB7fRKL89HNux+IZfTIOfvckb6Gh7cos5itOupJrjRP2P2SL0EyBj3xGzPqv5oRu1/zDdz9g8vC4PytRM3zgA9tkWWxVVaQF9v9fvGOjBD2LO5jebG+CRyQbeTlm+yxeM6Lp+d8tXnInfsFuMkA7g==';
+      const bp = new Blueprint(input);
+      const trainStop = bp.entities.find((ent) => ent.name === 'train_stop');
+      assert.equal(trainStop.stationName, 'Insert Easter Egg Here');
+      assert.deepEqual(trainStop.trainControlBehavior, {
+        circuit_enable_disable: true,
+        read_from_train: true,
+        read_stopped_train: true,
+        train_stopped_signal: { type: 'virtual', name: 'signal-B' },
+        set_trains_limit: true,
+        trains_limit_signal: { type: 'virtual', name: 'signal-A' },
+        read_trains_count: true,
+        trains_count_signal: { type: 'virtual', name: 'signal-C' },
+      });
+    });
+
+    it('should have manual trains limit', () => {
+      const input =
+        '0eNqNkt1OxCAQhd9lrtnE1p/ucqc+hjGEtqNOUqCBobFp+u4C3Wzs6sVekTmc+ebws0A7RBw9WQa5AHXOBpBvCwT6tHrIGs8jggRiNCDAapMr9prsIbAbYRVAtsdvkNX6LgAtExNulFLMykbTok+G//oFjC6kFmfztIxJthnkoakSOgVi7wbV4peeyPns6ch3kVih1e2AqqeQV5DsIwrwqHv14Z1RZchOzgNH7Pc7pbhs/Tn4RJ5jUi7ZN8fhJZ88IG+woAYyxDvmWbsd+ZyRJei5v3PRXjOLdjvzFdack/V2w5AMRtvkvMpdPdb5+cozy1+/QsCEPpTe+lg9NKe6eTrVd8f7el1/AHgPyCM=';
+      const bp = new Blueprint(input);
+      assert.equal(bp.entities[0].manualTrainsLimit, 152);
+    });
+  });
 });
 
 // vi: sts=2 ts=2 sw=2 et
