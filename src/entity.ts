@@ -81,7 +81,7 @@ export default class Entity {
   CAN_HAVE_MODULES: number;
   INVENTORY_SIZE: number;
 
-  constructor(data: any, bp: Blueprint, center: boolean) {
+  constructor(data: any, bp: Blueprint, center?: boolean) {
     if (!entityData[bp.checkName(data.name)])
       entityData[bp.checkName(data.name)] = {};
     let myData = entityData[bp.checkName(data.name)]; // entityData contains info like width, height, filterAmount, etc

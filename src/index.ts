@@ -20,7 +20,7 @@ export default class Blueprint {
   version: number;
   checkWithEntityData: boolean;
 
-  constructor(data: any, opt: BlueprintOptions = {}) {
+  constructor(data?: any, opt: BlueprintOptions = {}) {
     this.name = 'Blueprint';
     this.icons = []; // Icons for Blueprint (up to 4)
     this.entities = []; // List of all entities in Blueprint
@@ -152,10 +152,10 @@ export default class Blueprint {
   createEntity(
     name: string,
     position: Position,
-    direction: number,
-    allowOverlap: boolean,
-    noPlace: boolean,
-    center: boolean,
+    direction?: number,
+    allowOverlap?: boolean,
+    noPlace?: boolean,
+    center?: boolean,
   ) {
     return this.createEntityWithData(
       {
@@ -173,9 +173,9 @@ export default class Blueprint {
   // Creates an entity with a data object instead of paramaters
   createEntityWithData(
     data: any,
-    allowOverlap: boolean,
-    noPlace: boolean,
-    center: boolean,
+    allowOverlap?: boolean,
+    noPlace?: boolean,
+    center?: boolean,
   ) {
     const ent = new Entity(data, this, center);
     if (allowOverlap || ent.checkNoOverlap(this.entityPositionGrid)) {
@@ -395,8 +395,8 @@ export default class Blueprint {
     };
   }
 
-  toJSON() {
-    return JSON.stringify(this.toObject());
+  toJSON(opt: ToObjectOpt = {}) {
+    return JSON.stringify(this.toObject(opt));
   }
 
   // Blueprint string! Yay!
