@@ -17,7 +17,7 @@ export function generateElectricalConnections(bp: Blueprint) {
       .filter(
         (otherPole) =>
           otherPole.id < pole.id &&
-          pole.position.distance(otherPole.position) <
+          pole.position.distance(otherPole.position) <=
             Math.min(
               entityData[pole.name].maxElectricReach || 0,
               entityData[otherPole.name].maxElectricReach || 0,
