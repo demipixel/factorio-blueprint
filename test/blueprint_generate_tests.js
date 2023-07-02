@@ -133,7 +133,7 @@ describe('Blueprint Generation', () => {
     });
   });
 
-  describe('inventory filters', () => {});
+  describe('inventory filters', () => { });
 
   describe('logistic request filters', () => {
     //    it('storage chest ?', () => {
@@ -316,7 +316,6 @@ describe('Blueprint Generation', () => {
       };
 
       const obj = JSON.parse(JSON.stringify(bp.toObject()));
-      console.log(obj.blueprint.entities[0].control_behavior);
       assert.deepEqual(obj.blueprint.entities[0].control_behavior, {
         circuit_condition: {
           first_signal: {
@@ -335,6 +334,22 @@ describe('Blueprint Generation', () => {
       });
     });
   });
+
+});
+
+describe('Blueprint output', () => {
+  let bp = new Blueprint();
+  bp.name = "custom label";
+  bp.description = "custom description";
+  let bpObj = bp.toObject().blueprint;
+
+  it('correctly handles blueprint labels', () => {
+    assert.equal(bpObj.label, "custom label");
+  });
+
+  it('correctly handles blueprint descriptions', () => {
+    assert.equal(bpObj.description, "custom description");
+  })
 });
 
 describe('Blueprint Books', () => {
