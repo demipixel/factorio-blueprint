@@ -13,6 +13,20 @@ const Victor = require('victor');
  */
 
 describe('Blueprint Parsing', () => {
+  describe('metadata', () => {
+    const input =
+      '0eNp9j90OgjAMhd+l18Pg/EH2DL6BMWZANU2gW7ZiJIR3d4Mbr7w7bb6eczpD04/oA7GAmaHD2AbyQo7BAPk4DqCAWscRzG2GSC+2fSZl8pgRwUywHfL0tFEKCZajd0GKBnuBJd1zhx8w++WuAFlICDe7dZgePA4NhgT8NVLgXaSt2gzJr9DlsdydFExZ11XSKayjgO1GnXPg2tD8vKmgt8kw7a4urO3fGOJ6oC/7Y1Xr6lzr8nLQy/IFJUNeXw==';
+    let bp = new Blueprint(input);
+
+    it('supports a label', () => {
+      assert.equal(bp.name, 'Lorem');
+    });
+    it('supports a description', () => {
+      assert.equal(bp.description, 'ipsum');
+    });
+
+  });
+
   describe('simple, small', () => {
     it('2x walls centered on one of them', () => {
       const input =

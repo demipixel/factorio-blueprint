@@ -12,6 +12,7 @@ import util from './util';
 
 export default class Blueprint {
   name: string;
+  description: string;
   icons: string[];
   entities: Entity[];
   tiles: Tile[];
@@ -68,6 +69,7 @@ export default class Blueprint {
     if (!data.icons) data.icons = [];
 
     this.name = data.label;
+    this.description = data.description;
     this.version = data.version;
 
     data.entities.forEach((entity: any) => {
@@ -404,6 +406,7 @@ export default class Blueprint {
         item: 'blueprint',
         version: this.version || 0,
         label: this.name,
+        description: this.description || undefined,
         "absolute-snapping": this.snapping ? this.snapping.absolute : undefined,
         "snap-to-grid": this.snapping ? this.snapping.grid : undefined,
         "position-relative-to-grid": this.snapping ? this.snapping.position : undefined
