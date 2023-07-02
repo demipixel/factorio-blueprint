@@ -316,7 +316,7 @@ describe('Blueprint Parsing', () => {
     });
   });
 
-  describe('connections', () => {});
+  describe('connections', () => { });
 
   describe('splitters', () => {
     function asserts(
@@ -391,6 +391,32 @@ describe('Blueprint Parsing', () => {
       const bp = new Blueprint(input);
       assert.equal(bp.entities[0].manualTrainsLimit, 152);
     });
+  });
+
+  describe('snapping', () => {
+    it('should preserve snapping grid size', () => {
+      // a simple loop of fast belts in a 3x3 space with relative snapping
+      const input = '0eNqd001rhDAQBuC/InOOi8bP9bY999ZjKSXq7BLQJCTZUhH/e0e9bFsp1YuSZPLwZjQj1N0djZXKQzVCi66x0nipFVRwCWj+FuhrUGPnHTBwSpjQ6/BmZTvXf0KVMBjoOTGQjVYOqtcRnLwp0c0FfjBIkvTY03Yl+nl0Fc6H3grljLY+nHGY96sWCYynNwaovPQSV24ZDO/q3tdoqeBPiIHRTq4nWAJGp2yJGJ+yaWK/NH5MozdFbqXFZl3lG3ayz+YPSb/Z6YadHrOj/9jZPjve05P8WL/59tcrjiXlP5PmG3Z5rMMbNv3Qyw2oHm4bg04QRHMvsjcdBk+kBs9aG1r6QOvWDpZxWpx5kZ95VCZ8mr4AU8k4pA==';
+      const bp = new Blueprint(input);
+      assert.equal(bp.snapping.grid.x, 3);
+      assert.equal(bp.snapping.grid.y, 3);
+
+    });
+    it('should preserve absolute snapping', () => {
+      // same as above, but with absolute snapping
+      const input = '0eNqdk8FugzAMhl8F+RwqSCm03Lrz3mCapgBuFQmSKDHTKsS7z8AO3YamlUsix/bnP048QNX26Lw2BOUADYbaa0faGijhHPH5NbKXqMKWAggIRrmYbHz1upniP6DcC7jxOgpQVbBtTxhPUY4zoSTfowBdWxOgfBkg6KtR7ZRJN4dcQhN2zDWqm6yLChSTVyY46ymeqgKDtWmQK6XjqwA0pEnjgpuN25vpuwo9B/wJEuBs0MvVZuXJ7jBrT3eHcRS/aHIbjXeW3GiP9eKVK+z9Y2x5p/QbO1thZ9vYyX/Yh8fY6SM9ybf1W66/XrFNqfypNF9hH7d1eIXNH3qegPJuDAW0ikHT/H0NVPTE3OjZWsfOd/Rh6eExzYqTLPKTTI57OY6fhfJCzw==';
+      const bp = new Blueprint(input);
+      assert.strictEqual(bp.snapping.absolute, true);
+    });
+
+  });
+  it('should preserve absolute offset', () => {
+    // as above, but offst from the absolute grid by 1, 1
+    const input =
+      '0eNqd091qgzAUB/BXkXMdS02/veuu9wZjjFhPS0CTkBzLRHz3nWhhXSdj9UbJ1y9/jp4OiqpB57UhyDsoMZy8dqStgRyOCc9fEntOCqwogIBglEvJphevy7j/E/KVgJafvQBVBFs1hGnc5fgk5OQbFOBs0JFMPVaK9BUfiGwgMib0yZoA+VsHQV+MquIGah1yGE1YcwKj6jg6q0ApeWWCs57SmA/ieVNiBPt3AWiIb8WRGwbth2nqAv1w4x/Qd+JbwOViM0ZcbPpe/NLkPI3fHLnUHk/jqpywV8/Z8i7pD3s9Ya/n2cv/2Jvn7OyZmmzn1VtOf73dvKTyMel2wt7Pq/CEzT/00AH5XcMKqBRDsVNvrZe8sJu8Wut48Yo+jDXcZ+vdQe62B7ncr2TffwEVn1DN';
+    const bp = new Blueprint(input);
+    assert.equal(bp.snapping.position.x, 1);
+    assert.equal(bp.snapping.position.y, 1);
   });
 });
 

@@ -19,6 +19,7 @@ export default class Blueprint {
   tilePositionGrid: { [location: string]: Tile };
   version: number;
   checkWithEntityData: boolean;
+  snapping: { grid: Position, position?: Position, absolute?: boolean };
 
   constructor(data?: any, opt: BlueprintOptions = {}) {
     this.name = 'Blueprint';
@@ -89,6 +90,10 @@ export default class Blueprint {
     data.icons.forEach((icon: any) => {
       this.icons[icon.index - 1] = this.checkName(icon.signal.name);
     });
+
+    if (data['snap-to-grid']) {
+      this.setSnapping(data['snap-to-grid'], data['absolute-snapping'], data['position-relative-to-grid']);
+    }
 
     this.setIds();
 
@@ -186,15 +191,15 @@ export default class Blueprint {
       const otherEnt = ent.getOverlap(this.entityPositionGrid);
       throw new Error(
         'Entity ' +
-          data.name +
-          ' overlaps ' +
-          // @ts-ignore
-          otherEnt.name +
-          ' entity (' +
-          data.position.x +
-          ', ' +
-          data.position.y +
-          ')',
+        data.name +
+        ' overlaps ' +
+        // @ts-ignore
+        otherEnt.name +
+        ' entity (' +
+        data.position.x +
+        ', ' +
+        data.position.y +
+        ')',
       );
     }
   }
@@ -270,6 +275,14 @@ export default class Blueprint {
       tile.id = i + 1;
     });
     return this;
+  }
+
+  setSnapping(size: Position, absolute?: boolean, absolutePosition?: Position) {
+    this.snapping = {
+      grid: size,
+      absolute: absolute,
+      position: absolutePosition,
+    }
   }
 
   // Get corner/center positions
@@ -373,12 +386,12 @@ export default class Blueprint {
       .map((icon, i) => {
         return icon
           ? {
-              signal: {
-                type: entityData[icon].type || 'item',
-                name: this.fixName(icon),
-              },
-              index: i + 1,
-            }
+            signal: {
+              type: entityData[icon].type || 'item',
+              name: this.fixName(icon),
+            },
+            index: i + 1,
+          }
           : null;
       })
       .filter(Boolean);
@@ -391,6 +404,9 @@ export default class Blueprint {
         item: 'blueprint',
         version: this.version || 0,
         label: this.name,
+        "absolute-snapping": this.snapping ? this.snapping.absolute : undefined,
+        "snap-to-grid": this.snapping ? this.snapping.grid : undefined,
+        "position-relative-to-grid": this.snapping ? this.snapping.position : undefined
       },
     };
   }
