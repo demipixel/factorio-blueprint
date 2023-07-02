@@ -12,6 +12,7 @@ import util from './util';
 
 export default class Blueprint {
   name: string;
+  description: string;
   icons: string[];
   entities: Entity[];
   tiles: Tile[];
@@ -67,6 +68,7 @@ export default class Blueprint {
     if (!data.icons) data.icons = [];
 
     this.name = data.label;
+    this.description = data.description;
     this.version = data.version;
 
     data.entities.forEach((entity: any) => {
@@ -186,15 +188,15 @@ export default class Blueprint {
       const otherEnt = ent.getOverlap(this.entityPositionGrid);
       throw new Error(
         'Entity ' +
-          data.name +
-          ' overlaps ' +
-          // @ts-ignore
-          otherEnt.name +
-          ' entity (' +
-          data.position.x +
-          ', ' +
-          data.position.y +
-          ')',
+        data.name +
+        ' overlaps ' +
+        // @ts-ignore
+        otherEnt.name +
+        ' entity (' +
+        data.position.x +
+        ', ' +
+        data.position.y +
+        ')',
       );
     }
   }
@@ -373,12 +375,12 @@ export default class Blueprint {
       .map((icon, i) => {
         return icon
           ? {
-              signal: {
-                type: entityData[icon].type || 'item',
-                name: this.fixName(icon),
-              },
-              index: i + 1,
-            }
+            signal: {
+              type: entityData[icon].type || 'item',
+              name: this.fixName(icon),
+            },
+            index: i + 1,
+          }
           : null;
       })
       .filter(Boolean);
@@ -391,6 +393,7 @@ export default class Blueprint {
         item: 'blueprint',
         version: this.version || 0,
         label: this.name,
+        description: this.description || undefined,
       },
     };
   }

@@ -17,6 +17,10 @@ Array of all entities.
 
 Name of the blueprint, can be set. Be wary of setting this to anything other than letters or numbers.
 
+### description
+
+Description of the blueprint, can be set. 
+
 ### static UP
 
 Returns the integer for the direction up, helpful in Blueprint.createEntity()
