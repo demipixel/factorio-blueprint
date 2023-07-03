@@ -257,6 +257,23 @@ describe('Blueprint Generation', () => {
     });
   });
 
+  describe('snapping', () => {
+    const bp = new Blueprint();
+    let grid = new Victor(10, 12);
+    bp.setSnapping(grid);
+    it('should default to relative snapping', () => {
+      assert.strictEqual(bp.snapping.absolute, undefined);
+    });
+    it('should save snapping information', () => {
+      assert.equal(bp.snapping.grid, grid);
+    });
+    it('should support absolute snapping', () => {
+      bp.setSnapping(grid, true);
+      assert.strictEqual(bp.snapping.absolute, true);
+    });
+
+  });
+
   describe('icons', () => {
     it('should save icons', () => {
       const bp = new Blueprint();
@@ -341,6 +358,7 @@ describe('Blueprint output', () => {
   let bp = new Blueprint();
   bp.name = "custom label";
   bp.description = "custom description";
+  bp.setSnapping(new Victor(10, 20), true);
   let bpObj = bp.toObject().blueprint;
 
   it('correctly handles blueprint labels', () => {
@@ -350,6 +368,15 @@ describe('Blueprint output', () => {
   it('correctly handles blueprint descriptions', () => {
     assert.equal(bpObj.description, "custom description");
   })
+
+  it('correnctly handles snapping size', () => {
+    assert.equal(bpObj["snap-to-grid"].x, 10);
+    assert.equal(bpObj["snap-to-grid"].y, 20);
+  });
+  it('correctly handles absolute snapping', () => {
+    assert.strictEqual(bpObj['absolute-snapping'], true);
+  });
+
 });
 
 describe('Blueprint Books', () => {

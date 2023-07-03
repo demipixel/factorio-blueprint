@@ -21,6 +21,17 @@ Name of the blueprint, can be set. Be wary of setting this to anything other tha
 
 Description of the blueprint, can be set. 
 
+### snapping
+
+Dictionary with information on grid snapping, if set. Not set by default.
+```
+{
+  grid: {x: 32, y: 32}, //size of the grid, defaults to one chunk
+  absolute: true //whether it is absolutely positioned on the world grid or relative to the first placement
+  position: {x: 1, y: 1}, //world offset of the upper left corner of the blueprint, used only with absolute positioning
+}
+```
+
 ### static UP
 
 Returns the integer for the direction up, helpful in Blueprint.createEntity()
@@ -112,6 +123,15 @@ This is helpful as `blueprint.findEntity(position).remove()` could throw an erro
 ### removeTileAtPosition(position)
 
 Removes a tile at `position`, returns the tile (or false if it was not removed)
+
+### setSnapping(size, absolute?, absolutePosition?)
+
+Sets the grid snapping for the blueprint.
+`size` Position. Size of the grid
+`absolute` Boolean (optional). Absolute positioning will align the blueprint with the world grid
+`absolutePosition` Position (optional). Offsets an absolutely positioned blueprint from the world grid
+
+Note: The value that's shown as "grid position" in the GUI is controlled by moving the center with `fixCenter()`
 
 ### fixCenter([point])
 

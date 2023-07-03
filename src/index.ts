@@ -20,6 +20,7 @@ export default class Blueprint {
   tilePositionGrid: { [location: string]: Tile };
   version: number;
   checkWithEntityData: boolean;
+  snapping: { grid: Position, position?: Position, absolute?: boolean };
 
   constructor(data?: any, opt: BlueprintOptions = {}) {
     this.name = 'Blueprint';
@@ -91,6 +92,10 @@ export default class Blueprint {
     data.icons.forEach((icon: any) => {
       this.icons[icon.index - 1] = this.checkName(icon.signal.name);
     });
+
+    if (data['snap-to-grid']) {
+      this.setSnapping(data['snap-to-grid'], data['absolute-snapping'], data['position-relative-to-grid']);
+    }
 
     this.setIds();
 
@@ -274,6 +279,14 @@ export default class Blueprint {
     return this;
   }
 
+  setSnapping(size: Position, absolute?: boolean, absolutePosition?: Position) {
+    this.snapping = {
+      grid: size,
+      absolute: absolute,
+      position: absolutePosition,
+    }
+  }
+
   // Get corner/center positions
   getPosition(
     f: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight',
@@ -394,6 +407,9 @@ export default class Blueprint {
         version: this.version || 0,
         label: this.name,
         description: this.description || undefined,
+        "absolute-snapping": this.snapping ? this.snapping.absolute : undefined,
+        "snap-to-grid": this.snapping ? this.snapping.grid : undefined,
+        "position-relative-to-grid": this.snapping ? this.snapping.position : undefined
       },
     };
   }
