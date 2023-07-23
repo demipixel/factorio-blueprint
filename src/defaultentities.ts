@@ -653,8 +653,8 @@ const DEFAULT_ENTITIES: { [entity_name: string]: EntityDescription } = {
 
   boiler: {
     type: Type.Item,
-    width: 1,
-    height: 1,
+    width: 3,
+    height: 2,
   },
   steam_engine: {
     type: Type.Item,
