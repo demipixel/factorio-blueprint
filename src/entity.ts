@@ -18,7 +18,7 @@ interface Connection {
 
 interface CombinatorData {
   left?: string;
-  right?: string;
+  right?: string | number;
   operator?: string;
   out?: string;
 
@@ -473,8 +473,8 @@ export default class Entity {
   // Connect current entity to another entity via wire
   connect(
     ent: Entity,
-    mySide: Side = 1,
-    theirSide: Side = 1,
+    mySide: Side | null = 1,
+    theirSide: Side | null = 1,
     color: Color = 'red',
   ) {
     mySide = convertSide(mySide, this);
@@ -1015,7 +1015,7 @@ export default class Entity {
 // Lib Functions
 
 // Convert 'in' or 'out' of wires (only combinators have both of these) to a 1 or 2.
-function convertSide(side: Side, ent: Entity) {
+function convertSide(side: Side | null, ent: Entity) {
   if (!side) return 1;
   if (side == 1 || side == 2) return side;
   else if (side == 'in' || side == 'out') {

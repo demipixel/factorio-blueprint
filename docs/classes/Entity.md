@@ -149,7 +149,7 @@ Sets the condition on an arithmetic or decider combinator.
 
 ```js
 opt = {
-  left: 'transport_belt', // Number (constant) or String (item/entity name)
+  left: 'transport_belt', // String (item/entity name)
   right: 4, // Number (constant) or String (item/entity name)
   operator: '>', // If arithmetic, +-*/, if decider, <>=
   countFromInput: true, // For decider combinator, should output count from input (or be one). Default is true
