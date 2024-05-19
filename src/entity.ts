@@ -474,17 +474,17 @@ export default class Entity {
   connect(
     ent: Entity,
     { 
-      mySide,
-      theirSide,
+      fromSide,
+      toSide,
       color 
     }: {
-      mySide?: Side
-      theirSide?: Side
+      fromSide?: Side
+      toSide?: Side
       color: Color
     }
   ) {
-    mySide = convertSide(this, mySide);
-    theirSide = convertSide(ent, theirSide);
+    fromSide = convertSide(this, fromSide);
+    toSide = convertSide(ent, toSide);
 
     const checkCombinator = (name: string) => {
       return name == 'decider_combinator' || name == 'arithmetic_combinator';
@@ -495,14 +495,14 @@ export default class Entity {
     this.connections.push({
       entity: ent,
       color: color,
-      side: mySide,
-      id: checkCombinator(ent.name) ? theirSide.toString() : undefined,
+      side: fromSide,
+      id: checkCombinator(ent.name) ? toSide.toString() : undefined,
     });
     ent.connections.push({
       entity: this,
       color: color,
-      side: theirSide,
-      id: checkCombinator(this.name) ? mySide.toString() : undefined,
+      side: toSide,
+      id: checkCombinator(this.name) ? fromSide.toString() : undefined,
     });
     return this;
   }
@@ -510,23 +510,23 @@ export default class Entity {
   // Remove a specific wire connection given all details
   removeConnection(
     ent: Entity,
-    { mySide,
-      theirSide,
+    { fromSide,
+      toSide,
       color
     }: {
-      mySide?: Side
-      theirSide?: Side
+      fromSide?: Side
+      toSide?: Side
       color: Color
     }
   ) {
-    mySide = convertSide(this, mySide);
-    theirSide = convertSide(ent, theirSide);
+    fromSide = convertSide(this, fromSide);
+    toSide = convertSide(ent, toSide);
     color = color || 'red';
 
     for (let i = 0; i < this.connections.length; i++) {
       if (
         this.connections[i].entity == ent &&
-        this.connections[i].side == mySide &&
+        this.connections[i].side == fromSide &&
         this.connections[i].color == color
       ) {
         this.connections.splice(i, 1);
@@ -536,7 +536,7 @@ export default class Entity {
     for (let i = 0; i < ent.connections.length; i++) {
       if (
         ent.connections[i].entity == this &&
-        ent.connections[i].side == theirSide &&
+        ent.connections[i].side == toSide &&
         ent.connections[i].color == color
       ) {
         ent.connections.splice(i, 1);
