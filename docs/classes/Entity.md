@@ -113,7 +113,7 @@ Connect a wire (used for circuits) from one entity to another.
 
 Returns self.
 
-### removeConnection(toEntity, fromSide, toSide, color)
+### removeConnection(toEntity, { fromSide, toSide, color })
 
 Remove wire connection (if it exists). Returns self.
 
