@@ -133,7 +133,7 @@ describe('Blueprint Generation', () => {
     });
   });
 
-  describe('inventory filters', () => {});
+  describe('inventory filters', () => { });
 
   describe('logistic request filters', () => {
     //    it('storage chest ?', () => {
@@ -381,22 +381,22 @@ describe('Blueprint Generation', () => {
 
 describe('Blueprint output', () => {
   let bp = new Blueprint();
-  bp.name = 'custom label';
-  bp.description = 'custom description';
+  bp.name = "custom label";
+  bp.description = "custom description";
   bp.setSnapping(new Victor(10, 20), true);
   let bpObj = bp.toObject().blueprint;
 
   it('correctly handles blueprint labels', () => {
-    assert.equal(bpObj.label, 'custom label');
+    assert.equal(bpObj.label, "custom label");
   });
 
   it('correctly handles blueprint descriptions', () => {
-    assert.equal(bpObj.description, 'custom description');
+    assert.equal(bpObj.description, "custom description");
   });
 
   it('correnctly handles snapping size', () => {
-    assert.equal(bpObj['snap-to-grid'].x, 10);
-    assert.equal(bpObj['snap-to-grid'].y, 20);
+    assert.equal(bpObj["snap-to-grid"].x, 10);
+    assert.equal(bpObj["snap-to-grid"].y, 20);
   });
   it('correctly handles absolute snapping', () => {
     assert.strictEqual(bpObj['absolute-snapping'], true);

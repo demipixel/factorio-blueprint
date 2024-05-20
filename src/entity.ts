@@ -22,7 +22,7 @@ interface CombinatorData {
   operator?: string;
   out?: string;
 
-  type?: string;
+  type?: 'logistic' | 'circuit';
 
   controlEnable?: boolean;
   readContents?: boolean;
