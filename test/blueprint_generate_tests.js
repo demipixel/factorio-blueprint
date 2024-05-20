@@ -217,7 +217,7 @@ describe('Blueprint Generation', () => {
         { x: 0, y: 5 },
         Blueprint.UP,
       );
-      e1.connect(e2, null, null, 'red');
+      e1.connect(e2, { color: 'red' });
 
       const obj = bp.toObject();
 
