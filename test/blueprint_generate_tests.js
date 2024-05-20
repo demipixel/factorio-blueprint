@@ -341,7 +341,6 @@ describe('Blueprint Generation', () => {
           comparator: '>',
           constant: 0,
         },
-        connect_to_logistic_network: false,
         read_from_train: true,
         read_stopped_train: true,
         train_stopped_signal: {

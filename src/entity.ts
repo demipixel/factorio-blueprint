@@ -998,7 +998,7 @@ export default class Entity {
                 this.name == 'arithmetic_combinator'
                   ? getCondition()
                   : undefined,
-              connect_to_logistic_network: this.condition.type === 'logistic',
+              connect_to_logistic_network: this.condition.type === 'logistic' ? true : undefined,
               [this.condition.type === 'logistic'
                 ? 'logistic_condition'
                 : 'circuit_condition']:
