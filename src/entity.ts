@@ -22,6 +22,8 @@ interface CombinatorData {
   operator?: string;
   out?: string;
 
+  type?: string;
+
   controlEnable?: boolean;
   readContents?: boolean;
   readMode?: string;
@@ -636,6 +638,8 @@ export default class Entity {
       countFromInput: this.condition.countFromInput || opt.countFromInput,
       out: this.condition.out || opt.out,
 
+      type: this.condition.type || opt.type,
+
       controlEnable: this.condition.controlEnable || opt.controlEnable, // circuit_enable_disable, true/false
       readContents: this.condition.readContents || opt.readContents, // circuit_read_hand_contents, true/false
       readMode: this.condition.readMode || opt.readMode, // circuit_contents_read_mode, 0 or 1
@@ -983,7 +987,10 @@ export default class Entity {
                 this.name == 'arithmetic_combinator'
                   ? getCondition()
                   : undefined,
-              circuit_condition:
+              connect_to_logistic_network: this.condition.type === 'logistic',
+              [this.condition.type === 'logistic'
+                ? 'logistic_condition'
+                : 'circuit_condition']:
                 !this.name.includes('combinator') && this.condition.left
                   ? getCondition()
                   : undefined,

@@ -133,7 +133,7 @@ describe('Blueprint Generation', () => {
     });
   });
 
-  describe('inventory filters', () => { });
+  describe('inventory filters', () => {});
 
   describe('logistic request filters', () => {
     //    it('storage chest ?', () => {
@@ -271,7 +271,6 @@ describe('Blueprint Generation', () => {
       bp.setSnapping(grid, true);
       assert.strictEqual(bp.snapping.absolute, true);
     });
-
   });
 
   describe('icons', () => {
@@ -342,6 +341,7 @@ describe('Blueprint Generation', () => {
           comparator: '>',
           constant: 0,
         },
+        connect_to_logistic_network: false,
         read_from_train: true,
         read_stopped_train: true,
         train_stopped_signal: {
@@ -352,31 +352,55 @@ describe('Blueprint Generation', () => {
     });
   });
 
+  describe('logistic conditions', () => {
+    it('should set logistic condition', () => {
+      const bp = new Blueprint();
+      const inserter = bp.createEntity('inserter', { x: 0, y: 0 });
+      inserter.setCondition({
+        left: 'transport-belt',
+        operator: '<',
+        right: 200,
+        type: 'logistic',
+      });
+
+      const obj = JSON.parse(JSON.stringify(bp.toObject()));
+      assert.deepEqual(obj.blueprint.entities[0].control_behavior, {
+        logistic_condition: {
+          first_signal: {
+            name: 'transport-belt',
+            type: 'item',
+          },
+          comparator: '<',
+          constant: 200,
+        },
+        connect_to_logistic_network: true,
+      });
+    });
+  });
 });
 
 describe('Blueprint output', () => {
   let bp = new Blueprint();
-  bp.name = "custom label";
-  bp.description = "custom description";
+  bp.name = 'custom label';
+  bp.description = 'custom description';
   bp.setSnapping(new Victor(10, 20), true);
   let bpObj = bp.toObject().blueprint;
 
   it('correctly handles blueprint labels', () => {
-    assert.equal(bpObj.label, "custom label");
+    assert.equal(bpObj.label, 'custom label');
   });
 
   it('correctly handles blueprint descriptions', () => {
-    assert.equal(bpObj.description, "custom description");
-  })
+    assert.equal(bpObj.description, 'custom description');
+  });
 
   it('correnctly handles snapping size', () => {
-    assert.equal(bpObj["snap-to-grid"].x, 10);
-    assert.equal(bpObj["snap-to-grid"].y, 20);
+    assert.equal(bpObj['snap-to-grid'].x, 10);
+    assert.equal(bpObj['snap-to-grid'].y, 20);
   });
   it('correctly handles absolute snapping', () => {
     assert.strictEqual(bpObj['absolute-snapping'], true);
   });
-
 });
 
 describe('Blueprint Books', () => {
