@@ -18,7 +18,7 @@ interface Connection {
 
 interface CombinatorData {
   left?: string;
-  right?: string;
+  right?: string | number;
   operator?: string;
   out?: string;
 
@@ -473,12 +473,18 @@ export default class Entity {
   // Connect current entity to another entity via wire
   connect(
     ent: Entity,
-    mySide: Side = 1,
-    theirSide: Side = 1,
-    color: Color = 'red',
+    { 
+      fromSide,
+      toSide,
+      color 
+    }: {
+      fromSide?: Side
+      toSide?: Side
+      color: Color
+    }
   ) {
-    mySide = convertSide(mySide, this);
-    theirSide = convertSide(theirSide, ent);
+    fromSide = convertSide(this, fromSide);
+    toSide = convertSide(ent, toSide);
 
     const checkCombinator = (name: string) => {
       return name == 'decider_combinator' || name == 'arithmetic_combinator';
@@ -489,14 +495,14 @@ export default class Entity {
     this.connections.push({
       entity: ent,
       color: color,
-      side: mySide,
-      id: checkCombinator(ent.name) ? theirSide.toString() : undefined,
+      side: fromSide,
+      id: checkCombinator(ent.name) ? toSide.toString() : undefined,
     });
     ent.connections.push({
       entity: this,
       color: color,
-      side: theirSide,
-      id: checkCombinator(this.name) ? mySide.toString() : undefined,
+      side: toSide,
+      id: checkCombinator(this.name) ? fromSide.toString() : undefined,
     });
     return this;
   }
@@ -504,18 +510,23 @@ export default class Entity {
   // Remove a specific wire connection given all details
   removeConnection(
     ent: Entity,
-    mySide: Side = 1,
-    theirSide: Side = 1,
-    color: Color = 'red',
+    { fromSide,
+      toSide,
+      color
+    }: {
+      fromSide?: Side
+      toSide?: Side
+      color: Color
+    }
   ) {
-    mySide = convertSide(mySide, this);
-    theirSide = convertSide(theirSide, ent);
+    fromSide = convertSide(this, fromSide);
+    toSide = convertSide(ent, toSide);
     color = color || 'red';
 
     for (let i = 0; i < this.connections.length; i++) {
       if (
         this.connections[i].entity == ent &&
-        this.connections[i].side == mySide &&
+        this.connections[i].side == fromSide &&
         this.connections[i].color == color
       ) {
         this.connections.splice(i, 1);
@@ -525,7 +536,7 @@ export default class Entity {
     for (let i = 0; i < ent.connections.length; i++) {
       if (
         ent.connections[i].entity == this &&
-        ent.connections[i].side == theirSide &&
+        ent.connections[i].side == toSide &&
         ent.connections[i].color == color
       ) {
         ent.connections.splice(i, 1);
@@ -1015,7 +1026,7 @@ export default class Entity {
 // Lib Functions
 
 // Convert 'in' or 'out' of wires (only combinators have both of these) to a 1 or 2.
-function convertSide(side: Side, ent: Entity) {
+function convertSide(ent: Entity, side?: Side) {
   if (!side) return 1;
   if (side == 1 || side == 2) return side;
   else if (side == 'in' || side == 'out') {
