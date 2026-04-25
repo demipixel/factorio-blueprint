@@ -13,7 +13,12 @@
     "encode",
     "decode"
   ],
-  "main": "dist/factorio-blueprint.min.js",
+  "main": "./dist/factorio-blueprint.cjs.js",
+  "module": "./dist/factorio-blueprint.esm.js",
+  "exports": {
+    "require": "./dist/factorio-blueprint.cjs.js",
+    "import": "./dist/factorio-blueprint.esm.js"
+  },
   "types": "dist/src/index.d.ts",
   "scripts": {
     "test": "mocha",
