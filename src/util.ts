@@ -6,6 +6,8 @@ import { Buffer } from 'buffer';
 import * as zlib from 'zlib';
 
 const toExport = {
+  FACTORIO_V2: 0x0002000000000000,
+
   /**
    * Parse blueprint string in .15 format
    * @param str blueprint string to parse

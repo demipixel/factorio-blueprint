@@ -10,8 +10,6 @@ import Entity from './entity';
 import Tile from './tile';
 import util from './util';
 
-const FACTORIO_V2 = 0x0002000000000000;
-
 export default class Blueprint {
   name: string;
   description: string;
@@ -113,7 +111,7 @@ export default class Blueprint {
     if (this.entities.length == 0) {
       // inherit the placed blueprint's version
       this.version = bp.version;
-    } else if ((this.version >= FACTORIO_V2) != (bp.version >= FACTORIO_V2)) {
+    } else if ((this.version >= util.FACTORIO_V2) != (bp.version >= util.FACTORIO_V2)) {
       throw new Error("cannot mix pre-v2 and post-v2 blueprints");
     }
 
@@ -122,7 +120,7 @@ export default class Blueprint {
     bp.entities.forEach((ent) => {
       const data = ent.getData();
 
-      if (bp.version >= FACTORIO_V2) {
+      if (bp.version >= util.FACTORIO_V2) {
         data.direction += (rotations || 0) * 4;
         data.direction %= 16;
       } else {
