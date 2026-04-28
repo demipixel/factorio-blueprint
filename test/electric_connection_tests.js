@@ -1,5 +1,5 @@
 const assert = require('assert');
-const Blueprint = require('../dist/factorio-blueprint.min.js');
+const Blueprint = require('..');
 
 describe('Electric Connections', () => {
   const bp = new Blueprint();

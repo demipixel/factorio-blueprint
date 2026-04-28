@@ -16,8 +16,11 @@
   "main": "./dist/factorio-blueprint.cjs.js",
   "module": "./dist/factorio-blueprint.esm.js",
   "exports": {
-    "require": "./dist/factorio-blueprint.cjs.js",
-    "import": "./dist/factorio-blueprint.esm.js"
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "require": "./dist/factorio-blueprint.cjs.js",
+      "import": "./dist/factorio-blueprint.esm.js"
+    }
   },
   "types": "dist/src/index.d.ts",
   "scripts": {
@@ -36,10 +39,12 @@
     }
   ],
   "license": "ISC",
+  "dependencies": {
+    "@types/victor": "^1.1.0"
+  },
   "devDependencies": {
     "@types/assert": "^1.5.6",
     "@types/prettyjson": "0.0.30",
-    "@types/victor": "^1.1.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^9.1.2",

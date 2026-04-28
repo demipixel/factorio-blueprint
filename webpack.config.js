@@ -43,6 +43,7 @@ module.exports = [
       filename: "factorio-blueprint.cjs.js",
       library: {
         type: "commonjs2",
+        export: "default",
       },
       globalObject: "this",
     },
