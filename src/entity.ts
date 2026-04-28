@@ -2,6 +2,7 @@ import Victor from 'victor';
 
 import entityData from './defaultentities';
 import Blueprint from './index';
+import util from './util';
 
 type PositionGrid = { [location: string]: Entity };
 type Side = 1 | 2 | 'in' | 'out';
@@ -657,9 +658,10 @@ export default class Entity {
   // Sets direction of entity
   setDirection(dir: number) {
     // if (this.direction == null) return this; // Prevent rotation when we know what things can rotate in defaultentities.js
+    const mod = this.bp.version >= util.FACTORIO_V2 ? 8 : 4;
     this.size = new Victor(
-      dir % 4 == this.direction % 4 ? this.size.x : this.size.y,
-      dir % 4 == this.direction % 4 ? this.size.y : this.size.x,
+      dir % mod == this.direction % mod ? this.size.x : this.size.y,
+      dir % mod == this.direction % mod ? this.size.y : this.size.x,
     );
     this.direction = dir;
     return this;

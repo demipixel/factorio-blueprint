@@ -108,14 +108,25 @@ export default class Blueprint {
     rotations: number,
     allowOverlap: boolean,
   ) {
+    if (this.entities.length == 0) {
+      // inherit the placed blueprint's version
+      this.version = bp.version;
+    } else if ((this.version >= util.FACTORIO_V2) != (bp.version >= util.FACTORIO_V2)) {
+      throw new Error("cannot mix pre-v2 and post-v2 blueprints");
+    }
+
     // rotations is 0, 1, 2, 3 or any of the Blueprint.ROTATION_* constants.
     const entitiesCreated: Entity[] = [];
     bp.entities.forEach((ent) => {
       const data = ent.getData();
 
-      data.direction += (rotations || 0) * 2;
-      // data.direction += 8;
-      data.direction %= 8;
+      if (bp.version >= util.FACTORIO_V2) {
+        data.direction += (rotations || 0) * 4;
+        data.direction %= 16;
+      } else {
+        data.direction += (rotations || 0) * 2;
+        data.direction %= 8;
+      }
 
       if (rotations == 3)
         data.position = { x: data.position.y, y: -data.position.x };
