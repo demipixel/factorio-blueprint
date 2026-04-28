@@ -1,15 +1,8 @@
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
-module.exports = {
+const baseConfig = {
   entry: './src/index.ts',
   mode: 'production',
-  output: {
-    filename: './factorio-blueprint.min.js',
-    library: 'Blueprint',
-    libraryTarget: 'umd',
-    globalObject: 'this',
-    libraryExport: 'default',
-  },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
@@ -41,3 +34,33 @@ module.exports = {
   },
   plugins: [new NodePolyfillPlugin()],
 };
+
+module.exports = [
+  // CJS build
+  {
+    ...baseConfig,
+    output: {
+      filename: "factorio-blueprint.cjs.js",
+      library: {
+        type: "commonjs2",
+      },
+      globalObject: "this",
+    },
+  },
+
+  // ESM build
+  {
+    ...baseConfig,
+    experiments: {
+      outputModule: true,
+    },
+    output: {
+      filename: "factorio-blueprint.esm.js",
+      library: {
+        type: "module",
+      },
+      module: true,
+      globalObject: "this",
+    },
+  },
+];
