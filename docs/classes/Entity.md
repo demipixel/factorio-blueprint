@@ -41,7 +41,7 @@ List of entities that this electrical pole is connected to.
 
 ### condition
 
-Condition (if the entity is a combinator).
+Condition (circuit or logistic).
 
 ### constantEnabled
 
@@ -145,7 +145,7 @@ Remove all request filters on this entity. Returns self.
 
 ### setCondition(opt)
 
-Sets the condition on an arithmetic or decider combinator.
+Sets the condition, either circuit or logistic.
 
 ```js
 opt = {
@@ -154,6 +154,17 @@ opt = {
   operator: '>', // If arithmetic, +-*/, if decider, <>=
   countFromInput: true, // For decider combinator, should output count from input (or be one). Default is true
   out: 'medium_electric_pole' // String (item/entity name)
+}
+```
+
+To set a logistic condition, specify the type as 'logistic'. If the type property is left off, it defaults to a circuit condition.
+
+```js
+opt = {
+  left: 'fast-inserter',
+  operator: '<',
+  right: 200,
+  type: 'logistic'
 }
 ```
 

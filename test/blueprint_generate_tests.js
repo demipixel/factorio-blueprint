@@ -271,7 +271,6 @@ describe('Blueprint Generation', () => {
       bp.setSnapping(grid, true);
       assert.strictEqual(bp.snapping.absolute, true);
     });
-
   });
 
   describe('icons', () => {
@@ -352,6 +351,31 @@ describe('Blueprint Generation', () => {
     });
   });
 
+  describe('logistic conditions', () => {
+    it('should set logistic condition', () => {
+      const bp = new Blueprint();
+      const inserter = bp.createEntity('inserter', { x: 0, y: 0 });
+      inserter.setCondition({
+        left: 'transport-belt',
+        operator: '<',
+        right: 200,
+        type: 'logistic',
+      });
+
+      const obj = JSON.parse(JSON.stringify(bp.toObject()));
+      assert.deepEqual(obj.blueprint.entities[0].control_behavior, {
+        logistic_condition: {
+          first_signal: {
+            name: 'transport-belt',
+            type: 'item',
+          },
+          comparator: '<',
+          constant: 200,
+        },
+        connect_to_logistic_network: true,
+      });
+    });
+  });
 });
 
 describe('Blueprint output', () => {
@@ -367,7 +391,7 @@ describe('Blueprint output', () => {
 
   it('correctly handles blueprint descriptions', () => {
     assert.equal(bpObj.description, "custom description");
-  })
+  });
 
   it('correnctly handles snapping size', () => {
     assert.equal(bpObj["snap-to-grid"].x, 10);
@@ -376,7 +400,6 @@ describe('Blueprint output', () => {
   it('correctly handles absolute snapping', () => {
     assert.strictEqual(bpObj['absolute-snapping'], true);
   });
-
 });
 
 describe('Blueprint Books', () => {
