@@ -235,11 +235,16 @@ export default class Blueprint {
 
   // Returns entity at a position (or null)
   findEntity(pos: Position) {
-    return this.entityPositionGrid[Math.floor(pos.x) + ',' + pos.y] || null;
+    return (
+      this.entityPositionGrid[Math.floor(pos.x) + ',' + Math.floor(pos.y)] ||
+      null
+    );
   }
 
   findTile(pos: Position) {
-    return this.tilePositionGrid[Math.floor(pos.x) + ',' + pos.y] || null;
+    return (
+      this.tilePositionGrid[Math.floor(pos.x) + ',' + Math.floor(pos.y)] || null
+    );
   }
 
   // Removes a specific entity
@@ -257,6 +262,9 @@ export default class Blueprint {
   removeTile(tile: Tile) {
     if (!tile) return false;
     else {
+      const location = tile.position.x + ',' + tile.position.y;
+      if (this.tilePositionGrid[location] === tile)
+        delete this.tilePositionGrid[location];
       const index = this.tiles.indexOf(tile);
       if (index == -1) return tile;
       this.tiles.splice(index, 1);
@@ -266,17 +274,15 @@ export default class Blueprint {
 
   // Removes an entity at a position (returns false if no entity is there)
   removeEntityAtPosition(position: Position) {
-    if (!this.entityPositionGrid[position.x + ',' + position.y]) return false;
-    return this.removeEntity(
-      this.entityPositionGrid[position.x + ',' + position.y],
-    );
+    const ent = this.findEntity(position);
+    if (!ent) return false;
+    return this.removeEntity(ent);
   }
 
   removeTileAtPosition(position: Position) {
-    if (!this.tilePositionGrid[position.x + ',' + position.y]) return false;
-    return this.removeTile(
-      this.tilePositionGrid[position.x + ',' + position.y],
-    );
+    const tile = this.findTile(position);
+    if (!tile) return false;
+    return this.removeTile(tile);
   }
 
   // Set ids for entities, called in toJSON()
