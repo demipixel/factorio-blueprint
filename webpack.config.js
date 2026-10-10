@@ -56,7 +56,7 @@ module.exports = [
       outputModule: true,
     },
     output: {
-      filename: "factorio-blueprint.esm.js",
+      filename: "factorio-blueprint.esm.mjs",
       library: {
         type: "module",
       },

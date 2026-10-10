@@ -1,6 +1,6 @@
 {
   "name": "factorio-blueprint",
-  "version": "2.6.5",
+  "version": "2.7.0",
   "description": "Factorio Blueprints API",
   "keywords": [
     "factorio",
@@ -14,13 +14,14 @@
     "decode"
   ],
   "main": "./dist/factorio-blueprint.cjs.js",
-  "module": "./dist/factorio-blueprint.esm.js",
+  "module": "./dist/factorio-blueprint.esm.mjs",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
       "require": "./dist/factorio-blueprint.cjs.js",
-      "import": "./dist/factorio-blueprint.esm.js"
-    }
+      "import": "./dist/factorio-blueprint.esm.mjs"
+    },
+    "./package.json": "./package.json"
   },
   "types": "dist/src/index.d.ts",
   "scripts": {
