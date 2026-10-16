@@ -29,7 +29,7 @@ export default class Tile {
   getData() {
     return {
       name: this.bp.fixName(this.name),
-      position: this.position as { x: number; y: number },
+      position: this.position.clone() as { x: number; y: number },
     };
   }
 }
