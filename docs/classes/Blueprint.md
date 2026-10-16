@@ -7,7 +7,7 @@ Blueprint is the class that is returned by `require('factorio-blueprint')`. It i
 
 ### icons
 
-Array of names of entities. No more than four icons are allowed. If this array is empty when calling `.luaString()`, two icons will be automatically generated.
+Array of names of entities. No more than four icons are allowed. If this array is empty when calling `.toObject()`, up to two icons will be automatically generated.
 
 ### entities
 
@@ -159,7 +159,7 @@ Get bottom-left-most entity's corner position
 
 Get bottom-right-most entity's corner position
 
-### generateIcon(num)
+### generateIcons(num)
 
 Generate icons based off the entities, `num` is the number of icons from 1 to 4. This is called automatically if no icons are provided. Returns self.
 
@@ -208,7 +208,7 @@ Get an encoded string using an array of blueprint objects stored in `blueprints`
 
 If you do not provide data for modded objects, certain functions such as `entity.size` as `blueprint.findEntity()` will not work correctly.
 
-Use [defaultentities.js](https://github.com/demipixel/factorio-blueprint/blob/master/defaultentities.js) as a reference for vanilla items.
+Use [src/defaultentities.ts](https://github.com/demipixel/factorio-blueprint/blob/master/src/defaultentities.ts) as a reference for vanilla items.
 
 ### static Blueprint.getEntityData()
 
