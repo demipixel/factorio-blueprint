@@ -47,6 +47,7 @@ export default class Entity {
   name: string;
   position: Victor;
   direction: number;
+  private placed = false;
 
   rawConnections: any;
   connections: Connection[];
@@ -377,6 +378,7 @@ export default class Entity {
   place(positionGrid: PositionGrid, entityList: any[]) {
     this.setTileData(positionGrid);
     this.parseConnections(entityList);
+    this.placed = true;
     return this;
   }
 
@@ -388,6 +390,7 @@ export default class Entity {
   // Cleans up tile data after removing
   removeCleanup(positionGrid: PositionGrid) {
     this.removeTileData(positionGrid);
+    this.placed = false;
     return this;
   }
 
@@ -658,12 +661,14 @@ export default class Entity {
   // Sets direction of entity
   setDirection(dir: number) {
     // if (this.direction == null) return this; // Prevent rotation when we know what things can rotate in defaultentities.js
+    if (this.placed) this.removeTileData(this.bp.entityPositionGrid);
     const mod = this.bp.version >= util.FACTORIO_V2 ? 8 : 4;
     this.size = new Victor(
       dir % mod == this.direction % mod ? this.size.x : this.size.y,
       dir % mod == this.direction % mod ? this.size.y : this.size.x,
     );
     this.direction = dir;
+    if (this.placed) this.setTileData(this.bp.entityPositionGrid);
     return this;
   }
 
