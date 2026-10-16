@@ -114,7 +114,7 @@ export default class Entity {
     this.requestFilters = {}; // Request filters for requester chest
     this.directionType = data.type || 'input'; // Underground belts input/output
     this.recipe = data.recipe ? this.bp.checkName(data.recipe) : undefined;
-    this.bar = data.bar || -1;
+    this.bar = data.bar === undefined ? -1 : data.bar;
 
     this.modules = data.items
       ? Object.keys(data.items).reduce(
